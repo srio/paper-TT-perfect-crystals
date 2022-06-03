@@ -1,0 +1,33 @@
+\NeedsTeXFormat{LaTeX2e}
+%
+%\documentclass[aps,pra,showpacs,amsmath,amssymb,superscriptaddress,nofootinbib]{revtex4}
+\documentclass[]{article}
+\usepackage{graphicx}% Include figure files
+\usepackage{bm}% bold math
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{color}
+\usepackage{soul}
+\usepackage{nopageno}
+\usepackage{tikz}
+%%
+
+\begin{document}  
+
+\thispagestyle{empty}
+
+% figure created using https://www.mathcha.io/editor#
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  put here figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{figure}\label{fig:frame}
+\input{fig1code.tex}
+
+
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  end put here figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
