@@ -197,11 +197,12 @@ We obtain in this way the TT equations
 We define a parameter $\alpha$ that measures the deviation of the incident angle from the geometrical Bragg position as
 \begin{equation}
 \label{eq:alpha}
-\alpha = \frac{k^2-k_h^2}{k^2} = \frac{k^2-(\textbf k_0 + \textbf h)^2}{k^2} = \frac{\textbf h^2 + 2 \textbf k_0 . \textbf h}{k^2}.
+\alpha = \frac{k^2-k_h^2}{k^2} = \frac{k^2-(\textbf k_0 + \textbf h)^2}{k^2} = \inred{-} \frac{\textbf h^2 + 2 \textbf k_0 . \textbf h}{k^2}.
 % = 4 \sin \theta_B (\sin \theta - \sin \theta_B) \approx 2 (\theta-\theta_B) \sin 2\theta_B),
 \end{equation}
 
-In the ``rotating crystal mode" $\alpha=4 \sin \theta_B (\sin \theta - \sin \theta_B) \approx 2 (\theta-\theta_B) \sin 2\theta_B)$, with $\theta$ the glancing angle on the reflective planes, and $\theta_B$ the Bragg angle ($h=2 k \sin\theta_B$, $\textbf k_0 . \textbf h = -2 k \sin\theta$). Note that the last approximation fails far from the Bragg position or if $\cos\theta_B \rightarrow 0$ (normal incidence). The TT equation become
+In the ``rotating crystal mode" $\alpha=4 \sin \theta_B (\sin \theta - \sin \theta_B) \approx 2 (\theta-\theta_B) \sin (2\theta_B)$, with $\theta$ the glancing angle on the reflective planes, and $\theta_B$ the Bragg angle ($h=2 k \sin\theta_B$, $\textbf k_0 . \textbf h = -2 k \sin\theta$). Note that the last approximation fails far from the Bragg position or if $\cos\theta_B \rightarrow 0$ (normal incidence). \inred{Note also that the $\alpha$ defined in \cite{ZachariasenBook} (equation [3.114b]) is the same as here but with opposite sign.  }
+The TT equation become
 \begin{subequations}
 \label{eq:TTvectorAlpha}
 \begin{align}
@@ -452,7 +453,7 @@ An example is in Fig.~\ref{fig:braggProfiles}.
     \centering
     \includegraphics[width=0.49\textwidth]{figures/Bragg_1.eps}
     \includegraphics[width=0.49\textwidth]{figures/Bragg_2.eps}
-    \caption{Example of reflectance and transmittance for a Bragg Si 111 crystal. \todo{Check ``scan" direction, it is opposite to the usual way.}}
+    \caption{Example of reflectance and transmittance for a Bragg Si 111 crystal of $t=$\SI{10}{\micro\meter} at 8 keV. }
 \end{figure}
 
 
@@ -473,11 +474,23 @@ For $t \rightarrow \infty$,
 It is interesting to calculate the field inside the crystal, i.e. $B_0(s)$ and $B_h(s)$. Introducing the coefficients in (\ref{eq:TTbraggCoefficients}) into equations (\ref{eq:BSolutions}) we obtain, after some algebraic manipulation
 \begin{subequations}\label{eq:bragginside}
 \begin{align}
-D_h(s)&=i \frac{b u_h \sin(as - aT)}{a \cos(aT) + i \omega \sin(aT)} e^{is(u_0+\omega)}\\
-D_0(s)&= \frac{a \cos(aT-as) + i \omega \sin(aT-as)}{a \cos(aT) + i \omage \sin(aT)} e^{is(u_0+\omega)}.
+D_h(s)&=\frac{i b u_h \sin(as - aT)}{a \cos(aT) + i \omega \sin(aT)} e^{is(u_0+\omega)}\\
+D_0(s)&= \frac{a \cos(as-aT) - i \omega \sin(as-aT)}{a \cos(aT) + i \omega \sin(aT)} e^{is(u_0+\omega)}.
 \end{align}
 \end{subequations}
 }
+
+\begin{figure}\label{fig:braggMap}
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/Bragg_DH.png}
+    \includegraphics[width=0.49\textwidth]{figures/Bragg_D0.png}
+    \caption{Example of intensity of the electric fields inside the crystal as a function of the 
+    deviation angle $\theta-\theta_B$ and thickness ratio $-s/T$. 
+    Left $|D_h|^2$, right $|D_0|^2$. 
+    The crystal is Si 111 at 8 keV with thickness $t=$\SI{10}{\micro\meter}. 
+    }
+\end{figure}
+
 \todo{Do the same for Laue }
 
 \section{Scattering and transfer matrices}
@@ -634,10 +647,10 @@ It can be verified that $M^2$ is of the same form as $M$ where $T$ is replaced b
 \subsection{The crystalpy library}
 \subsection{Crystal examples}
 \begin{itemize}
-    \item rocking curves
-    \item differences with Darwin (see \cite{yashiro2001, Yashiro2000}), Ewald, etc. 
-    \item field maps inside the crystal
-    \item skew scans (2D scans)
+    \item rocking curves (see Figs.~\ref{fig:braggProfiles}, \ref{fig:laueProfiles})
+    \item differences with Darwin (see \cite{Yashiro2000, Yashiro2001}), Ewald, Zachariasen, etc. 
+    \item field maps inside the crystal using equation~(\ref{eq:bragginside})
+    \item skew scans (2D scans) [Needs to calculate the output direction]
     \item crystal curvature/deformation treated with matrices??
     \item extend the matrices to include s and p polarization to calculate polarization changes
 \end{itemize}
