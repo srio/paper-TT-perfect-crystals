@@ -277,7 +277,7 @@ Using the approximation \todo{physical meaning, justify?}
 \end{equation}
 we obtain from equations~(\ref{eq:TTvector})
 \begin{subequations}
-% \label{eq:TT}
+\label{eq:TT}
 % \begin{align}
 \begin{empheq}[box=\fbox]{align}
 \frac{\partial D_0}{\partial s_0} =& \frac{ik}{2} \left[ \chi_0 D_0(s_0,s_h,s_t)+ \chi_{-h} D_h(s_0,s_h) \right]; \\
@@ -711,8 +711,76 @@ It can be verified that $M^2$ is of the same form as $M$ where $T$ is replaced b
 \section{Derivation of the TT equations for a rotating perfect crystal}
 \label{appendix:rotating}
 
-In the ``rotating crysal mode", the crystal is rotated around
+In the ``rotating crystal mode", the crystal is rotated around an axis perpendicular to the ``diffraction plane" which contains the diffraction vector $\textbf{h}$ and the wave-vector $\textbf{k}_0$ of the fixed incident plane-wave in vacuum. The crystal rotation from the exact geometrical Bragg position may be viewed as a special kind of crystal deformation. We propose to use the Takagi-Taupin approach to derive some basic results of the usual dynamic theory for the perfect crystal diffraction. 
 
+The x-ray wavefield inside the crystal is set as
+\begin{subequations}
+\label{eq:wavefieldappendix}
+\begin{align}
+        \Psi(\textbf r) = 
+        e^{i \textbf k_0 . \textbf r} \left[
+        A_0(\textbf r) + e^{i \textbf k_{B} . \textbf r} A_h(\textbf r)
+        \right] = 
+        \nonumber\\
+        A_0(\textbf r) e^{i \textbf k_0 . \textbf r} + A_{h}(\textbf r) e^{i \textbf k_{hB} . \textbf r},
+\end{align}
+\end{subequations}
+$\textbf{h}_B$ representing the diffraction vector in exact Bragg position. The vector $\textbf k_{hB}$  is therefore such that $|\textbf k_{0}|=|\textbf k_{hB}|=k=2 \pi / \lambda$. The Fourier coefficients $\chi_h$ of the perfect crystal susceptibility are \cyan{to be} replaced by the function $\chi_h \exp[i\textbf{k}_b.\textbf{u}(\textbf{r})]$, in which $\textbf{u}(\textbf{r})$ is the displacement field of the rotated crystal. The phase term $\exp[i\textbf{h}_B.\textbf{u}(\textbf{r})]$ will be written as $\exp(i\phi(\textbf{r})$. In such conditions, the following form of the TT equations
+\begin{subequations}
+\label{eq:TTvectorappendix}
+\begin{align}
+2 i \textbf{k}_0 . \nabla A_0 + \chi_0 k^2 A_0 + \chi_{-h} k^2 \exp(i\phi) A_h =& 0; \\
+2 i \textbf{k}_{hB} . \nabla A_h + \chi_0 k^2 A_h + \chi_{h} k^2 \exp(-i\phi) A_0 =& 0,
+\end{align}
+\end{subequations}
+is obtained by inserting this expression in the \cyan{Helmholz equation~(\ref{eq:helmholz})}, with the following approximations: the 2$^{\text{nd}}$-order derivatives of $A_{0,h}$ supposed to be slowly varying amplitudes are neglected and only the terms containing $\exp(i\textbf{k}_0.\textbf{r})$ in the product $\chi\Psi$ are considered. Introducing oblique coordinates $(s_0,s_h)$ in the diffraction plane, along the directions $\textbf{k}_0$ and $\textbf{k}_{hB}$, so that $\textbf{k}_0.\nabla A_0=k\frac{\partial A_0}{\partial s_0}$ and  $\textbf{k}_{hB}.\nabla A_h=k\frac{\partial A_h}{\partial s_h}$, the TT equations are
+\begin{subequations}
+\begin{align}
+\frac{\partial A_0}{\partial s_0} =& \frac{ik}{2} \left[ \chi_0 A_0+ \chi_{-h} \exp(i\phi) A_h\right]; \\
+\frac{\partial A_h}{\partial s_h} =& \frac{ik}{2} \left[ \chi_0 A_h+ \chi_{\cyan{h}} \exp(-\phi) A_0\right].
+\end{align}
+\end{subequations}
+
+Performing the transformation $A_0=D_0$ and $\exp(i\phi) A_h=D_h$, we obtain
+\begin{subequations}
+\begin{align}
+\frac{\partial D_0}{\partial s_0} =& \frac{ik}{2} \left[ \chi_0 D_0+ \chi_{-h} D_h\right]; \\
+\frac{\partial D_h}{\partial s_h} =& \frac{ik}{2} \left[ (\chi_0 + \frac{2}{k}\frac{\partial\phi}{\partial s_h} ) D_h+ \chi_{\cyan{h}} D_0\right].
+\end{align}
+\end{subequations}
+This is identical to equation~(\ref{eq:TT}) considering that $\alpha=\frac{2}{k}\frac{\partial\phi}{\partial s_h}$, \cyan{which demonstration follows.}
+
+\subsection{Demonstration of $\alpha=\frac{2}{k}\frac{\partial\phi}{\partial s_h}$ }
+
+Let $\textbf{i}_{0,h}$ be unit vectors along the directions of $\textbf{k}_0$ an $\textbf{k}_{hB}$; the crystal rotation $\Delta\theta=\theta-\theta_B$ transforms $\textbf{i}_{0,h}$ into $\textbf{j}_{0,h}$. A position vector $s_0\textbf{i}_0+s_h\textbf{i}_h$ is transformed into $s_0\textbf{j}_0+s_h\textbf{j}_h$. The displacement field is $\textbf{u}(s_0,s_h)=s_0(\textbf{j}_0-\textbf{i}_0)+ s_h(\textbf{j}_h-\textbf{i}_h)$; $\textbf{h}_B=k(\textbf{i}_h-\textbf{i}_0)$. Hence
+\begin{equation}
+    \phi(s_0,s_h)=\textbf{h}_B.\textbf{u}=k s_0(\textbf{i}_h-\textbf{i}_0).(\textbf{j}_0-\textbf{i}_0) + 
+    k s_h(\textbf{i}_h-\textbf{i}_0).(\textbf{j}_h-\textbf{i}_h).
+\end{equation}
+We note that 
+\begin{subequations}
+\begin{align}
+    \textbf{i}_0.\textbf{j}_0=\textbf{i}_h.\textbf{j}_h=&\cos\Delta\theta_B \\
+    \textbf{i}_0.\textbf{j}_h=&\cos(2\theta_B +\Delta\theta) \\
+    \textbf{i}_h.\textbf{j}_0=&\cos(2\theta_B -\Delta\theta) \\
+    \textbf{i}_0.\textbf{i}_h=&\cos2\theta_B
+\end{align}
+\end{subequations}
+therefore, 
+\begin{subequations}
+\begin{align}
+    \frac{2}{k}\frac{\partial\phi}{\partial s_h} =  2(\textbf{i}_h-\textbf{i}_0).(\textbf{j}_h-\textbf{i}_h)= \nonumber\\
+    2(\cos\Delta\theta - \cos(2\theta_B+\Delta\theta)-1+\cos2\theta_B)= \nonumber\\
+    2[(\cos\Delta\theta-1)(1-\cos2\theta_B)+\sin2\theta_B\sin\Delta\theta]=\nonumber\\
+    4 \sin\theta_B[\sin\theta_B(\cos\Delta\theta-1)+\cos\theta_B\sin\Delta\theta]=\nonumber\\
+    4 \sin\theta_B[\sin(\theta_B+\Delta\theta)-\sin\theta_B]\approx\nonumber\\
+    \alpha
+\end{align}
+\end{subequations}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Solutions of TT equations (\ref{eq:TTinB}) using the Laplace transform}
 \label{appendix:laplace}
 
