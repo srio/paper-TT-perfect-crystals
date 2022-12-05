@@ -5,8 +5,8 @@
 % Version 1.6 (28 March 2013)
 %------------------------------------------------------------------------------
 
-% \documentclass{iucr}
-\documentclass[preprint]{iucr}              % DO NOT DELETE THIS LINE
+\documentclass{iucr}
+% \documentclass[preprint]{iucr}              % DO NOT DELETE THIS LINE
 \usepackage{bm}
 % \usepackage{graphicx}
 % \usepackage{tabularx}
@@ -36,18 +36,29 @@
 \usepackage{makecell}
 \usepackage{cancel}
 \usepackage{empheq}
+\usepackage[usenames,dvipsnames]{xcolor}
+
+\definecolor{darkblue}{rgb}{0.0, 0.0, 0.55}
+\definecolor{cyan(process)}{rgb}{0.0, 0.72, 0.92}
 
 \newcommand{\todo}[1]{{\color{red}[TODO: "#1'']}}
 \newcommand{\inblue}[1]{{\color{blue}#1}}
+\newcommand{\cyan}[1]{{\color{cyan(process)}#1}}
 \newcommand{\inred}[1]{{\color{red}#1}}
 \newcommand{\ingreen}[1]{{\color{green}#1}}
 
-
+\makeatletter
+\@ifclasswith{iucr}{preprint}{
+\newcommand{\whencolumns}[2]{#1}
+}{
+\newcommand{\whencolumns}[2]{#2}
+}
+\makeatother
 
      %-------------------------------------------------------------------------
      % Infobrmation about journal to which submitted
      %-------------------------------------------------------------------------
-     \journalcode{S}              % Indicate the journal to which submitted
+     \journalcode{X}              % Indicate the journal to which submitted
                                   %   A - Acta Crystallographica Section A
                                   %   B - Acta Crystallographica Section B
                                   %   C - Acta Crystallographica Section C
@@ -67,7 +78,7 @@
      % The title of the paper. Use \shorttitle to indicate an abbreviated title
      % for use in running heads (you will need to uncomment it).
 
-\title{Calculation of diffraction profiles for perfect crystals from analytical solutions of Takagi-Taupin equations}
+\title{\cyan{Diffracted amplitudes} for perfect crystals derived from solutions of Takagi-Taupin equations \cyan{and numerical implementation in the \texttt{crystalpy} library.}}
 % * <msanchezdelrio@gmail.com> 2018-09-25T09:38:50.716Z:
 %
 % ^.
@@ -115,11 +126,11 @@
 The Takagi-Taupin equations are solved in its simpler form (zero deformation) and equations of the diffracted and transmitted amplitudes are obtained. Then, the case of a multilayered crystal is discussed using a matrix model. 
 \end{synopsis}
 
-\today
+% \today
 
 \begin{abstract}
 
-The Takagi-Taupin equations are solved in its simpler form (zero deformation) and equations of the diffracted and transmitted amplitudes are obtained. Then, the case of a multilayered crystal is discussed using a matrix model. 
+The Takagi-Taupin equations are solved in its simpler form (zero deformation) and equations of the diffracted and transmitted amplitudes are obtained. \cyan{The case of multilayered crystals is discussed using a matrix model. The equations are implemented in a python library \texttt{cryslalpy} adapted for numeric applications like reflectivity calculations and ray-tracing.} 
 
 \end{abstract}
 
@@ -131,9 +142,19 @@ The Takagi-Taupin equations are solved in its simpler form (zero deformation) an
      % and \subsubsection's as required.
 
 \section{Introduction}
+\label{sec:Intro}
 
-The Takagi-Taupin \cite{Takagi1962, Taupin, Taupin1967} equations...
+\cyan{
+Almost every synchrotron radiation beamline operating at hard X-rays makes use of perfect crystals.  
+Most beamlines use crystal monochromators, typically in the DCM (double crystal monochromator) mode, but polychromators or single crystal Laue monochromators can be also found. In addition, crystal analyzers are used in most spectroscopy beamlines. 
+Beamline simulation tools used for the design, optimization and commissioning of synchrotron instrumentation implement in software the equations to calculate reflectivities of perfect crystals. The theory of diffraction (see \cite{authierbook} for a complete reference) puts the bases of all numeric implementations. 
 
+There are lots of simulation tools implementing the equations of the dynamical theory in different forms. This variate scenario is even more complex if we consider that the calculation of the crystal structure factor, which is an essential ingredient to calculate diffracted amplitudes and intensities, is obtained from tabulated scattering functions of multiple origin. The wide menu of available methods and tools can be found even in the single suite OASYS \cite{codeOASYS}, that provides multiple solutions for calculating diffraction profiles of crystals (e.g. INPRO\footnote{\texttt{https://github.com/oasys-kit/xoppy\_externa\_codes/tree/master/src/INPRO}}, CRYTSTAL\cite{codeCRYSTAL}, X-RAY Server \cite{codeXRAYserver}), as well as beamline simulation tools (based on the ray tracing code SHADOW\cite{codeSHADOW}) and physical wave-optics simulations (with SRW\cite{codeSRW, codeSRWcrystals}). This scenario has heritaged decades of developments and have witnessed several synchrotron radiation generations. The work presented here looks into the future to improve this situation. We have two objectives: derive the equations of the crystal reflectivities from first principles and implementing them in a software library.
+
+In section~\ref{sec:TT} we derive the Takagi-Taupin (TT) equations \cite{Takagi1962, Taupin, Taupin1967} equations. In section~\ref{sec:TTsolutions} we solve the TT equations for a plane undeformed-crystal, giving four fundamental results: the diffracted and forward-diffracted (or transmitted) amplitudes for a crystal set in Bragg (reflection) and Laue (transmission) geometries. The diffracted amplitudes constitute the elements of the transfer matrices (section~\ref{sec:matrices}), useful to calculate systems of layered crystals and multilayers. Section~\ref{sec:crystalpy} is dedicated to the software implementation (library \texttt{crystalpy}, discussing some details and applications.
+ }
+ 
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,20 +183,28 @@ The x-ray wavefield inside the crystal is expressed as the sum of two modulated 
 \label{eq:wavefield}
     \Psi(\textbf r) = D_0(\textbf r) e^{i \textbf k_0 . \textbf r} + D_h(\textbf r) e^{i \textbf k_h . \textbf r},
 \end{equation}
-with amplitudes $D_{0,h}(\textbf r)$.
+with amplitudes\footnote{
+\cyan{
+Note that equation~(\ref{eq:wavefield}) expresses the field inside the crystal along incident and diffracted directions. However,the exact choice of  these directions may vary: we opted for a vector $\textbf{k}_0$ along the direction of the incident wave, and $\textbf{k}_h$ defined later. We could use incident and diffracted vectors defined in other ways, in such a way that the ``differences" are absorbed in the amplitudes $D_{0,h}$. In appendix~\ref{appendix:rotating}, we explore another alternative}
+} $D_{0,h}(\textbf r)$.
 The vector $\textbf{k}_h$ can be defined, without lost of generality, as $\textbf k_h=\textbf k_0 + \textbf h$. 
-The wavevector modulus is $k \equiv |\textbf{k}_0|=2\pi/\lambda$, where $\lambda$ is x-ray wavelength in vacuum. Note that, in general, $ |\textbf{k}_h| \ne k$. Only for a direction along the geometrical Bragg position ($\textbf{k}_0=\textbf{k}_0^B$), the Laue equations ($\textbf{k}_h^B=\textbf{k}_0^B+\textbf{h}$) holds, and $|\textbf{k}_0^B|=|\textbf{k}_h^B|$. \inred{This definition implies that, in general, the outgoing Bragg wave outside the crystal is not $cte \times \exp(i \textbf{k}_h . \textbf{r})$}
+The wavevector modulus is $k \equiv |\textbf{k}_0|=2\pi/\lambda$, where $\lambda$ is x-ray wavelength in vacuum. Note that, in general, $ |\textbf{k}_h| \ne k$. Only for a direction along the geometrical Bragg position ($\textbf{k}_0=\textbf{k}_0^B$), the Laue equations ($\textbf{k}_h^B=\textbf{k}_0^B+\textbf{h}$) holds, and $|\textbf{k}_0^B|=|\textbf{k}_h^B|$. This definition implies that, in general, the outgoing Bragg wave outside the crystal} is not \cyan{ along the direction of $\textbf{k}_h$.}
 
 
 % The Takagi-Taupin equations are obtained 
 To obtain the Takagi-Taupin equations (TT) we insert the equations~(\ref{eq:chisimple}) and (\ref{eq:wavefield}) in (\ref{eq:helmholz}) and consider two approximations. One supposes $D_{0,h}$ to be slowly varying amplitudes, thus neglecting the 2$^{\text{nd}}$ order derivatives of $D_{0,h}$,  so that
-\begin{equation}
+\begin{subequations}
 \label{eq:approxslowlyvarying}
-(\Delta + k^2)[D_{0,h}(\textbf{r}) \exp(i\textbf{k}_{0,h} . \textbf{r})] \approx \exp(i\textbf{k}_{0,h} . \textbf{r}) [2 i \textbf{k}_{0,h} . \nabla D_{0,h} + (k^2 - k^2_{0,h}) D_{0,h}].
-\end{equation}
-The second approximation neglects two of the six terms in $\chi \Psi$ \todo{justify? Piault: les termes ()
-et () ne sont pas considérés, car différents des ondes inci-
-dente et diffractée et donc en dehors de l’approximation à deux ondes.}
+\begin{align}
+&(\Delta + k^2)[D_{0,h}(\textbf{r}) \exp(i\textbf{k}_{0,h} . \textbf{r})] \approx \nonumber  \\
+&\exp(i\textbf{k}_{0,h} . \textbf{r}) [2 i \textbf{k}_{0,h} . \nabla D_{0,h} + (k^2 - k^2_{0,h}) D_{0,h}].
+\end{align}
+\end{subequations}
+The second approximation neglects two
+\footnote{\cyan{
+in such a way that the two-waves approximation is maintained. In appendix~\ref{appendix:rotating} an alternative choice of the incident and diffracted directions is made, and in this case these two terms are zero.
+}}
+of the six terms in $\chi \Psi$
 \begin{subequations}
 \label{eq:approxchiPsi}
 \begin{align}
@@ -197,14 +226,17 @@ We obtain in this way the TT equations
 \end{align}
 \end{subequations}
 
-We define a parameter $\alpha$ that measures the deviation of the incident angle from the geometrical Bragg position as
+We define a parameter $\alpha$ that measures the deviation\footnote{
+\cyan{Note that the $\alpha$ defined in \cite{ZachariasenBook} (equation [3.114b]) is the same as here but with opposite sign.  }
+}
+of the incident angle from the geometrical Bragg position as
 \begin{equation}
 \label{eq:alpha}
-\alpha = \frac{k^2-k_h^2}{k^2} = \frac{k^2-(\textbf k_0 + \textbf h)^2}{k^2} = \inred{-} \frac{\textbf h^2 + 2 \textbf k_0 . \textbf h}{k^2}.
+\alpha = \frac{k^2-k_h^2}{k^2} = \frac{k^2-(\textbf k_0 + \textbf h)^2}{k^2} = - \frac{\textbf h^2 + 2 \textbf k_0 . \textbf h}{k^2}.
 % = 4 \sin \theta_B (\sin \theta - \sin \theta_B) \approx 2 (\theta-\theta_B) \sin 2\theta_B),
 \end{equation}
 
-In the ``rotating crystal mode" $\alpha=4 \sin \theta_B (\sin \theta - \sin \theta_B) \approx 2 (\theta-\theta_B) \sin (2\theta_B)$, with $\theta$ the glancing angle on the reflective planes, and $\theta_B$ the Bragg angle ($h=2 k \sin\theta_B$, $\textbf k_0 . \textbf h = -2 k \sin\theta$). Note that the last approximation fails far from the Bragg position or if $\cos\theta_B \rightarrow 0$ (normal incidence). \inred{Note also that the $\alpha$ defined in \cite{ZachariasenBook} (equation [3.114b]) is the same as here but with opposite sign.  }
+In the ``rotating crystal mode" $\alpha=4 \sin \theta_B (\sin \theta - \sin \theta_B) \approx 2 (\theta-\theta_B) \sin (2\theta_B)$, with $\theta$ the glancing angle on the reflective planes, and $\theta_B$ the Bragg angle ($h=2 k \sin\theta_B$, $\textbf k_0 . \textbf h = -2 k \sin\theta$). Note that the last approximation fails far from the Bragg position or if $\cos\theta_B \rightarrow 0$ (normal incidence)\cyan{, therefore the equation~\ref{eq:alpha} is used in the software}.
 The TT equation become
 \begin{subequations}
 \label{eq:TTvectorAlpha}
@@ -215,7 +247,7 @@ The TT equation become
 \end{subequations}
 
 A point in the diffraction plane (the plane containing $\textbf{k}_0$ and $\textbf{h}$) 
-can be expressed with two oblique coordinates $(s_0,s_h)$ along the directions of the $\textbf k_0$ and $\textbf k_h$ (unit vectors $\hat{ \textbf{s}}_{0}$ and $\hat{ \textbf{s}}_{h}$, respectively). A generic spatial spatial position will also include a third coordinate $\textbf{s}_t$ along an axis $\hat{\textbf{s}}_t=\hat{\textbf{s}}_0 \times \hat{\textbf{s}}_h$, therefore $\textbf r=(s_0,s_h,s_t)$. The director cosines are $\gamma_{0,h,t}=\cos(\textbf{n} , \hat{\textbf{s}}_{0,h,t}) \equiv \cos(\theta_{0,h,t})$. The equation of the crystal surface is $\gamma_0 s_0 + \gamma_h s_h + \gamma_t s_t=0$. For any point $\textbf r=(s_0,s_h,s_t)$ inside the crystal we introduce the path length $s$ \inred{of the incident ray going in this point}: this ray meets the crystal surface in the point of coordinates $(s'_0,s_h,s_t)$ such that $\gamma_0 s'_0+\gamma_h s_h + \gamma_t s_t=0$, so that 
+can be expressed with two oblique coordinates $(s_0,s_h)$ along the directions of the $\textbf k_0$ and $\textbf k_h$ (unit vectors $\hat{ \textbf{s}}_{0}$ and $\hat{ \textbf{s}}_{h}$, respectively). A generic spatial spatial position will also include a third \cyan{transverse} coordinate $\textbf{s}_t$ along an axis $\hat{\textbf{s}}_t=\hat{\textbf{s}}_0 \times \hat{\textbf{s}}_h$, therefore $\textbf r=(s_0,s_h,s_t)$. The director cosines are $\gamma_{0,h,t}=\cos(\textbf{n} , \hat{\textbf{s}}_{0,h,t}) \equiv \cos(\theta_{0,h,t})$. The equation of the crystal surface is $\gamma_0 s_0 + \gamma_h s_h + \gamma_t s_t=0$. For any point $\textbf r=(s_0,s_h,s_t)$ inside the crystal we introduce the path length $s$ \inred{of the incident ray going in this point}: this ray meets the crystal surface in the point of coordinates $(s'_0,s_h,s_t)$ such that $\gamma_0 s'_0+\gamma_h s_h + \gamma_t s_t=0$, so that 
 \begin{equation}
 \label{eq:s}
 s = s_0 - s'_0 = s_0 + s_h \frac{\gamma_h}{\gamma_0} + s_t \frac{\gamma_t}{\gamma_0}.
@@ -498,6 +530,7 @@ D_0(s)&= \frac{a \cos(as-aT) - i \omega \sin(as-aT)}{a \cos(aT) + i \omega \sin(
 
 \section{Scattering and transfer matrices}
 \label{sec:matrices}
+
 Equations (\ref{eq:BSolutions}) represent a system of two equations containing two coefficients $c_1$ and $c_2$ and two fields ($B_0$ and $B_h$) that are latter expressed at the top ($s=0$) and bottom ($s=T$) surfaces. From these four fields, we can calculate two as a function of the other two. In the usual case, we calculate the diffracted and transmitted fields at the corresponding exit surface (which depends on the geometry, Bragg or Laue) given the other two that are set as boundary conditions. This gives the ``scattering matrix". In other cases, when one considers a complex crystal made by several piled individual crystal layer, we would be interested in calculating the diffracted and transmitted beam at the bottom as a function of the beams from the top.   
 
 \subsection{Scattering matrix in Bragg case}
@@ -674,6 +707,11 @@ It can be verified that $M^2$ is of the same form as $M$ where $T$ is replaced b
 %\referencelist{library}
 
 \appendix
+
+\section{Derivation of the TT equations for a rotating perfect crystal}
+\label{appendix:rotating}
+
+In the ``rotating crysal mode", the crystal is rotated around
 
 \section{Solutions of TT equations (\ref{eq:TTinB}) using the Laplace transform}
 \label{appendix:laplace}

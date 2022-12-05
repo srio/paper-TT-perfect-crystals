@@ -1,6 +1,8 @@
+%% Note by Overleaf (29 March 2016): the graphicx package is used instead of the graphics package in the original iucr.cls file, for more robust handling of image files
+%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is the IUCr LaTeX 2e class macro file iucr.cls                        %
-% Copyright (c) 1998-2021 International Union of Crystallography             %
+% Copyright (c) 1998-2016 International Union of Crystallography             %
 %                                                                            %
 % Usage:                                                                     %
 %  \documentclass{iucr}               for Acta A/JAC/IUCrJ paper (default)   %
@@ -32,7 +34,6 @@
 %  boldsection                        bold subsection style (IT Vol G)       %
 %  itabstract                         show abstract/keywords (IT - default)  %
 %  itnoabstract                       hide abstract and keywords (IT only)   %
-%  itnopartno                         hide part and chapter nos. (IT only)   %
 %  fullsize                           set text for large page size (IT only) %
 %                                                                            %
 % Compatibility options for old-style journal articles                       %
@@ -42,24 +43,6 @@
 % Author: Brian McMahon bm@iucr.org                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ChangeLog:                                                                 %
-%   2.1.14                                                                   %
-%          2021-03-05  Bugfix for bookmarking non-supplementary Appendices.  %
-%                      Thanks to  Leon Merten Lohse                          %
-%                      New option (itnopartno) and additional cif macros     %
-%                      (for DDLm etc.) for typsesetting ITG edition 2        %
-%   2.1.13                                                                   %
-%          2020-04-29  Updated Appendix section numbering style and fixed    %
-%                      related bug when switching between single- and        %
-%                      multicolumns. Thanks to Carsten Detlefs               %
-%   2.1.12                                                                   %
-%          2020-03-03  Updated journals names, issns etc.                    %
-%                      Improves handling of supplementary material with a    %
-%                      new papertype "SUP".                                  %
-%                      Fixes section titles in one-column format. Thanks to  %
-%                      Andrew Hanson                                         %
-%   2.1.11                                                                   %
-%          2019-01-14  Reverts a bug fix in latex.ltx to facilitate handling %
-%                      of underscores in CIF dictionaries                    %
 %   2.1.10                                                                   %
 %          2016-01-28  Sets IT content to small page measure unless new      %
 %                      option "fullsize" specified                           %
@@ -241,9 +224,8 @@
 % \box5 (\journalreceived, journalaccepted); \box7 (\keyword)
 %
 % ====================== version and identifying label =======================
-\def\f@@{2021/03/05 }
-%\def\b@r{{\tiny IUCr macros version 2.1.14: \f@@ \hfill}}
-% (change also in PREPRINT style)
+\def\f@@{2016/01/28 }
+%\def\b@r{{\tiny IUCr macros version 2.1.10: \f@@ \hfill}}
 \def\b@r{\relax}
 
 % ====================== some early conditionals declared ====================
@@ -269,7 +251,6 @@
 \newif\ifsyn@p\syn@pfalse                        % Print synopsis?
 \newif\ifkeyw@rd\keyw@rdfalse                    % Print keywords?
 \newif\ifc@pyright\c@pyrighttrue                 % Print copyright details?
-\newif\ifsuppm@t\suppm@tfalse                    % Supplementary material?
 \newif\ifmkttl\mkttlfalse                        % Was author group printed?
 \newif\iffirsts@c\firsts@ctrue                   % Short contributions effect
                                                  %  many page layout actions
@@ -281,11 +262,7 @@
 \newif\if@ppend@x\@ppend@xfalse                  % within appendix section?
 \newif\ifb@lds@ction\b@lds@ctionfalse            % subsection style of IT
 \newif\ifshow@bs\show@bstrue                     % print abstract (in IT only)
-\newif\ifshowp@rt\showp@rttrue                   % print part/chap nos. (IT only)
 \newif\iff@llsize\f@llsizefalse                  % large page size (in IT only)
-\newif\iff@rcesingl@col\f@rcesingl@colfalse      % flags that singlecolumn has
-                                                 % been forced in an otherwise
-                                                 % multicolumn context
 
 \let\f@@tn@te\footnote%                          % In new-style articles a
                                                  %  title footnote is treated
@@ -294,13 +271,9 @@
                                                  %  \t@tlefn; so need to store
                                                  %  old definition of \footnote
 \newcommand{\chapter}{\relax}%                   % Gets redefined for IT
-\newcommand{\theBOOKMARKsection}{\relax}%        % Gets redefined for IT
+\newcommand{\theBOOKMARKsection}{\relax}%       % Gets redefined for IT
 \newcounter{chapter}
 \newcounter{example}
-
-% Initialising some commands that are usually dynamically assigned
-\newcommand{\recd@te}{\relax}
-\newcommand{\accd@te}{\relax}
 
 % ====================== identification ======================================
 \NeedsTeXFormat{LaTeX2e}
@@ -524,9 +497,6 @@
 \DeclareOption{itnoabstract}{%                   % Hide abstract/keywords in IT
   \show@bsfalse%
 }
-\DeclareOption{itnopartno}{%                     % Hide part/chapter nos. in IT
-  \showp@rtfalse%
-}
 \DeclareOption{fullsize}{%                       % Use large page size in IT
   \f@llsizetrue%
 }
@@ -565,8 +535,9 @@
   \ifOptim@\renewcommand{\sfdefault}{pop}\fi     % Optima
 \fi
 
-\ifPDF\RequirePackage[dvips,pdftex]{graphics}%
-  \else\RequirePackage[dvips]{graphics}\fi
+% \ifPDF\RequirePackage[dvips,pdftex]{graphics}%
+%   \else\RequirePackage[dvips]{graphics}\fi
+\RequirePackage{graphicx}
 \RequirePackage{float}
 \RequirePackage{tabularx}
 \InputIfFileExists{colordvi.tex}{\global\C@l@rtrue}{\global\C@l@rfalse}
@@ -1147,7 +1118,7 @@
           \fi%
           \kern12pt%
           {\fontsize{12}{12pt}
-          \sffamily\bfseries{\p@geprefix\thepage}}
+          \sffamily\bfseries{\thepage}}
           }%
         }%
         \b@r\hfill%                              % version info
@@ -1158,7 +1129,7 @@
         \hrule height .1 pt width \textwidth \vskip 3pt%
         \hbox to \textwidth{%
           {\fontsize{12}{12pt}
-          \sffamily\bfseries{\p@geprefix\thepage}}
+          \sffamily\bfseries{\thepage}}
           \kern12pt%
           {\fontsize{7}{12pt}%
           \sffamily%
@@ -1247,7 +1218,7 @@
             \fi%
             \kern12pt%
             {\fontsize{12}{12pt}
-            \sffamily\bfseries{\p@geprefix\thepage}}
+            \sffamily\bfseries{\thepage}}
               }%
           }%
         \b@r\hfill%                              % version info
@@ -1261,7 +1232,7 @@
           \hbox to \textwidth{%
             \fontsize{7}{12pt}\sffamily%
             {\fontsize{12}{12pt}
-            \sffamily\bfseries{\p@geprefix\thepage}}
+            \sffamily\bfseries{\thepage}}
             \kern12pt%
             {\sffamily \AUTITLE}%
             \ifC@nf%                             % Conference: no short title
@@ -1314,9 +1285,9 @@
     \renewcommand{\@oddfoot}{}%                  % version info
     \renewcommand{\@evenfoot}{}%                 % version info
     \renewcommand{\@oddhead}{%
-      \hfill\llap\p@geprefix\thepage}%
+      \hfill\llap\thepage}%
     \renewcommand{\@evenhead}{%
-      \hbox to 0pt{\p@geprefix\thepage}\hfill}%
+      \hbox to 0pt{\thepage}\hfill}%
   }
   \renewcommand{\thesection}{%                   % Section numbering
      \arabic{section}}
@@ -1405,7 +1376,7 @@
         \ifhbox\vit@{\renewcommand{\@makefntext}{}\footnotetext{\unhbox\vit@}}\fi
         \ifhbox\@ufn{\renewcommand{\@makefntext}{}\footnotetext{\unhbox\@ufn}}\fi
         \ifhbox\t@tlebox\footnotetext{\unhbox\t@tlebox}\fi
-      \iff@rcesingl@col\else\begin{multicols}{2}\singl@colfalse\fi%
+      \begin{multicols}{2}\singl@colfalse%
       \fi%                                       % END of \iffirsts@c
     \fi%                                         % END of \ifsingl@col
     \refstepcounter{section}%                    % increment counter
@@ -1503,12 +1474,14 @@
           \hbox to \textwidth{%
             \ifc@pyright%
               \fontsize{7}{12pt}\sffamily \copyright\ %
-              \j@urnalyear\ International Union of Crystallography%
+              \j@urnalyear\ ESRF - The European Synchrotron%
               \kern3pt$\cdot$\kern3pt %
             \fi%
+            \fontsize{7}{12pt}\sffamily Printed
+            in Singapore -- all rights reserved
             \hfill\d@i%
             \hfill\unhbox\c@tchline%
-            {\quad\fontsize{12}{12pt}\sffamily\bfseries\p@geprefix\thepage}%
+            {\quad\fontsize{12}{12pt}\sffamily\bfseries\thepage}%
         }%
       }%
     \fi
@@ -1518,12 +1491,14 @@
         \vbox to 0pt{%
           \hrule height .1 pt width \textwidth \vskip 3pt%
           \hbox to \textwidth{%
-            {\fontsize{12}{12pt}\sffamily\bfseries\p@geprefix\thepage\quad}%
+            {\fontsize{12}{12pt}\sffamily\bfseries\thepage\quad}%
             \ifc@pyright%
               \fontsize{7}{12pt}\sffamily \copyright\ %
-              \j@urnalyear\ International Union of Crystallography%
+              \j@urnalyear\ ESRF - The European Synchrotron%
               \kern3pt$\cdot$\kern3pt %
             \fi%
+            \fontsize{7}{12pt}\sffamily Printed
+            in Singapore -- all rights reserved
             \hfill\d@i%
             \hfill\unhbox\c@tchline%
           }%
@@ -1588,7 +1563,7 @@
             \fi%
             \kern12pt%
             {\fontsize{12}{12pt}
-            \textbf{\p@geprefix\thepage}}
+            \textbf{\thepage}}
               }%
           }%
         \b@r\hfill%                              % version info
@@ -1602,7 +1577,7 @@
           \hbox to \textwidth{%
             {\fontsize{12}{12pt}
               \sffamily%
-            \textbf{\p@geprefix\thepage}}
+            \textbf{\thepage}}
             \kern12pt%
             \fontsize{7}{12pt}%
             {\sffamily \AUTITLE}%
@@ -1666,7 +1641,7 @@
 %  bookmarks to sections within pdflatex
   \renewcommand{\@seccntformat}[1]{\csname the#1\endcsname.\ }
   \renewcommand{\section}[1]{%
-    \iff@rcesingl@col\else\ifsingl@col\begin{multicols}{2}\singl@colfalse\fi\fi
+    \ifsingl@col\begin{multicols}{2}\singl@colfalse\fi
     \refstepcounter{section}%                    % increment counter
     % Output bookmarks in hyperref package if using pdflatex
     \providecommand{\pdfbookmark}[5]{\relax} % in case hyperref not loaded
@@ -1763,7 +1738,7 @@
             \fi%
             \kern12pt%
             {\fontsize{12}{12pt}
-            \sffamily\bfseries{\p@geprefix\thepage}}
+            \sffamily\bfseries{\thepage}}
             }%
           }%
           \b@r\hfill%                            % version info
@@ -1776,7 +1751,7 @@
           \hrule height .1 pt width \textwidth \vskip 3pt%
           \hbox to \textwidth{%
             {\fontsize{12}{12pt}
-            \sffamily\bfseries{\p@geprefix\thepage}}
+            \sffamily\bfseries{\thepage}}
             \kern12pt%
             {\fontsize{7}{12pt}%
             \sffamily%
@@ -1868,7 +1843,7 @@
             \fi%
             \kern12pt%
             {\fontsize{12}{12pt}
-            \sffamily\bfseries{\p@geprefix\thepage}}
+            \sffamily\bfseries{\thepage}}
               }%
           }%
         \b@r\hfill%                              % version info
@@ -1882,7 +1857,7 @@
           \hbox to \textwidth{%
             \fontsize{7}{12pt}\sffamily%
             {\fontsize{12}{12pt}
-            \sffamily\bfseries{\p@geprefix\thepage}}
+            \sffamily\bfseries{\thepage}}
             \kern12pt%
             {\sffamily \AUTITLE}%
             \ifC@nf%                             % Conference: no short title
@@ -1933,9 +1908,9 @@
     \renewcommand{\@oddfoot}{}%                  % version info
     \renewcommand{\@evenfoot}{}%                 % version info
     \renewcommand{\@oddhead}{%
-      \hfill\llap\p@geprefix\thepage}%
+      \hfill\llap\thepage}%
     \renewcommand{\@evenhead}{%
-      \hbox to 0pt{\p@geprefix\thepage}\hfill}%
+      \hbox to 0pt{\thepage}\hfill}%
   }
   \renewcommand{\thesection}{%                   % Section numbering
      \arabic{section}}
@@ -1989,8 +1964,9 @@
                \fontsize{7}{10pt}\sffamily%
                \ifc@pyright%
                  \hbox{\copyright\  \j@urnalyear\
-                 International Union of Crystallography}\par
+                 ESRF - The European Synchrotron}\par
                \fi%
+               \if\j@urnalcode\@D@{Printed in Denmark -- all rights reserved}\fi
              }}%
            }%
           \firsts@cfalse
@@ -1998,9 +1974,6 @@
       \fi%
       \ifC@nf\begin{multicols}{2}\singl@colfalse\fi%
     \fi%                                         % END of \ifsingl@col
-    \iff@rcesingl@col%                           % notwithstanding, if
-        \end{multicols}%                         % the f@rcesingl@col flag
-    \fi                                          % is set, make single column
     \refstepcounter{section}%                    % increment counter
     % Output bookmarks in hyperref package if using pdflatex
     \providecommand{\pdfbookmark}[5]{\relax} % in case hyperref not loaded
@@ -2308,9 +2281,9 @@
     \renewcommand{\@oddfoot}{}%                  % version info
     \renewcommand{\@evenfoot}{}%                 % version info
     \renewcommand{\@oddhead}{%
-      \hfill\llap\p@geprefix\thepage}%
+      \hfill\llap\thepage}%
     \renewcommand{\@evenhead}{%
-      \hbox to 0pt{\p@geprefix\thepage}\hfill}%
+      \hbox to 0pt{\thepage}\hfill}%
   }
   \renewcommand{\thesection}{%                   % Section numbering
      \arabic{section}}
@@ -2364,8 +2337,9 @@
                \fontsize{7}{10pt}\sffamily%
                \ifc@pyright%
                  \hbox{\copyright\  \j@urnalyear\
-                 International Union of Crystallography}\par
+                 ESRF - The European Synchrotron}\par
                \fi%
+               \if\j@urnalcode\@D@{Printed in Denmark -- all rights reserved}\fi
              }}%
            }%
           \firsts@cfalse
@@ -2373,9 +2347,6 @@
       \fi%
       \ifC@nf\begin{multicols}{2}\singl@colfalse\fi%
     \fi
-    \iff@rcesingl@col%                           % notwithstanding, if
-        \end{multicols}%                         % the f@rcesingl@col flag
-    \fi                                          % is set, make single column
     \refstepcounter{section}%                    % increment counter
     % Output bookmarks in hyperref package if using pdflatex
     \providecommand{\pdfbookmark}[5]{\relax} % in case hyperref not loaded
@@ -2443,11 +2414,13 @@
           \hbox to \textwidth{%
             \ifc@pyright%
               \fontsize{7}{12pt}\sffamily \copyright\ %
-              \j@urnalyear\ International Union of Crystallography%
+              \j@urnalyear\ ESRF - The European Synchrotron%
               \kern3pt$\cdot$\kern3pt %
             \fi%
+            \fontsize{7}{11pt}\sffamily Printed
+            in Singapore -- all rights reserved
             \hfill\unhbox\c@tchline%
-            {\quad\fontsize{12}{12pt}\sffamily\bfseries\p@geprefix\thepage}%
+            {\quad\fontsize{12}{12pt}\sffamily\bfseries\thepage}%
         }%
       }%
     \fi
@@ -2457,12 +2430,14 @@
         \vbox to 0pt{%
           \hrule height .1 pt width \textwidth \vskip 3pt%
           \hbox to \textwidth{%
-            {\fontsize{12}{12pt}\sffamily\bfseries\p@geprefix\thepage\quad}%
+            {\fontsize{12}{12pt}\sffamily\bfseries\thepage\quad}%
             \ifc@pyright%
               \fontsize{7}{12pt}\sffamily \copyright\ %
-              \j@urnalyear\ International Union of Crystallography%
+              \j@urnalyear\ ESRF - The European Synchrotron%
               \kern3pt$\cdot$\kern3pt %
             \fi%
+            \fontsize{7}{11pt}\sffamily Printed
+            in Singapore -- all rights reserved
             \hfill\unhbox\c@tchline%
         }%
       }%
@@ -2525,7 +2500,7 @@
             \fi%
             \kern12pt%
             {\fontsize{12}{12pt}
-            \textbf{\p@geprefix\thepage}}
+            \textbf{\thepage}}
               }%
           }%
         \b@r\hfill%                              % version info
@@ -2539,7 +2514,7 @@
           \hbox to \textwidth{%
             {\fontsize{12}{12pt}
               \sffamily%
-            \textbf{\p@geprefix\thepage}}
+            \textbf{\thepage}}
             \kern12pt%
             \fontsize{7}{12pt}%
             {\sffamily \AUTITLE}%
@@ -2603,9 +2578,6 @@
   \renewcommand{\@seccntformat}[1]{\csname the#1\endcsname.\ }
   \renewcommand{\section}[1]{%
     \ifsingl@col\begin{multicols}{2}\singl@colfalse\fi
-    \iff@rcesingl@col%                           % notwithstanding, if
-        \end{multicols}%                         % the f@rcesingl@col flag
-    \fi                                          % is set, make single column
     \refstepcounter{section}%                    % increment counter
     % Output bookmarks in hyperref package if using pdflatex
     \providecommand{\pdfbookmark}[5]{\relax} % in case hyperref not loaded
@@ -2665,10 +2637,10 @@
           \hbox to \textwidth{%
             \ifc@pyright%
               \fontsize{8}{12pt}\sffamily \copyright\ %
-              \j@urnalyear\ International Union of Crystallography%
+              \j@urnalyear\ ESRF - The European Synchrotron%
               \hfill%
             \fi%
-            {\quad\fontsize{12}{12pt}\sffamily\bfseries\p@geprefix\thepage}%
+            {\quad\fontsize{12}{12pt}\sffamily\bfseries\thepage}%
         }%
       }%
     \fi
@@ -2678,10 +2650,10 @@
         \vbox to 0pt{%
           \hrule height .1 pt width \textwidth \vskip 3pt%
           \hbox to \textwidth{%
-            {\fontsize{12}{12pt}\sffamily\bfseries\p@geprefix\thepage\quad}%
+            {\fontsize{12}{12pt}\sffamily\bfseries\thepage\quad}%
             \ifc@pyright%
               \fontsize{8}{12pt}\sffamily \copyright\ %
-              \j@urnalyear\ International Union of Crystallography%
+              \j@urnalyear\ ESRF - The European Synchrotron%
               \hfill%
             \fi%
           }%
@@ -2723,7 +2695,7 @@
               \hfill%
             \kern12pt%
             {\fontsize{12}{12pt}
-            \textbf{\p@geprefix\thepage}}
+            \textbf{\thepage}}
               }%
           }%
         \b@r\hfill%                              % version info
@@ -2737,7 +2709,7 @@
           \hbox to \textwidth{%
             {\fontsize{12}{12pt}
               \sffamily%
-            \textbf{\p@geprefix\thepage}}
+            \textbf{\thepage}}
             \kern12pt%
             \fontsize{7}{12pt}%
               \hfill%
@@ -2817,16 +2789,18 @@
         }%
       }\hskip-\textwidth\vbox to 0pt{%
         \vskip12pt\hbox to \textwidth{%
+          \fontsize{8}{11pt}\sffamily Printed
+          in Singapore -- all rights reserved
           \hfill ISSN \issn\ \ifc@pyright\copyright\ \j@urnalyear\fi%
       }%
     }%
   }
     \renewcommand{\@evenfoot}{\@oddfoot}%
     \renewcommand{\@oddhead}{%
-      {\hfill\fontsize{9}{12pt}\sffamily\bfseries\p@geprefix\thepage}%
+      {\hfill\fontsize{9}{12pt}\sffamily\bfseries\thepage}%
     }
     \renewcommand{\@evenhead}{%
-      {\fontsize{9}{12pt}\sffamily\bfseries\p@geprefix\thepage}\hfill%
+      {\fontsize{9}{12pt}\sffamily\bfseries\thepage}\hfill%
     }
   }
   \renewcommand{\ps@myheadings}{%                % Running heads on other pages
@@ -2834,11 +2808,11 @@
     \renewcommand{\@evenfoot}{\b@r}%             % version info
     \renewcommand{\@oddhead}{%
       \fontsize{9}{12pt}\hfill\sffamily\AUTITLE%
-      \hfill$\smash{\mathsfbf\p@geprefix\thepage}$%
+      \hfill$\smash{\mathsfbf\thepage}$%
     }
     \renewcommand{\@evenhead}{%
       \fontsize{9}{12pt}\sffamily%
-      $\smash{\mathsfbf\p@geprefix\thepage}$\hfill\STITLE\hfill%
+      $\smash{\mathsfbf\thepage}$\hfill\STITLE\hfill%
     }
   \renewcommand{\thesection}{%                   % Section numbering
      \arabic{section}}
@@ -2917,7 +2891,7 @@
   \fi
 \fi
 \ifPstyl@ %%%%%%%%%%%%%%%%%%%%%%%%%% PREPRINT STYLE %%%%%%%%%%%%%%%%%%%%%%%%%%
-  \def\b@r{{\tiny IUCr macros version 2.1.14: \f@@ \hfill}}
+  \def\b@r{{\tiny IUCr macros version 2.1.10: \f@@ \hfill}}
   \setlength{\textheight}{220mm}                 % Page dimensions
   \setlength{\textwidth}{143mm}
   \setlength{\topmargin}{0pt}
@@ -2948,21 +2922,21 @@
     \renewcommand{\@oddhead}{%
       \hbox to \textwidth{%
         \ifF@ll%
-          {\fontsize{10}{12pt}\hfill\rmfamily\p@geprefix\thepage}
+          {\fontsize{10}{12pt}\hfill\rmfamily\thepage}
         \fi%
         \ifSh@rt%
           {\fontsize{10}{12pt}\hfill%
-          \hfill\rmfamily\p@geprefix\thepage}%
+          \hfill\rmfamily\thepage}%
         \fi%
         }%
       }
     \renewcommand{\@evenhead}{%
       \hbox to\textwidth{%
       \ifF@ll%
-        {\fontsize{10}{12pt}\rmfamily\p@geprefix\thepage}\hfill%
+        {\fontsize{10}{12pt}\rmfamily\thepage}\hfill%
       \fi%
       \ifSh@rt%
-        {\fontsize{10}{12pt}\rmfamily\p@geprefix\thepage}\hfill%
+        {\fontsize{10}{12pt}\rmfamily\thepage}\hfill%
       \fi%
       }%
     }%
@@ -2970,8 +2944,8 @@
   \renewcommand{\ps@myheadings}{%                % Running heads on other pages
     \renewcommand{\@oddfoot}{\b@r}%              % version info
     \renewcommand{\@evenfoot}{\b@r}%             % version info
-     \renewcommand{\@oddhead}{\hfill\llap\p@geprefix\thepage}%
-     \renewcommand{\@evenhead}{\hfill\llap\p@geprefix\thepage}%
+     \renewcommand{\@oddhead}{\hfill\llap\thepage}%
+     \renewcommand{\@evenhead}{\hfill\llap\thepage}%
   }%
   \renewcommand{\thesection}{%                   % Section numbering
      \arabic{section}}
@@ -3039,7 +3013,7 @@
   }
   \renewcommand{\ps@plain}{%                     % Running heads on first page
     \renewcommand{\@oddfoot}{\hfill\fontsize{11}{12}\selectfont%
-      \p@geprefix\thepage\hfill}%
+      \thepage\hfill}%
     \renewcommand{\@evenfoot}{\@oddfoot}%
     \renewcommand{\@oddhead}{}%
     \renewcommand{\@evenhead}{}%
@@ -3049,25 +3023,17 @@
   \renewcommand{\ps@myheadings}{%                % Running heads on other pages
     \renewcommand{\@oddfoot}{%
       \fontsize{11}{12}\selectfont%
-      \hfill\p@geprefix\thepage\hfill\llap{\b@r}}%          % version info
+      \hfill\thepage\hfill\llap{\b@r}}%          % version info
     \renewcommand{\@evenfoot}{%
       \fontsize{11}{12}\selectfont%
-      \hfill\p@geprefix\thepage\hfill\llap{\b@r}}%          % version info
+      \hfill\thepage\hfill\llap{\b@r}}%          % version info
     \renewcommand{\@oddhead}{%
 \rlap{\textbf{\cifdicname}}%
-  \ifshowp@rt%
       \hfill\thepart.\thechapter. \STITLE\hfill%
-  \else%
-      \hfill\STITLE\hfill%
-  \fi
 \llap{\textbf{\botmark}}}
     \renewcommand{\@evenhead}{%
 \rlap{\textbf{\firstmark}}
-  \ifshowp@rt%
       \hfill\thepart. \PARTTITLE\hfill%
-  \else%
-      \hfill\PARTTITLE\hfill%
-  \fi
 \llap{\textbf{\cifdicname}}}%
   }%
   \renewcommand{\thepart}{%                      % Section numbering
@@ -3113,9 +3079,6 @@
         \fi
       \fi
     \ifsingl@col\begin{multicols}{2}\singl@colfalse\fi
-    \iff@rcesingl@col%                           % notwithstanding, if
-        \end{multicols}%                         % the f@rcesingl@col flag
-    \fi                                          % is set, make single column
     \refstepcounter{section}%                    % increment counter
     \setcounter{example}{0}                      % caption numbering by section
     \setcounter{figure}{0}                       % caption numbering by section
@@ -3144,11 +3107,8 @@
      \fi%                                        %
     }%                                           %
   }
-\providecommand{\sectioniv}{}
-\providecommand{\sectionv}{}
   \renewcommand{\@seccntformat}[1]{\csname the#1\endcsname.\ }
 \ifb@lds@ction%
-  \renewcommand{\@seccntformat}[1]{$\csname the#1\endcsname.\ $}
   \renewcommand{\subsection}{\@startsection%     % Subsection heading
      {subsection}%                               % the name
      {2}%                                        % the level
@@ -3157,33 +3117,7 @@
      {3pt}%                                      % the afterskip
      {\normalfont\normalsize\bfseries}%          % the style
    }
-  \renewcommand{\subsubsection}{\@startsection%  % Subsection heading
-     {subsubsection}%                            % the name
-     {3}%                                        % the level
-     {0pt}%                                      % the indent
-     {\baselineskip}%                            % the beforeskip
-     {3pt}%                                      % the afterskip
-     {\normalfont\normalsize\bfseries}%          % the style
-   }
-  \addtocounter{secnumdepth}{2}
-  \renewcommand{\sectioniv}{\@startsection%  % Subsection heading
-     {paragraph}%                            % the name
-     {4}%                                        % the level
-     {1em}%                                      % the indent
-     {\baselineskip}%                            % the beforeskip
-     {3pt}%                                      % the afterskip
-     {\normalfont\normalsize\bfseries}%          % the style
-   }
-  \renewcommand{\sectionv}{\@startsection%         % Subsubsection heading
-     {subparagraph}%                             % the name
-     {5}%                                        % the level
-     {1em}%                                      % the indent
-     {\baselineskip}%                            % the beforeskip
-     {3pt}%                                      % the afterskip
-     {\normalfont\normalsize\bfseries}%           % the style
-  }
 \else%
-  \renewcommand{\@seccntformat}[1]{$\csname the#1\endcsname.\ $}
   \renewcommand{\subsection}{\@startsection%     % Subsection heading
      {subsection}%                               % the name
      {2}%                                        % the level
@@ -3203,7 +3137,7 @@
      {\normalfont\normalsize\itshape}%           % the style
   }
   \addtocounter{secnumdepth}{2}
-  \renewcommand{\sectioniv}{\@startsection%      % Subsubsection heading
+  \newcommand{\sectioniv}{\@startsection%        % Subsubsection heading
      {paragraph}%                                % the name
      {4}%                                        % the level
      {1em}%                                      % the indent
@@ -3211,7 +3145,7 @@
      {3pt}%                                      % the afterskip
      {\normalfont\normalsize\itshape}%           % the style
   }
-  \renewcommand{\sectionv}{\@startsection%       % Subsubsection heading
+  \newcommand{\sectionv}{\@startsection%         % Subsubsection heading
      {subparagraph}%                             % the name
      {5}%                                        % the level
      {1em}%                                      % the indent
@@ -3246,6 +3180,8 @@
       }%
     \hskip-\textwidth\vbox to 0pt{%
       \vskip11pt\hbox to \textwidth{%
+        \fontsize{8}{10pt}\rmfamily Printed
+        in Singapore -- all rights reserved
         \hfill ISSN \issn\ \ifc@pyright\copyright\ \j@urnalyear\fi%
       }%
     }%
@@ -3255,22 +3191,22 @@
     \renewcommand{\@oddhead}{%
       \hbox to \textwidth{%
         \ifF@ll%
-          {\fontsize{10}{12pt}\hfill\rmfamily\p@geprefix\thepage}
+          {\fontsize{10}{12pt}\hfill\rmfamily\thepage}
         \fi%
         \ifSh@rt%
           {\fontsize{10}{12pt}\hfill%
           \rmfamily{SHORT COMMUNICATIONS}%
-          \hfill\rmfamily\p@geprefix\thepage}%
+          \hfill\rmfamily\thepage}%
         \fi%
         }%
       }
     \renewcommand{\@evenhead}{%
       \hbox to\textwidth{%
       \ifF@ll%
-        {\fontsize{10}{12pt}\rmfamily\p@geprefix\thepage}\hfill%
+        {\fontsize{10}{12pt}\rmfamily\thepage}\hfill%
       \fi%
       \ifSh@rt%
-        {\fontsize{10}{12pt}\rmfamily\p@geprefix\thepage}\hfill%
+        {\fontsize{10}{12pt}\rmfamily\thepage}\hfill%
         \rmfamily{SHORT COMMUNICATIONS}\hfill%
       \fi%
       }%
@@ -3280,17 +3216,17 @@
     \renewcommand{\@oddfoot}{\b@r}%              % version info
     \renewcommand{\@evenfoot}{\b@r}%             % version info
     \renewcommand{\@oddhead}{%
-      \hfill\uppercase{\AUTITLE}\hfill\llap\p@geprefix\thepage}%
+      \hfill\uppercase{\AUTITLE}\hfill\llap\thepage}%
     \renewcommand{\@evenhead}{%
-      \hbox to 0pt{\p@geprefix\thepage}\hfill\STITLE\hfill}%
+      \hbox to 0pt{\thepage}\hfill\STITLE\hfill}%
   }%
   \newcommand{\ps@nofootings}{%                  % Running heads on other pages
     \renewcommand{\@oddfoot}{}%                  % version info
     \renewcommand{\@evenfoot}{}%                 % version info
     \renewcommand{\@oddhead}{%
-      \hfill\llap\p@geprefix\thepage}%
+      \hfill\llap\thepage}%
     \renewcommand{\@evenhead}{%
-      \hbox to 0pt{\p@geprefix\thepage}\hfill}%
+      \hbox to 0pt{\thepage}\hfill}%
   }
   \renewcommand{\thesection}{%                   % Section numbering
      \arabic{section}
@@ -3426,25 +3362,6 @@
   \baselineskip=8pt%
   \parskip=-10pt%
   \fontsize{8}{9pt}%
-\par%
-  \catcode`\_=8%
-}
-\catcode`\^^@=8
-\newenvironment{smallciflisting}%                     % CIF LISTING
-{%                                               % Begin new environment
-  % Make the underscore character active so that it can be treated as part
-  %  of a CIF data name in macros which typeset CIF listings
-  \catcode`\_=\active\def\_{\ifmmode^^@\else\char'137{}\fi}
-  \vskip 6pt plus 0pt minus 1pt%
-  \baselineskip=9pt%
-  \parindent=0pt%
-  \fontsize{7}{9pt}%
-  \setupverbatim%
-}
-{%                                               % End environment
-  \baselineskip=8pt%
-  \parskip=-10pt%
-  \fontsize{7}{9pt}%
 \par%
   \catcode`\_=8%
 }
@@ -4338,7 +4255,7 @@
 \def\j@urnalcode{\relax}                         % Some defaults in case the
 \def\j@urnaltitle{\relax}                        %  relevant items are not
 \def\j@urnalfullname{\relax}                     %  declared in the source
-\def\j@urnalyear{0000}                           %  file
+\def\j@urnalyear{2022}                           %  file
 \def\v@lume{00}                                  %
 \def\issn{\relax}
 
@@ -4350,11 +4267,6 @@
 \newcommand{\papertype}[1]{%                     % category of paper
 \gdef\RHEAD{#1}                                  % default case
 \gdef\p@geprefix{\relax}                         % default case
-
-\strcmp{#1}{SUP}\ifstringsequal\gdef\RHEAD{supplementary material}%
-  \suppm@ttrue%
-  \gdef\p@geprefix{S}\fi%
-
 \strcmp{#1}{FA}\ifstringsequal\gdef\RHEAD{research papers}\fi%
 \strcmp{#1}{SC}\ifstringsequal\gdef\RHEAD{short communications}\fi%
 
@@ -4452,8 +4364,8 @@
   \if\j@urnalcode\@A@{%
      \gdef\j@urnalname{Acta Cryst.}
      \gdef\j@urnalfullname{Acta Crystallographica Section A}
-     \gdef\j@urnaltitle{Foundations and\hfill\break Advances}
-     \gdef\issn{2053-2733}
+     \gdef\j@urnaltitle{Foundations of\hfill\break Crystallography}
+     \gdef\issn{0108-7673}
      \global\setbox\c@tchline=\hbox{\normalfont\rmfamily\itshape%
        \noindent\j@urnalname}
   }\fi
@@ -4462,41 +4374,43 @@
      \gdef\j@urnalfullname{Acta Crystallographica Section B}
      \gdef\j@urnaltitle{Structural Science,\hfill\break Crystal
        Engineering\hfill\break and Materials}
-     \gdef\issn{2052-5206}
+     \gdef\issn{0108-7681}
      \global\setbox\c@tchline=\hbox{\normalfont\rmfamily\itshape%
        \noindent\j@urnalname}
   }\fi
   \if\j@urnalcode\@C@{%
      \gdef\j@urnalname{Acta Cryst.}
      \gdef\j@urnalfullname{Acta Crystallographica Section C}
-     \gdef\j@urnaltitle{Structural\hfill\break Chemistry}
-     \gdef\issn{2053-2296}
+     \gdef\j@urnaltitle{Crystal Structure\hfill\break Communications}
+     \gdef\issn{0108-2701}
      \global\setbox\c@tchline=\hbox{\normalfont\fontsize{8}{12}\sffamily\itshape%
        \noindent\j@urnalname}
   }\fi
   \if\j@urnalcode\@D@{%
      \gdef\j@urnalname{Acta Cryst.}
      \gdef\j@urnalfullname{Acta Crystallographica Section D}
-     \gdef\j@urnaltitle{Structural\hfill\break Biology}
-     \gdef\issn{2059-7983}
+     \gdef\j@urnaltitle{Biological\hfill\break Crystallography}
+     \gdef\issn{0907-4449}
   }\fi
   \if\j@urnalcode\@E@{%
      \gdef\j@urnalname{Acta Cryst.}
      \gdef\j@urnalfullname{Acta Crystallographica Section E}
-     \gdef\j@urnaltitle{Crystallographic\hfill\break Communications}
-     \gdef\issn{2056-9890}
+     \gdef\j@urnaltitle{Structure\hfill\break Reports %
+       \ifC@l@r{\Red{Online}}\else{Online}\fi%
+       }
+     \gdef\issn{1600-5368}
   }\fi
   \if\j@urnalcode\@F@{%
      \gdef\j@urnalname{Acta Cryst.}
      \gdef\j@urnalfullname{Acta Crystallographica Section F}
-     \gdef\j@urnaltitle{Structural Biology\hfill\break Communications}
-     \gdef\issn{2053-230X}
+     \gdef\j@urnaltitle{Structural Biology\hfill\break and Crystallization\hfill\break Communications}
+     \gdef\issn{0000-0009}
   }\fi
   \if\j@urnalcode\@J@{%
      \gdef\j@urnalname{J. Appl. Cryst.}
      \gdef\j@urnalfullname{Journal of Applied Crystallography}
      \gdef\j@urnaltitle{}
-     \gdef\issn{1600-5767}
+     \gdef\issn{0021-8898}
      \global\setbox\c@tchline=\hbox{\normalfont\rmfamily\itshape%
        \noindent\j@urnalname}
   }\fi
@@ -4509,10 +4423,10 @@
        \noindent\j@urnalname}
   }\fi
   \if\j@urnalcode\@S@{%
-     \gdef\j@urnalname{J. Synchrotron Rad.}
-     \gdef\j@urnalfullname{Journal of Synchrotron Radiation}
+     \gdef\j@urnalname{X-ray Optics, Simulations \& Synchr. Rad.}
+     \gdef\j@urnalfullname{X-ray Optics, Simulations \& Synchr. Rad.}
      \gdef\j@urnaltitle{}
-     \gdef\issn{1600-5775}
+     \gdef\issn{0000-0000}
      \ifXstyl@%
      \global\setbox\c@tchline=\hbox{\normalfont\sffamily\itshape%
        \noindent\j@urnalname}
@@ -4725,7 +4639,6 @@
   \ifSstyl@%
     \if\relax\scr@tch%
       \setbox5=\null%
-      \printd@tesfalse%
     \else%
       \def\recd@te{#1}%
     \fi%
@@ -4733,7 +4646,6 @@
   \ifOstyl@%
     \if\relax\scr@tch%
       \setbox5=\null%
-      \printd@tesfalse%
     \else%
       \setbox5=\hbox{\rmfamily\itshape\small{(Received #1; }}%
     \fi%
@@ -4989,18 +4901,18 @@
       \fontsize{7}{10pt}\sffamily%
       \ifc@pyright%
         \hbox{\copyright\  \j@urnalyear\
-        International Union of Crystallography%
+        ESRF - The European Synchrotron%
         }\par%
       \fi%
-      %\if\j@urnalcode\@A@{\noindent Printed in Singapore -- all rights reserved}\fi%
-      %\if\j@urnalcode\@B@{\noindent Printed in Singapore -- all rights reserved}\fi%
-      %\if\j@urnalcode\@C@{\noindent Printed in Singapore -- all rights reserved}\fi%
-      %\if\j@urnalcode\@D@{\noindent Printed in Singaport -- all rights reserved}\fi%
-      %\if\j@urnalcode\@E@{\noindent Printed in Singapore -- all rights reserved}\fi%
-      %\if\j@urnalcode\@F@{\noindent Printed in Singapore -- all rights reserved}\fi%
-      %\if\j@urnalcode\@J@{\noindent Printed in Singapore -- all rights reserved}\fi%
-      %\if\j@urnalcode\@J@{\noindent \relax}\fi%
-      %\if\j@urnalcode\@S@{\noindent Printed in Singapore -- all rights reserved}\fi%
+      \if\j@urnalcode\@A@{\noindent Printed in Grenoble -- all rights reserved}\fi%
+      \if\j@urnalcode\@B@{\noindent Printed in Grenoble -- all rights reserved}\fi%
+      \if\j@urnalcode\@C@{\noindent Printed in Grenoble -- all rights reserved}\fi%
+      \if\j@urnalcode\@D@{\noindent Printed in Grenoble -- all rights reserved}\fi%
+      \if\j@urnalcode\@E@{\noindent Printed in Grenoble -- all rights reserved}\fi%
+      \if\j@urnalcode\@F@{\noindent Printed in Grenoble -- all rights reserved}\fi%
+      \if\j@urnalcode\@J@{\noindent Printed in Grenoble -- all rights reserved}\fi%
+      \if\j@urnalcode\@J@{\noindent \relax}\fi%
+      \if\j@urnalcode\@S@{\noindent Printed in Grenoble -- all rights reserved}\fi%
       \par$\phantom{(}$%                         % hack to balance boxes
       }}
     \mkttltrue
@@ -5090,17 +5002,17 @@
           \fontsize{7}{10pt}\sffamily%
           \ifc@pyright%
             \hbox{\copyright\  \j@urnalyear\
-            International Union of Crystallography}\par
+            ESRF - The European Synchrotron}\par
           \fi%
-          %\if\j@urnalcode\@A@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@B@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@C@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@D@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@E@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@F@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@J@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@M@{\relax}\fi
-          %\if\j@urnalcode\@S@{Printed in Singapore -- all rights reserved}\fi
+          \if\j@urnalcode\@A@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@B@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@C@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@D@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@E@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@F@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@J@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@M@{\relax}\fi
+          \if\j@urnalcode\@S@{Printed in Grenoble -- all rights reserved}\fi
         }%
 %
         \hskip 96mm\hbox{%
@@ -5243,17 +5155,17 @@
           \fontsize{7}{10pt}\sffamily%
           \ifc@pyright%
             \hbox{\copyright\  \j@urnalyear\
-            International Union of Crystallography}\par
+            ESRF - The European Synchrotron}\par
           \fi%
-          %\if\j@urnalcode\@A@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@B@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@C@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@D@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@E@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@F@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@J@{Printed in Singapore -- all rights reserved}\fi
-          %\if\j@urnalcode\@M@{\relax}\fi
-          %\if\j@urnalcode\@S@{Printed in Singapore -- all rights reserved}\fi
+          \if\j@urnalcode\@A@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@B@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@C@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@D@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@E@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@F@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@J@{Printed in Grenoble -- all rights reserved}\fi
+          \if\j@urnalcode\@M@{\relax}\fi
+          \if\j@urnalcode\@S@{Printed in Grenoble -- all rights reserved}\fi
         }%
 %
         \hskip 96mm\hbox{%
@@ -6382,11 +6294,7 @@
     \vbox to 24pt{\vfill}%
     \begin{centering}%                           % centred
     \fontsize{13.02}{16}\selectfont%             % 14 pt scaled 93% (ps)
-  \ifshowp@rt%
     \bf\thepart.\thechapter. #1\par%       % large bold font
-  \else%
-    \bf #1\par%       % large bold font
-  \fi%
     \gdef\STITLE{\uppercase{#1}}%                % for running heads
     \end{centering}%
     \thispagestyle{plain}%                       % no r/head on title page
@@ -6493,20 +6401,12 @@
 % International Tables, a roman letter A must be forced by \mathrm{A},
 % but this breaks as an argument to \pdfbookmark
 \ifIstyl@%
-  \renewcommand{\thefigure}{\thesection$\arabic{figure}$}
   \newcommand{\theappendix}{\arabic{part}.\arabic{chapter}.\arabic{section}}%   %  LaTeX Companion)
-  %% \renewcommand{\thesection}{$\mathrm{A}$\arabic{part}.\arabic{chapter}.\arabic{section}}%   %  LaTeX Companion)
-  \renewcommand{\thesection}{\ensuremath{\mathrm{A}\arabic{part}.\arabic{chapter}.\arabic{section}}}%   %  LaTeX Companion)
+  \renewcommand{\thesection}{\mathrm{A}\arabic{part}.\arabic{chapter}.\arabic{section}}%   %  LaTeX Companion)
   \renewcommand{\theBOOKMARKsection}{A\arabic{part}.\arabic{chapter}.\arabic{section}}%   %  LaTeX Companion)
-  \renewcommand{\thesubsection}{\ensuremath{\mathrm{A}\arabic{part}.\arabic{chapter}.\arabic{section}.\arabic{subsection}}}%   %  LaTeX Companion)
 \else%
-  \ifsuppm@t%
-    \renewcommand{\thesection}{\p@geprefix\arabic{section}}%   %  (LaTeX Companion)
-    \renewcommand{\theBOOKMARKsection}{\p@geprefix\arabic{section}}%   %  (LaTeX Companion)
-  \else%
-    \renewcommand{\thesection}{\Alph{section}}%   %  (LaTeX Companion)
-    \renewcommand{\theBOOKMARKsection}{\Alph{section}}%   %  (LaTeX Companion)
-  \fi%
+  \renewcommand{\thesection}{\Alph{section}}%   %  LaTeX Companion)
+  \renewcommand{\theBOOKMARKsection}{\Alph{section}}%   %  LaTeX Companion)
 \fi
 }
 \newcommand{\APPSEC}[2][?]{%
@@ -6517,73 +6417,35 @@
   \ifPDF\pdfbookmark[1]{\theBOOKMARKsection\  #1}{section.0.\theBOOKMARKsection}\fi
   \vspace\baselineskip%                          % Skip before
   \ifAstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#2\par}%
   \vspace\baselineskip\noindent%                 % Skip after
-%%%%%%%%%%%%%
-  \renewcommand{\thesubsection}{%                % Subsection numbering
-     \thesection\arabic{subsection}}
-  \renewcommand{\thesubsubsection}{%             % Subsubsection numbering
-     \thesubsection.\arabic{subsubsection}}
-%%%%%%%%%%%%%
   \fi
   \ifCstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#2\par}%
   \vspace\baselineskip\noindent%                 % Skip after
-%%%%%%%%%%%%%
-  \renewcommand{\thesubsection}{%                % Subsection numbering
-     \thesection\arabic{subsection}}
-  \renewcommand{\thesubsubsection}{%             % Subsubsection numbering
-     \thesubsection.\arabic{subsubsection}}
-%%%%%%%%%%%%%
   \fi
   \ifDstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#2\par}%
   \vspace\baselineskip\noindent%                 % Skip after
-%%%%%%%%%%%%%
-  \renewcommand{\thesubsection}{%                % Subsection numbering
-     \thesection\arabic{subsection}}
-  \renewcommand{\thesubsubsection}{%             % Subsubsection numbering
-     \thesubsection.\arabic{subsubsection}}
-%%%%%%%%%%%%%
   \fi
   \ifEstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#2\par}%
   \vspace\baselineskip\noindent%                 % Skip after
-%%%%%%%%%%%%%
-  \renewcommand{\thesubsection}{%                % Subsection numbering
-     \thesection\arabic{subsection}}
-  \renewcommand{\thesubsubsection}{%             % Subsubsection numbering
-     \thesubsection.\arabic{subsubsection}}
-%%%%%%%%%%%%%
   \fi
   \ifIstyl@%
     %{\large\bfseries\centering%
     {\rmfamily\normalsize\bfseries\centering%
       \appendixname\ \theappendix\par#2\par}%
   \vspace{3pt}\noindent%                 % Skip after
-    \renewcommand{\thesection}{\ensuremath{\mathrm{A}\arabic{part}.\arabic{chapter}.\arabic{section}.}}%   %  LaTeX Companion)
-    \renewcommand{\thesubsection}{\ensuremath{\mathrm{A}\arabic{part}.\arabic{chapter}.\arabic{section}.\arabic{subsection}}}%   %  LaTeX Companion)
-    \renewcommand{\thesubsubsection}{\ensuremath{\mathrm{A}\arabic{part}.\arabic{chapter}.\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}}%   %  LaTeX Companion)
   \fi
   \ifSstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#2\par}%
   \vspace\baselineskip\noindent%                 % Skip after
-%%%%%%%%%%%%%
-  \renewcommand{\thesubsection}{%                % Subsection numbering
-     \thesection\arabic{subsection}}
-  \renewcommand{\thesubsubsection}{%             % Subsubsection numbering
-     \thesubsection.\arabic{subsubsection}}
-%%%%%%%%%%%%%
   \fi
   \ifOstyl@%
     {\large\bfseries\centering%
@@ -6591,28 +6453,14 @@
   \vspace\baselineskip\noindent%                 % Skip after
   \fi
   \ifPstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#2\par}%
   \vspace\baselineskip\noindent%                 % Skip after
-%%%%%%%%%%%%%
-  \renewcommand{\thesubsection}{%                % Subsection numbering
-     \thesection\arabic{subsection}}
-  \renewcommand{\thesubsubsection}{%             % Subsubsection numbering
-     \thesubsection.\arabic{subsubsection}}
-%%%%%%%%%%%%%
   \fi
   \ifVstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#2\par}%
   \vspace\baselineskip\noindent%                 % Skip after
-%%%%%%%%%%%%%
-  \renewcommand{\thesubsection}{%                % Subsection numbering
-     \thesection\arabic{subsection}}
-  \renewcommand{\thesubsubsection}{%             % Subsubsection numbering
-     \thesubsection.\arabic{subsubsection}}
-%%%%%%%%%%%%%
   \fi
   \ifXstyl@%
     {\sffamily\bfseries\large%
@@ -6624,22 +6472,18 @@
 \newcommand{\sAPPSEC}[1]{%
   \vspace\baselineskip%                          % Skip before
   \ifAstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#1\par}%
   \fi
   \ifCstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#1\par}%
   \fi
   \ifDstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#1\par}%
   \fi
   \ifEstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#1\par}%
   \fi
@@ -6652,12 +6496,10 @@
       \appendixname\ \thesection\par#1\par}%
   \fi
   \ifPstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#1\par}%
   \fi
   \ifVstyl@%
-    \renewcommand{\thesection}{\Alph{section}}%   % bm 20200429
     {\large\bfseries\centering%
       \appendixname\ \thesection\par#1\par}%
   \fi
@@ -7145,69 +6987,38 @@
 }
 
 % Simple multicolumns switching macros
-% bm 20200429 - modified to handle appendices correctly
 \renewcommand{\onecolumn}{%                      % set in single column
-  \ifsingl@col\else\end{multicols}\fi\singl@coltrue%
-  \f@rcesingl@coltrue%                           % flags explicit formatting
+  \ifsingl@col\else\end{multicols}\singl@coltrue\fi%
   % If called in the appendix section, the redefinition of \section
   % goes out of scope and so must be redeclared
-  \if@ppend@x%     % bm 20200429
-    \ifIstyl@%
-      \renewcommand{\section}{\secdef\APPSEC\sAPPSEC}%
-      \renewcommand{\thefigure}{\thesection$\arabic{figure}$}
-      \newcommand{\theappendix}{\arabic{part}.\arabic{chapter}.\arabic{section}}%   %  LaTeX Companion)
-       \renewcommand{\thesection}{\ensuremath{\mathrm{A}\arabic{part}.\arabic{chapter}.\arabic{section}.}}%   %  LaTeX Companion)
-      \renewcommand{\theBOOKMARKsection}{A\arabic{part}.\arabic{chapter}.\arabic{section}}%   %  LaTeX Companion)
-    \else%
-    \renewcommand{\section}{\secdef\APPSEC\sAPPSEC}%
-    \renewcommand{\thesection}{\Alph{section}}\fi
-    \renewcommand{\thesubsection}{%                % Subsection numbering
-       \thesection\arabic{subsection}}
-    \renewcommand{\thesubsubsection}{%             % Subsubsection numbering
-       \thesubsection.\arabic{subsubsection}}
-  \fi
-  \let\theBOOKMARKsection\thesection%
+  \if@ppend@x\renewcommand{\section}{\secdef\APPSEC\sAPPSEC}%
+    \renewcommand{\thesection}{\Alph{section}.}\fi
+\let\theBOOKMARKsection\thesection
 }
 
 \renewcommand{\twocolumn}{%                      % set in two columns
   \ifsingl@col\begin{multicols}{2}\singl@colfalse\fi%
-  \f@rcesingl@colfalse%                          % flags explicit formatting
   % If called in the appendix section, the redefinition of \section
   % goes out of scope and so must be redeclared
 % \if@ppend@x\renewcommand{\section}{\secdef\APPSEC\sAPPSEC}%
 %   \renewcommand{\thesection}{\Alph{section}.}\fi
-  \if@ppend@x
-    \ifIstyl@
-      \renewcommand{\section}{\secdef\APPSEC\sAPPSEC}%
-      \renewcommand{\thefigure}{\thesection$\arabic{figure}$}
-      \renewcommand{\theappendix}{\arabic{part}.\arabic{chapter}.\arabic{section}}%   %  LaTeX Companion)
-      \renewcommand{\thesection}{\ensuremath{\mathrm{A}\arabic{part}.\arabic{chapter}.\arabic{section}.}}%   %  LaTeX Companion)
-      \renewcommand{\theBOOKMARKsection}{A\arabic{part}.\arabic{chapter}.\arabic{section}}%   %  LaTeX Companion)
-  \else
-    \renewcommand{\thesection}{\Alph{section}}%
-  \fi
-  \let\theBOOKMARKsection\thesection
-  \fi
+  \if@ppend@x\renewcommand{\section}{\secdef\APPSEC\sAPPSEC}%
+\ifIstyl@
+    \global\renewcommand{\thesection}{\relax}%
+\else
+    \renewcommand{\thesection}{\Alph{section}.}%
+\fi
+\let\theBOOKMARKsection\thesection
+\fi
 }
 
 \newcommand{\threecolumn}{%                      % set in three columns
   \ifsingl@col\begin{multicols}{3}\singl@colfalse\fi%
-  \f@rcesingl@colfalse%                          % flags explicit formatting
   % If called in the appendix section, the redefinition of \section
   % goes out of scope and so must be redeclared
-  \if@ppend@x%
-    \ifIstyl@
-      \renewcommand{\section}{\secdef\APPSEC\sAPPSEC}%
-      \renewcommand{\thefigure}{\thesection$\arabic{figure}$}
-      \renewcommand{\theappendix}{\arabic{part}.\arabic{chapter}.\arabic{section}}%   %  LaTeX Companion)
-      \renewcommand{\thesection}{\ensuremath{\mathrm{A}\arabic{part}.\arabic{chapter}.\arabic{section}.}}%   %  LaTeX Companion)
-      \renewcommand{\theBOOKMARKsection}{A\arabic{part}.\arabic{chapter}.\arabic{section}}%   %  LaTeX Companion)
-      \renewcommand{\thesection}{\Alph{section}}
-    \else
-      \renewcommand{\thesection}{\Alph{section}}%
-    \fi
-    \let\theBOOKMARKsection\thesection
-  \fi
+  \if@ppend@x\renewcommand{\section}{\secdef\APPSEC\sAPPSEC}%
+    \renewcommand{\thesection}{\Alph{section}.}\fi
+\let\theBOOKMARKsection\thesection
 }
 
 % The index entry and index page wrappers (for use in the index environment)
@@ -7461,7 +7272,7 @@
           \hfill%
           Received \recd@te \kern3pt$\cdot$\kern3pt%
           Accepted \accd@te%
-          {\quad\fontsize{12}{12pt}\sffamily\bfseries\p@geprefix\thepage}%
+          {\quad\fontsize{12}{12pt}\sffamily\bfseries\thepage}%
           }
         }
       \fi
@@ -7471,7 +7282,7 @@
         \vbox to 0pt{%
           \hrule height .1 pt width \textwidth \vskip 3pt%
           \hbox to \textwidth{%
-            {\fontsize{12}{12pt}\sffamily\bfseries\p@geprefix\thepage}\quad%
+            {\fontsize{12}{12pt}\sffamily\bfseries\thepage}\quad%
             \fontsize{7}{12pt}\sffamily %
             Received \recd@te \kern3pt$\cdot$\kern3pt%
             Accepted \accd@te%
@@ -7528,7 +7339,7 @@
           \hfill%
           Received \recd@te \kern3pt$\cdot$\kern3pt%
           Accepted \accd@te%
-          {\quad\fontsize{12}{12pt}\sffamily\bfseries\p@geprefix\thepage}%
+          {\quad\fontsize{12}{12pt}\sffamily\bfseries\thepage}%
           }
         }
       \fi
@@ -7538,7 +7349,7 @@
         \vbox to 0pt{%
           \hrule height .1 pt width \textwidth \vskip 3pt%
           \hbox to \textwidth{%
-            {\fontsize{12}{12pt}\sffamily\bfseries\p@geprefix\thepage}\quad%
+            {\fontsize{12}{12pt}\sffamily\bfseries\thepage}\quad%
             \fontsize{7}{12pt}\sffamily %
             Received \recd@te \kern3pt$\cdot$\kern3pt%
             Accepted \accd@te%
@@ -7623,10 +7434,6 @@
   {\ttfamily\bfseries%
   \fontsize{9.5}{10pt}\f@rsttrue\CIFNAME#1\end}%  % pass separate tokens
 }
-\newcommand{\trimcifname}[1]{% % for long item names in dictionary entries
-  {\ttfamily\bfseries%
-  \fontsize{9}{10pt}\f@rsttrue\CIFNAME#1\end}%  % pass separate tokens
-}
 \newcommand{\smallcifname}[1]{%
   {\ttfamily\bfseries%
   \fontsize{7}{9pt}\f@rsttrue\CIFNAME#1\end}%  % pass separate tokens
@@ -7704,21 +7511,12 @@
 \newif\ifneedpar\needparfalse
 \newif\ifneedrule\needruletrue  % need separator rule in category examples?
 
-%vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-% The next block is rather hackish, but seems to be needed to get
-% underscores working properly in CIF dictionaries
-%
-% First, thanks to Scott Kostyshak for pointing out that an update to
-% latex.ltx in late 2019 (doubtless to fix a bug) needs to be backed
-% out to allow this initialisation to work in the document preamble
-\def\finsm@sh{\ht\z@\z@ \dp\z@\z@ \box\z@}
-%
-% For some unknown reason the way in which \_ is set up requires that it
-% be instantiated in some hidden way like this (undoubtedly a subtle bug,
-% but this provides a workaround for current dictionaries):
+% The next line is rather mysterious. For some reason the way in which \_ is
+% set up requires that it be instantiated in some hidden way like this:
+% undoubtedly a subtle bug, but this provides a workaround for current
+% dictionaries
 \gdef\RHUBARB{\smash{$\phantom{\_}$}}%
-  \RHUBARB% % hack - see above
-%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  %\RHUBARB% % hack - see above
 \def\DATA#1{%
   \baselineskip10pt%
   \ckeytrue%
@@ -7726,8 +7524,6 @@
   \global\needruletrue%
   \gdef\MC{\relax}%
   \gdef\DITCon{\relax}%
-  \gdef\DITDim{\relax}%
-  \gdef\DITUnit{\relax}%
   \needpointfalse%
   \needparfalse%
    \gdef\lidhead{\fontsize{7}{10}\selectfont {\ containing }}%
@@ -7736,8 +7532,6 @@
   \gdef\rihead{\fontsize{7}{10}\selectfont \par\noindent Related item(s):\par}%
   \gdef\lihead{\fontsize{7}{10}\selectfont \par\noindent%
     \textit{The following item(s) have an equivalent role in their respective categories:} }%
-  \gdef\liheadm{\fontsize{7}{10}\selectfont \par\noindent% %for DDLm
-    \textit{Values must match those for the following item(s):} }%
   \gdef\eghead{\fontsize{7}{10}\selectfont Example(s): \par}%
   \gdef\enumhead{\fontsize{7}{10}\selectfont The data value must be one of the following: \par}%
   \gdef\replacedhead{\fontsize{8}{10}\selectfont\bfseries\par%
@@ -7930,10 +7724,6 @@
 \leavevmode#1\par}}%
   \parskip2pt\par\needpointfalse}
 
-\def\fatitemenumerationdetail#1{{\fontsize{8}{10}\selectfont \hfill\parbox[t]{200pt}{\fontsize{8}{9}\selectfont\everypar{\hangindent=6pt\hangafter=1}%
-\leavevmode#1\par}}%
-  \parskip2pt\par\needpointfalse}
-
 \def\wideitemenumerationdetail#1{{\fontsize{8}{10}\selectfont \hfill\parbox[t]{174pt}{\fontsize{8}{9}\selectfont\everypar{\hangindent=6pt\hangafter=1}%
 \leavevmode#1\par}}%
   \parskip2pt\par\needpointfalse}
@@ -7944,12 +7734,12 @@
 
 \def\itemenumerationname#1{#1}
 
-\def\itemenumerationvalue#1{\ifneedpoint{. }\fi\parskip1pt{\par\noindent%
+\def\itemenumerationvalue#1{\ifneedpoint{. }\fi\parskip0pt{\par\noindent%
   \fontsize{8}{10}\normalfont\selectfont%
   \enumhead%
   \fontsize{8}{10}\ttfamily\selectfont%
    \quad\parbox[t]{78pt}{\rlap{#1}}}%
-  \gdef\enumhead{\relax}\parskip2pt\needpointfalse}
+  \gdef\enumhead{\relax}\needpointfalse}
 
 %%% example: put in a box for intro, else print in quotes
 \long\def\itemexamplescase#1{\ifneedpoint{. }\needpointfalse\fi%
@@ -7966,7 +7756,6 @@
 \def\itemexamplesname#1{#1}
 
 \def\itemlinkedchildname#1{\lihead\par\noindent\textit{\smallcifname{#1}}\def\lihead{, }\needpointtrue}
-\def\namelinkeditem#1{\liheadm\par\parskip-3pt\noindent\textit{\smallcifname{#1}}\def\lihead{, }\needpointtrue}
 
 \def\itemlinkedparentname#1{#1}
 
@@ -8010,8 +7799,6 @@ The permitted range is #1. }
 
 \def\itemtypeconditionsname#1{#1}
 
-\def\itemtypedimension#1{#1}
-
 \def\itemtypelistcode#1{#1}
 
 \def\itemtypelistconstruct#1{#1}
@@ -8021,25 +7808,6 @@ The permitted range is #1. }
 \def\itemtypelistprimitivecode#1{#1}
 
 \def\itemunitscode#1{\ifneedpoint{. }\needpointfalse\fi{\eightrm\let\tt=\rm Units are #1. }}
-
-\def\itemunits#1{\ifneedpoint{. }\needpointfalse\fi\vskip-12pt
-  minus2pt{\sevenrm\let\tt=\rm\hfill[#1]}} % candidate for DDLm
-% dictionary
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% some candidates for the DDLm dictionary - attributes to list at the
-% *end* of an entry
-\def\Mitemtypecode#1{\vskip-12pt minus2pt\hfill\fontsize{8}{10}\selectfont%
-  (\textit{#1}\DITCon\DITDim\DITUnit)}
-
-\def\Mitemtypedimension#1{%
-\gdef\DITDim{#1}%
-}
-
-\def\Mitemunits#1{%
-\gdef\DITUnit{%
-  \let\tt=\rm; #1}}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \def\itemunitsname#1{#1}
 
