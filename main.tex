@@ -5,6 +5,7 @@
 % Version 1.6 (28 March 2013)
 %------------------------------------------------------------------------------
 
+% \documentclass{iucr}
 \documentclass[preprint]{iucr}              % DO NOT DELETE THIS LINE
 \usepackage{bm}
 % \usepackage{graphicx}
@@ -172,7 +173,9 @@ To obtain the Takagi-Taupin equations (TT) we insert the equations~(\ref{eq:chis
 \label{eq:approxslowlyvarying}
 (\Delta + k^2)[D_{0,h}(\textbf{r}) \exp(i\textbf{k}_{0,h} . \textbf{r})] \approx \exp(i\textbf{k}_{0,h} . \textbf{r}) [2 i \textbf{k}_{0,h} . \nabla D_{0,h} + (k^2 - k^2_{0,h}) D_{0,h}].
 \end{equation}
-The second approximation neglects two of the six terms in $\chi \Psi$ \todo{justify?}
+The second approximation neglects two of the six terms in $\chi \Psi$ \todo{justify? Piault: les termes ()
+et () ne sont pas considérés, car différents des ondes inci-
+dente et diffractée et donc en dehors de l’approximation à deux ondes.}
 \begin{subequations}
 \label{eq:approxchiPsi}
 \begin{align}
@@ -212,7 +215,7 @@ The TT equation become
 \end{subequations}
 
 A point in the diffraction plane (the plane containing $\textbf{k}_0$ and $\textbf{h}$) 
-can be expressed with two oblique coordinates $(s_0,s_h)$ along the directions of the $\textbf k_0$ and $\textbf k_h$ (unit vectors $\hat{ \textbf{s}}_{0}$ and $\hat{ \textbf{s}}_{h}$, respectively). A generic spatial spatial position will also include a third coordinate $\textbf{s}_t$ along an axis $\hat{\textbf{s}}_t=\hat{\textbf{s}}_0 \times \hat{\textbf{s}}_h$, therefore $\textbf r=(s_0,s_h,s_t)$. The director cosines are $\gamma_{0,h,t}=\cos(\textbf{h} . \hat{\textbf{s}}_{0,h,t}) \equiv \cos(\theta_{0,h,t})$. The equation of the crystal surface is $\gamma_0 s_0 + \gamma_h s_h + \gamma_t s_t=0$. For any point $\textbf r=(s_0,s_h,s_t)$ inside the crystal we introduce the path length $s$ \inred{of the incident ray going in this point}: this ray meets the crystal surface in the point of coordinates $(s'_0,s_h,s_t)$ such that $\gamma_0 s'_0+\gamma_h s_h + \gamma_t s_t=0$, so that 
+can be expressed with two oblique coordinates $(s_0,s_h)$ along the directions of the $\textbf k_0$ and $\textbf k_h$ (unit vectors $\hat{ \textbf{s}}_{0}$ and $\hat{ \textbf{s}}_{h}$, respectively). A generic spatial spatial position will also include a third coordinate $\textbf{s}_t$ along an axis $\hat{\textbf{s}}_t=\hat{\textbf{s}}_0 \times \hat{\textbf{s}}_h$, therefore $\textbf r=(s_0,s_h,s_t)$. The director cosines are $\gamma_{0,h,t}=\cos(\textbf{n} , \hat{\textbf{s}}_{0,h,t}) \equiv \cos(\theta_{0,h,t})$. The equation of the crystal surface is $\gamma_0 s_0 + \gamma_h s_h + \gamma_t s_t=0$. For any point $\textbf r=(s_0,s_h,s_t)$ inside the crystal we introduce the path length $s$ \inred{of the incident ray going in this point}: this ray meets the crystal surface in the point of coordinates $(s'_0,s_h,s_t)$ such that $\gamma_0 s'_0+\gamma_h s_h + \gamma_t s_t=0$, so that 
 \begin{equation}
 \label{eq:s}
 s = s_0 - s'_0 = s_0 + s_h \frac{\gamma_h}{\gamma_0} + s_t \frac{\gamma_t}{\gamma_0}.
@@ -295,7 +298,7 @@ It is convenient to introduce the functions $B_{0,h}(s)$ by setting
 \label{eq:Bdefinition}
 D_{0,h} = \exp \left( i s \frac{u_0 + b (u_0+\alpha')}{2} \right) B_{0,h} = \exp(i s (u_0+\omega)) B_{0,h},  
 \end{equation}
-with $\omega=(b(u_0+\alpha')-u_0)/2$. They are solutions of 
+with $\boxed{\omega=(b(u_0+\alpha')-u_0)/2}$. They are solutions of 
 \begin{subequations}
 \label{eq:TTinB}
 \begin{align}
@@ -318,7 +321,7 @@ b \sin(2\theta_B)(\theta-\theta_c)+ i [(b-1)/2] \operatorname{Im} \chi_0$, where
 Equations~(\ref{eq:TTinB}) are a system of linear differential equations with constant coefficients. The solutions can be found in two ways i) using test solutions in form of exponential (this method follows), and ii) using the Laplace transform (this methid is shown in Appendix~\ref{appendix:laplace}).
 
 Looking for solutions of equation~(\ref{eq:TTinB}) of the form $B_0(s)=\exp(i \eta s)$, $B_h(s)=\xi \exp(i \eta s)$, we obtain from equations (\ref{eq:TTinB}): $\eta =-\omega + \xi u_{-h}$, $\xi \eta=\xi \omega+b u_h$,
-hence $\xi=(\eta+\omega)/u_{-h}=b u_h / (\eta-\omega)$, $\eta^2-\omega^2=b u_h u_{-h}$ with solutions $\eta_{1,2}=\pm a$, with $a=\sqrt{b u_h u_{-h}+\omega^2}$.
+hence $\xi=(\eta+\omega)/u_{-h}=b u_h / (\eta-\omega)$, $\eta^2-\omega^2=b u_h u_{-h}$ with solutions $\eta_{1,2}=\pm a$, with $\boxed{a=\sqrt{b u_h u_{-h}+\omega^2}}$.
 The general solutions can be written as 
 \begin{subequations}
 \label{eq:BSolutions}
