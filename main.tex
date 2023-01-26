@@ -334,7 +334,7 @@ D_{0,h} = \exp \left[ i s \frac{u_0 + b (u_0+\alpha')}{2} \right] B_{0,h} = \exp
 \end{equation}
 with
 % $\boxed{\omega=(b(u_0+\alpha')-u_0)/2}$
-$\boxed{\omega=b \alpha'/2+ (1/2) (b-1) u_0)}$
+$\boxed{\omega=b \alpha'/2+ (1/2) (b-1) u_0}$
 . They are solutions of 
 \begin{subequations}
 \label{eq:TTinB}
@@ -968,9 +968,9 @@ wave and the other quantities are defined as:
     x_{1,2}
 	&= \frac{- z\pm X}{\Psi_{\bar{H}}}
  \\
-	z &= \frac{1-b}{2} \Psi_0 + \frac{b}{2} \alpha 
+	z &= \frac{1-b}{2} \Psi_0 + \frac{b}{2} \alpha_Z 
  \\
-	\alpha &= \frac{1}{|\vec{k}_0|^2} 
+	\alpha_Z &= \frac{1}{|\vec{k}_0|^2} 
               \left[ |\vec{B_H}|^2 +
 	       2 \vec{k}_0 \cdot \vec{B_H} \right],
 \end{align}
@@ -982,7 +982,7 @@ $\Psi_H$ is the Fourier component of the
 electrical susceptibility $\Psi_0$ and $b=\gamma_0/\gamma_h$ is the asymmetry
 factor.
 
-It is easy to see that $x_2-x_1=2 X / (P\Psi_{\bar{H}})$, $x_1 x_2 = -b \Psi_H/(\Psi_{\bar{H}} \inred{/P^2})$, and 
+It is easy to see that $x_2-x_1=2 X / (\inred{P}\Psi_{\bar{H}})$, $x_1 x_2 = -b \Psi_H/(\Psi_{\bar{H}} \inred{/P^2})$, and 
 \begin{equation}
   c_{1,2} = \exp
   \left(-i\frac{2 \pi k_0 t}{\gamma_0} \frac{1}{2} (\Psi_0-z \pm X)\right)\equiv c \exp(\pm i m), 
@@ -993,31 +993,32 @@ where we introduced the variables $c=\exp(-i2\pi k_0 t  (\Psi_0-z)) / (2 \gamma_
 \end{equation}
 and
 \begin{equation}
-    x_2 c_1 - x_1 c_2 = \frac{c}{P \Psi_{\bar{H}}} \left[ 
+    x_2 c_1 - x_1 c_2 = \frac{c}{\inred{P} \Psi_{\bar{H}}} \left[ 
  -(X+z)e^{im}-(X-z)e^{-im}\right] =
- \frac{2 c}{P \Psi_{\bar{H}}}(-X \cos(m) - i z \sin(m)).
+ \frac{2 c}{\inred{P} \Psi_{\bar{H}}}(-X \cos(m) - i z \sin(m)).
 \end{equation}
 Replacing in equation~(\ref{eq:ZacBragg}) the terms obtained here  we finally get:
 	\begin{subequations}
 	\label{eq:ZacBragg2}
     \begin{align}
-	r^Z_{L} &=  i c b P \Psi_H \frac{\sin(m)}{X}, \\
- 	t^Z_{L} &= c (\cos(m) + i\frac{z}{X} \sin(m)).   
+	r^Z_{L} &=  i c b \inred{P} \Psi_H \frac{\sin(m)}{X}, \\
+ 	t^Z_{L} &= c [\cos(m) + i\frac{z}{X} \sin(m)].   
     \end{align}
     \end{subequations}
 
 For the Bragg case, we precalculate
 \begin{equation}
-    x_2 c_2 - x_1 c_1 = \frac{c}{P \Psi_{\bar{H}}} \left[ 
+    x_2 c_2 - x_1 c_1 = \frac{c}{\inred{P} \Psi_{\bar{H}}} \left[ 
  -(X+z)e^{-im}-(X-z)e^{im}\right] =
- \frac{2c}{P \Psi_{\bar{H}}}(-X \cos(m) + z \sin(m)),
+ \frac{2c}{\inred{P} \Psi_{\bar{H}}}(-X \cos(m) + \inred{i} z \sin(m)),
 \end{equation}
 that introduced in equation~(\ref{eq:ZacBragg}) we finally get:
-	\begin{subequations}
+
 	\label{eq:ZacLaue2}
+    \begin{subequations}
     \begin{align}
-	r^Z_{B} &=  i b \Psi_H \frac{\sin(m)}{z \sin(m) - X \cos(m)}, \\
- 	t^Z_{B} &= \frac{ c X}{X \cos(m) - z \sin(m)}.   
+	r^Z_{B} &=  i b \Psi_H \frac{\sin(m)}{ - X \cos(m) + \inred{i} z \sin(m)}, \\
+ 	t^Z_{B} &= \frac{ -c X}{-X \cos(m) + \inred{i} z \sin(m)}.   
     \end{align}
     \end{subequations}
 
@@ -1025,17 +1026,22 @@ Considering the equivalence of notations between this work and Zachariasen' book
 
 \begin{table}
 \caption{Equivalences in notation of this work and \cite{ZachariasenBook}}
+    \begin{center}
 \begin{tabular}{ll}      % Alignment for each cell: l=left, c=center, r=right
  Zachariasen    & This work     \\
 \hline
- $k=1/\lambda$ & $k=2 \pi / \lambda$ \\
- $\alpha$      & $-\alpha$ \\
- $\Psi_H$      & $\chi_h$    \\
- $z$           & $-\lambda \omega / \pi$          \\
- $X$           & $\lambda a / \pi$          \\
- $m$           & $a T$    \\
+$\exp(-2\pi i \textbf{k}_0.\textbf{r})$ & $\exp(i\textbf{k}.\textbf{r})$      \\
+ $k_0=1/\lambda$ & $k=2 \pi / \lambda$      \\
+ $\alpha_Z$      & $-\alpha$                \\
+ $\Psi_0$      & $\chi_0$                 \\
+ $\Psi_H$      & $\chi_h$                 \\
+ $z$           & $-(\lambda/\pi) \omega$  \\
+ $X$           & $(\lambda/\pi) a$        \\
+ $t_0$         & $t_c=T/\gamma_0$         \\
+ $m$           & $a T$                    \\
  $c$  & $\exp(i T (u_0+\omega))$   
  \end{tabular}
+     \end{center}
 \end{table}
 
 
