@@ -148,9 +148,14 @@ Almost every synchrotron radiation beamline operating at hard X-rays makes use o
 Most beamlines use crystal monochromators, typically in the DCM (double crystal monochromator) mode, but polychromators or single crystal Laue monochromators can be also found. In addition, crystal analyzers are used in most spectroscopy beamlines. 
 Beamline simulation tools used for the design, optimization and commissioning of synchrotron instrumentation, implement in software the equations to calculate reflectivities of perfect crystals. The theory of diffraction (see \cite{authierbook} for a complete reference) puts the bases of all numeric implementations. 
 
-There are lots of simulation tools implementing the equations of the dynamical theory in different forms. This variate scenario is even more complex if we consider that the calculation of the crystal structure factor, which is an essential ingredient to calculate diffracted amplitudes and intensities, is obtained from tabulated scattering functions of multiple origin. The wide menu of available methods and tools can be found even in the single suite OASYS \cite{codeOASYS}, that provides multiple solutions for calculating diffraction profiles of crystals (e.g. INPRO\footnote{\texttt{https://github.com/oasys-kit/xoppy\_externa\_codes/tree/master/src/INPRO}}, CRYTSTAL \cite{codeCRYSTAL}, X-RAY Server \cite{codeXRAYserver}), as well as beamline simulation tools (based on the ray tracing code SHADOW \cite{codeSHADOW}) and physical wave-optics simulations with SRW \cite{codeSRW, codeSRWcrystals}. This scenario has heritaged decades of developments and have witnessed several synchrotron radiation generations. The work presented here looks into the future to improve this situation. We have two objectives: deriving the equations of the crystal reflectivities from first principles and implementing them in a software library.
+There are lots of simulation tools implementing the equations of the dynamical theory in different forms. This variate scenario is even more complex if we consider that the calculation of the crystal structure factor, which is an essential ingredient to calculate diffracted amplitudes and intensities, is obtained from tabulated scattering functions of multiple origin. The wide menu of available methods and tools can be found even in the single suite OASYS \cite{codeOASYS}, that provides multiple solutions for calculating diffraction profiles of crystals (e.g. INPRO\footnote{\texttt{https://github.com/oasys-kit/xoppy\_externa\_codes/tree/master/src/INPRO}}, CRYTSTAL \cite{codeCRYSTAL}, X-RAY Server \cite{codeXRAYserver}), as well as beamline simulation tools (based on the ray tracing code SHADOW \cite{codeSHADOW}) and physical wave-optics simulations with SRW \cite{codeSRW, codeSRWcrystals}. This scenario has heritaged decades of developments and have witnessed several synchrotron radiation generations. The work presented here looks into the future to improve this situation. We have two objectives: deriving the equations of the crystal reflectivities from first principles and implementing them in a well-documented open-source software library.
 
-In section~\ref{sec:TT} we derive the Takagi-Taupin (TT) equations \cite{Takagi1962, Taupin, Taupin1967} equations. In section~\ref{sec:TTsolutions} we solve the TT equations for a plane undeformed-crystal, giving four fundamental results: the diffracted and forward-diffracted (or transmitted) amplitudes for a crystal set in Bragg (reflection) and Laue (transmission) geometries. The diffracted amplitudes constitute the elements of the transfer matrices (section~\ref{sec:matrices}), useful to calculate systems of layered crystals and multilayers. Section~\ref{sec:crystalpy} is dedicated to the software implementation (library \texttt{crystalpy}, discussing some details and applications.
+In section~\ref{sec:TT} we derive the Takagi-Taupin (TT) equations \cite{Takagi1962, Taupin, Taupin1967} equations.
+In section~\ref{sec:TTsolutions} we solve the TT equations for a plane undeformed-crystal.
+
+Given known amplitudes at the entrance surface,
+the amplitudes along the incident and diffracted directions at the back surface are calculated via the transfer matrix (section~\ref{sec:transferMatrix}). For the Laue case, the transfer matrix can be used to compute the diffracted and forward-diffracted (or transmitted) amplitudes for a crystal set in Laue or transmission (section~\ref{sec:TTsolutionsLaue}). For the Bragg case (section~\ref{sec:TTsolutionsBragg}) the transfer matrix is then used to obtain the scattering matrix, which gives the diffracted and forward-diffracted (or transmitted) amplitudes. 
+Section~\ref{sec:crystalpy} is dedicated to the software implementation of the library \texttt{crystalpy}. A final summary and conclusions are in section~\ref{sec:summary}.
 
  
  
@@ -334,8 +339,7 @@ D_{0,h} = \exp \left[ i s \frac{u_0 + b (u_0+\alpha')}{2} \right] B_{0,h} = \exp
 \end{equation}
 with
 % $\boxed{\omega=(b(u_0+\alpha')-u_0)/2}$
-$\boxed{\omega=b \alpha'/2+ (1/2) (b-1) u_0}$
-. They are solutions of 
+$\boxed{\omega=b \alpha'/2+ (1/2) (b-1) u_0}$. They are solutions of 
 \begin{subequations}
 \label{eq:TTinB}
 \begin{align}
@@ -366,8 +370,12 @@ Looking for solutions of equations~(\ref{eq:TTinB}) of the form $B_0(s)=\exp(i \
     \end{split}
 \end{equation}
 Therefore $\eta^2-\omega^2=b u_h u_{-h}$,
-with solutions $\eta_{1,2}=\pm a$  with $\boxed{a=\sqrt{b u_h u_{-h}+\omega^2}}$. Hence
-$\xi_{1,2}=b u_h / (\pm a-\omega) = (\omega \pm a) / u_{-h}$.
+with solutions $\eta_{1,2}=\pm a$  with $\boxed{a=\sqrt{b u_h u_{-h}+\omega^2}}$.
+Hence
+\begin{equation}\label{eq:xis}
+\xi_{1,2}=\frac{b u_h}{\pm a-\omega} = \frac{\omega \pm a}{u_{-h}}.    
+\end{equation}
+
 Some useful expressions are
 \begin{subequations}
 \label{eq:TTuseful}
@@ -388,9 +396,66 @@ B_h(s) = &c_1 \xi_1 \exp(i a s) + c_2 \xi_2 \exp(-i a s) = \nonumber \\
 &(c_1 \xi_1+c_2 \xi_2) \cos(as) + (c_1 \xi_1-c_2 \xi_2) i \sin(as),
 \end{align}
 \end{subequations}
-where coefficients $c_{1,2}$ are calculated from the boundary conditions that are different for the Laue and Bragg cases.
+where coefficients $c_{1,2}$ will be calculated from the boundary conditions. They are different for the Laue and Bragg cases.
 
-\subsection{\inred{Boundary conditions, generic case. Transfer matrix???}}
+\subsection{Boundary conditions in a generic case: the Transfer matrix}
+\label{sec:transferMatrix}
+
+In many practical cases of a crystal slab we are interested in knowing the electric fields at the top surface ($s$=0) or/and at the bottom surface ($s=T=z/\gamma_0=t_c/\cos\theta_0$ with $t_c$ the thickness of the crystal). Some boundary conditions are know, usually the incident beam.   
+We can express the fields at the bottom surface $(D_0(T),D_h(T))$ as a function of those at the top surface $(D_0(0),D_h(0))$, so we can write in matrix form
+\begin{equation}\label{eq:Mtransfer}
+    \begin{pmatrix}
+    D_0(T)\\
+    D_h(T)
+    \end{pmatrix}
+    =
+    M
+        \begin{pmatrix}
+    D_0(0) \\
+    D_h(0)
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+    m_{11} & m_{12}\\
+    m_{21} & m_{22}
+    \end{pmatrix}
+    \begin{pmatrix}
+    D_0(0) \\
+    D_h(0)
+    \end{pmatrix}.
+\end{equation}
+
+The matrix $M$ is the transfer matrix. To calculate  the coefficients, we consider equation~(\ref{eq:BSolutions}) at $s=0$ and $s=T$: 
+\begin{subequations}
+\label{eq:Btranfer}
+\begin{align}
+B_0(T) = &c_1 \exp(i a T) + c_2 \exp(-i a T) ; \\
+B_h(T) = &c_1 \xi_1 \exp(i a T) + c_2 \xi_2 \exp(-i a T) ; \nonumber \\
+B_0(0) = &c_1 + c_2  ; \\
+B_h(0) = &c_1 \xi_1 + c_2 \xi_2.  \nonumber  
+\end{align}
+\end{subequations}
+
+From equation~(\ref{eq:Btranfer}b) we get $c_1=(B_h(0)-B_0(0)\xi_2)/(\xi_1-\xi_2)$ and $c_2=(B_0(0)\xi_1-B_h(0))/(\xi_1-\xi_2)$, which introduced in equation~(\ref{eq:Btranfer}a) and using the $\xi_{1,2}$ expressions from equations~(\ref{eq:xis}), we get
+\begin{subequations}
+\label{eq:BtranferFinal}
+\begin{align}
+B_0(T) = & \left[\cos(aT)-i\frac{\omega}{a}\sin(aT)\right] B_0(0) + i u_{-h}\frac{\sin(aT)}{a} B_h(0); \\
+B_h(T) = & i b u_h \frac{\sin(aT)}{a} B_0(0) + \left[ \cos(aT)+i\frac{\omega}{a}\sin(aT)\right] B_h(0).
+\end{align}
+\end{subequations}
+
+Therefore, the terms of the transfer matrix $M$ are 
+\begin{subequations}\label{eq:scatteringMatrix }
+\begin{align}
+m_{11} &= \left[ \cos(aT)-i\frac{\omega}{a}\sin(aT) \right] \inred{\exp(i T (u_0+\omega))};\\
+m_{12} &= i u_{-h}\frac{\sin(aT)}{a} \inred{\exp(i T (u_0+\omega))};\\
+m_{21} &= i b u_h \frac{\sin(aT)}{a} \inred{\exp(i T (u_0+\omega))};\\
+m_{22} &= \left[ \cos(aT)+i \frac{\omega}{a}\sin(aT) \right] \inred{\exp(i T (u_0+\omega))}.
+\end{align}
+\end{subequations}
+
+The matrix $M$, \inred{excluding the exponential terms related to absorption,} has a determinant equal to one, as required by the energy conservation. It can be verified that $M^2$ is of the same form as $M$ where $T$ is replaced by $2T$ (the addition of two equal layers behaves like a single layer of double thickness). Last, but not least, these equations are valid for both Bragg and Laue cases \inred{(using, of course, the correct values $b$ \todo{and others?})}.
 
 % For the case studien in section~\ref{sec:TTsolutionsBragg}, the initial conditions are 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -399,62 +464,18 @@ where coefficients $c_{1,2}$ are calculated from the boundary conditions that ar
 \subsection{Laue case}
 \label{sec:TTsolutionsLaue}
 
-For the Laue case $b>0$. The boundary conditions are $D_0(0)=B_0(0)$=1; and $D_h(0)=B_h(0)$=0, therefore
-\begin{equation}
-    \begin{split}
-        c_1+c_2=1; \\
-        c_1\xi_1+c_2\xi_2=0,
-    \end{split}
-\end{equation}
-resulting in
+For the Laue case $b>0$. The boundary conditions are $(D_0(0),D_h(0))=(1,0)$. 
 
-
-\begin{equation}
-\label{eq:TTlaueCs}
-\begin{split}
-c_1=\frac{\xi_2}{\xi_2-\xi_1}, \\
-c_2=\frac{-\xi_1}{\xi_2-\xi_1}.
-\end{split}
-\end{equation}
-% \todo{REMOVE?
-% Some other useful expressions are
-% \begin{subequations}
-% \label{eq:TTlaueCoefficients2}
-% \begin{align}
-% &c_1-c_2=\frac{\xi_1+\xi_2}{\xi_2-\xi_1}=-\frac{\omega}{a};\\
-% &c_1\xi_1-c_2\xi_2=\frac{2\xi_1\xi_2}{\xi_2-\xi_1}=
-% 2\frac{\omega^2-a^2}{u_{-h}^2}\frac{u_{-h}}{-2a}=\frac{-b u_h u_{-h}}{-a u_{-h}}=\frac{b u_h}{a}.
-% \end{align}
-% \end{subequations}
-% }
-Finally, equation~(\ref{eq:BSolutions}) gives the field inside the crystal
-\begin{subequations}
-\label{eq:laueSolutionsB}
-\begin{align}
-B_0(s) = & \cos(a s) - i \omega \frac{\sin(a s)}{a} \\
-B_h(s) = & i b u_h \frac{\sin(a s)}{a} ,
-\end{align}
-\end{subequations}
-or, in terms of $D$
-\begin{subequations}
-\label{eq:laueSolutions}
-\begin{align}
-D_0(s) = & \left(\cos(a s) - i \omega\frac{\sin(a s)}{a}  \right) \exp(i s u_0+i s \omega) \\
-D_h(s) = & i b u_h \frac{\sin(a s)}{a} \exp(i s u_0+i s \omega).
-\end{align}
-\end{subequations}
-
-
-The reflectivity $r$ and transmission $t$ amplitudes are evaluated at the exit surface ($s=T=z/\gamma_0=t_c/\cos\theta_0$ with $t_c$ the thickness of the crystal). They are: 
+The reflectivity $r$ and transmission $t$ amplitudes are evaluated at the exit surface are: 
 \begin{subequations}
 \label{eq:lauerandt}
 \begin{empheq}[box=\fbox]{align}
-r = \frac{D_h(T)}{D_0(0)}=& i b u_h \frac{\sin(a T)}{a} e^{iT (u_0+\omega)}  \\
-t = \frac{D_0(T)}{D_0(0)}=& \left(\cos(a T) - i \omega\frac{\sin(a T)}{a}  \right) e^{i T (u_0+\omega)}.
+r = D_h(T)= m_{21} = & i b u_h \frac{\sin(a T)}{a} e^{iT (u_0+\omega)}  \\
+t = D_0(T) = m_{11} = & \left(\cos(a T) - i \omega\frac{\sin(a T)}{a}  \right) e^{i T (u_0+\omega)}.
 \end{empheq}
 \end{subequations}
 
-The intrinsic diffraction profile (often referred as rocking curve) is obtained from equations~(\ref{eq:lauerandt}) as $\mathcal{R}=|r(\theta,\lambda)|^2 \times P$, with $P=1/|b|$ is a power factor (see \cite{ZachariasenBook}). Similarly, the forward diffracted profile (or transmitted) is $\mathcal{T}=|t|^2$. \inred{There are called hereafter reflectance ($\mathcal{R}$) and transmittance ($\mathcal{T}$)}. An example is in Fig.~\ref{fig:laueProfiles}. 
+The intrinsic diffraction profile (often referred as rocking curve) is obtained from equations~(\ref{eq:lauerandt}) as $\mathcal{R}=|r(\theta,\lambda)|^2 \times P$, with $P=1/|b|$ is a power factor (see \cite{ZachariasenBook}). The forward diffracted profile (or transmitted) is $\mathcal{T}=|t|^2$. \inred{There are called hereafter reflectance ($\mathcal{R}$) and transmittance ($\mathcal{T}$)}. An example is in Fig.~\ref{fig:laueProfiles}. 
 
 
 \begin{figure}\label{fig:laueProfiles}
@@ -465,7 +486,7 @@ The intrinsic diffraction profile (often referred as rocking curve) is obtained 
 \end{figure}
 
 \inred{
-Note that $a, u_0, \omega$ in equations~(\ref{eq:laueSolutions}) are complex. The careful look at the real and imaginary parts conducts to common expressions for absorption and Pendell\"osung. The real part of the exponential argument gives to a pure absorption term:  
+Note that $a, u_0, \omega$ in equations~(\ref{eq:lauerandt}) are complex. The careful look at the real and imaginary parts conducts to common expressions for absorption and Pendell\"osung. The real part of the exponential argument gives to a pure absorption term:  
 $\exp(\operatorname{Re} i s (u_0+\omega))
 = \exp(\operatorname{Im} s (u_0 + \omega))$. Using $u_0 + \omega = (1/2)[b(u_0+\alpha')+u_0]$, we find
 \begin{subequations}
@@ -489,97 +510,12 @@ which depends on $\theta$. At $\theta=\theta_c$ we find the usual value $\Lambda
 \subsection{Bragg case}
 \label{sec:TTsolutionsBragg}
 
-For the Bragg case $b<0$. Considering $T$ the path length of the incident beam in the crystal, a ``normalized" incident beam $D_0(0)=B_0(0)=1$. The boundary conditions are $D_0(0)=B_0(0)=1$ and $D_h(T)=B_h(T)=0$. Introducing the general solutions (\ref{eq:BSolutions}) in equation~(\ref{eq:TTinB}) and applying the boundary conditions we obtain: 
-\begin{subequations}
-\label{eq:TTbraggCoefficients}
-\begin{align}
-c_1&=\frac{\xi_2 \exp(-i a T)}{\xi_2\exp(-i a T)-\xi_1 \exp(i a T)}\\
-c_2&=\frac{-\xi_1 \exp(i a T)}{\xi_2\exp(-i a T)-\xi_1\exp(i a T)}.
-\end{align}
-\end{subequations}
+For the Bragg case $b<0$. Considering $T$ the path length of the incident beam in the crystal, and a ``normalized" incident beam $D_0(0)=1$. The other boundary condition is found at the bottom surface, where there is no diffracted field in the ascendant direction $D_h(T)=0$. Knowing $(D_0(0),D_h(T)) = (1,0)$, we have the unknows $(D_0(T),D_h(0))$ and we have to modify  the transfer equation~(\ref{eq:Mtransfer}) to get the ``Bragg case scattering matrix"
 
-The field inside the crystal is obtained 
-introducing the coefficients in (\ref{eq:TTbraggCoefficients}) into equations (\ref{eq:BSolutions}). We obtain, after some algebraic manipulation
-% It is sometimes useful (e.g. Fig.~\ref{fig:braggMap}) to calculate , i.e. $B_0(s)$ and $B_h(s)$ \cyan{(the Bragg counterpart of equations~(\ref{eq:laueSolutions}))}. 
-\begin{subequations}\label{eq:bragginside}
-\begin{align}
-D_h(s)&=\frac{i b u_h \sin(as - aT)}{a \cos(aT) + i \omega \sin(aT)} e^{is(u_0+\omega)}\\
-D_0(s)&= \frac{a \cos(as-aT) - i \omega \sin(as-aT)}{a \cos(aT) + i \omega \sin(aT)} e^{is(u_0+\omega)}.
-\end{align}
-\end{subequations}
-An example pf the electric field map calculation if shown in Fig.~\ref{fig:braggMap}. 
-
-
-\todo{REMOVE: In particular, the values at the entrance and exit surfaces are: 
-\begin{subequations}
-\begin{align}
-B_h(0)=&\xi_1 \xi_2 \frac{\exp(i a T) - \exp(-i a T)}{\xi_1 \exp(i a T) - \xi_2 \exp(-i a T)}= \nonumber \\
-&\frac{-i b u_h \sin(a T)}{a \cos(a T) + i \omega \sin(a T)}\\
-B_0(T)= &\frac{\xi_1 - \xi_2}{\xi_1 \exp(i a T) - \xi_2 \exp(-i a T)}= \nonumber \\
-&\frac{a}{a \cos(a T) + i \omega \sin(a T)},
-\end{align}
-\end{subequations}
-
-which in terms of $D$ we get the amplitudes:}
-
-The amplitudes are then, 
-\begin{subequations}
-\label{eq:braggrandt}
-\begin{empheq}[box=\fbox]{align}
-r = \frac{D_h(0)}{D_0(0)}=
-\frac{-i b u_h \sin(a T)}{a \cos(a T) + i \omega \sin(a T)}\\
-t = \frac{D_0(T)}{D_0(0)}= 
-\frac{a~\exp(i T (u_0+ \omega))}{a \cos(a T) + i \omega \sin(a T)} ,
-\end{empheq}
-\end{subequations}
-
-The diffraction profiles are $\mathcal{R}=|r|^2 P$ (diffracted beam or reflectance) and $\mathcal{T}=|t|^2$ (forward diffracted beam or transmittance).
-An example is in Fig.~\ref{fig:braggProfiles}. 
-
-\begin{figure}\label{fig:braggProfiles}
-    \centering
-    \includegraphics[width=0.49\textwidth]{figures/Bragg_1.eps}
-    \includegraphics[width=0.49\textwidth]{figures/Bragg_2.eps}
-    \caption{Example of reflectance and transmittance for a Bragg Si 111 crystal of $t=$\SI{10}{\micro\meter} at 8 keV. }
-\end{figure}
-
-
-\inblue{A particular case is to consider zero absorption. 
-$a^2$ is real negative \todo{Why?} if $|\theta-\theta_c|<|\chi_h|/(|b|^2 \sin(2 \theta_B))$, then $aT=i |a| T$, $\cos(a T)=\cosh(|a|T)$, $\sin(a T)=i \sinh(|a|T)$, 
-\begin{equation}
-    r = \frac{b u_h \sinh(|a|T)}{i |a|T \cosh(|a|T)- \omega
-    \sinh(|a|T)}=
-\frac{i |b| u_h \tanh(|a|T)}{|a|+ i \omega \tanh(|a|T)}.
-\end{equation}
-For $t \rightarrow \infty$, 
-\begin{equation}
-    r \rightarrow - \frac{i \inred{|b|} u_h}{|a|+ i \omega} .
-\end{equation}
-}
-
-
-\begin{figure}\label{fig:braggMap}
-    \centering
-    \includegraphics[width=0.49\textwidth]{figures/Bragg_DH.png}
-    \includegraphics[width=0.49\textwidth]{figures/Bragg_D0.png}
-    \caption{Example of intensity of the electric fields inside the crystal as a function of the 
-    deviation angle $\theta-\theta_B$ and thickness ratio $-s/T$. 
-    Left $|D_h|^2$, right $|D_0|^2$. 
-    The crystal is \cyan{a symmetric} Si 111 at 8 keV \cyan{in Bragg geometry} with thickness $t=$\SI{10}{\micro\meter}. 
-    }
-\end{figure}
-
-\section{Scattering and transfer matrices}
-\label{sec:matrices}
-
-Equations (\ref{eq:BSolutions}) represent a system of two equations containing two coefficients $c_1$ and $c_2$ and two fields ($B_0$ and $B_h$) that are latter expressed at the top ($s=0$) and bottom ($s=T$) surfaces. From these four fields, we can calculate two as a function of the other two. In the usual case, we calculate the diffracted and transmitted fields at the corresponding exit surface (which depends on the geometry, Bragg or Laue) given the other two that are set as boundary conditions. This gives the ``scattering matrix". In other cases, when one considers a complex crystal made by several piled individual crystal layer, we would be interested in calculating the diffracted and transmitted beam at the bottom as a function of the beams from the top.   
-
-\subsection{Scattering matrix in Bragg case}
-For the Bragg case, we calculate $D_0(T)$ (transmitted) and $D_h(0)$ (diffracted) as a function of generic $D_0(0)$ and $D_h(T)$, so we can write in matrix form
-\begin{equation}
+\begin{equation}\label{eq:scatteringMatrix}
     \begin{pmatrix}
-    D_h(0)\\
-    D_0(T)
+    D_0(T)\\
+    D_h(0)
     \end{pmatrix}
     =
     S
@@ -595,68 +531,190 @@ For the Bragg case, we calculate $D_0(T)$ (transmitted) and $D_h(0)$ (diffracted
     \begin{pmatrix}
     D_0(0) \\
     D_h(T)
-    \end{pmatrix},
+    \end{pmatrix}
+        =
+    \begin{pmatrix}
+    m_{11}-\frac{m_{12} m_{21}}{m_{22}} & \frac{m_{12}}{m_{22}}\\
+    -\frac{m_{21}}{m_{22}} & \frac{1}{m_{22}}
+    \end{pmatrix}
+    \begin{pmatrix}
+    D_0(T) \\
+    D_h(0)
+    \end{pmatrix}.
 \end{equation}
-where the terms of the scattering matrix $S$ are 
-\begin{subequations}\label{eq:scatteringMatrixBragg }
-\begin{align}
-s_{11} &= \frac{-i b u_h \sin(a T)}{a \cos(a T) + i \omega \sin(a T)};\\
-s_{12} &= \frac{a~\exp(-i T (u_0+ \omega))}{a \cos(a T) + i \omega \sin(a T)};\\
-s_{21} &= \frac{a~\exp(i T (u_0+ \omega))}{a \cos(a T) + i \omega \sin(a T)};\\
-s_{22} &= \frac{-i u_{-h} \sin(a T)}{a \cos(a T) + i \omega \sin(a T)}.
-\end{align}
+
+
+The amplitudes are, after a small algebraic calculations, 
+\begin{subequations}
+\label{eq:braggrandt}
+\begin{empheq}[box=\fbox]{align}
+r = D_h(0)=s_{21}=
+\frac{-i b u_h \sin(a T)}{a \cos(a T) + i \omega \sin(a T)}\\
+t = D_0(T)=s_{11}=
+\frac{a~\exp(i T(u_0+ \omega))}{a \cos(a T) + i \omega \sin(a T)} ,
+\end{empheq}
 \end{subequations}
 
+The diffraction profiles are $\mathcal{R}=|r|^2 P$ (diffracted beam or reflectance) and $\mathcal{T}=|t|^2$ (forward diffracted beam or transmittance).
+An example is in Fig.~\ref{fig:braggProfiles}. 
 
-For the case studied in section~\ref{sec:TTsolutionsBragg} we set $(D_0(0),D_h(T))=(1,0)$ from there we get $s_{11}=r; s_{21}=t$, with $r$ and $t$ from equations (\ref{eq:braggrandt}). Similarly, when the incident beam enters the crystal by the bottom surface, as studied in appendix~\ref{sec:braggfromtheback}, we set $(D_0(0),D_h(T))=(0,1)$ and  we get $s_{12}=\bar{r}; s_{22}=\bar{t}$, with $r$ and $t$ from equations (\ref{eq:braggrbarandtbar}) \todo{suppress the appendix?}.
+\begin{figure}\label{fig:braggProfiles}
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/Bragg_1.eps}
+    \includegraphics[width=0.49\textwidth]{figures/Bragg_2.eps}
+    \caption{Example of reflectance and transmittance for a Bragg Si 111 crystal of $t=$\SI{10}{\micro\meter} at 8 keV. }
+\end{figure}
+
+\inred{
+It may be interesting to calculate the field inside the crystal, i.e. $D_0(s)$ and $D_h(s)$. Introducing the coefficients in (\ref{eq:TTbraggCoefficients}) into equations (\ref{eq:BSolutions}) we obtain, after some algebraic manipulation
+\begin{subequations}\label{eq:bragginside}
+\begin{align}
+D_h(s)&=\frac{i b u_h \sin(as - aT)}{a \cos(aT) + i \omega \sin(aT)} e^{is(u_0+\omega)}\\
+D_0(s)&= \frac{a \cos(as-aT) - i \omega \sin(as-aT)}{a \cos(aT) + i \omega \sin(aT)} e^{is(u_0+\omega)}.
+\end{align}
+\end{subequations}
+}
+\inblue{
+An example of simulation of the field inside the crystal using equations~(\ref{eq:bragginside}) is in Fig.~\ref{fig:braggMap}. For the Laue case, also shown in this figure, we simply use the equations~(\ref{eq:lauerandt}) replacing $T$ by $s$. 
+}
+
+\begin{figure}\label{fig:braggMap}
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/Bragg_DH.png}
+    \includegraphics[width=0.49\textwidth]{figures/Bragg_D0.png}
+    \includegraphics[width=0.49\textwidth]{figures/Laue_DH.png}
+    \includegraphics[width=0.49\textwidth]{figures/Laue_D0.png}
+    \caption{Examples of electric field intensity inside the crystal as a function of the 
+    deviation angle $\theta-\theta_B$ and thickness ratio $-s/T$ for a symmetric Si 111 at 8 keV with thickness $t=$\SI{50}{\micro\meter} in Bragg or Laue geometry. 
+    a) Bragg $|D_h|^2$, b) Bragg $|D_0|^2$,
+    c) Laue $|D_h|^2$, d) Laue $|D_0|^2$.
+    }
+\end{figure}
 
 
-\subsection{Transfer matrix in Bragg case}
-For the Bragg case, we calculate the fields at the bottom surface $(D_0(T),D_h(T))$ as a function of those at the top surface $(D_0(0),D_h(0))$, so we can write in matrix form
+
+\todo{REMOVE THIS? A particular case is to consider zero absorption. 
+$a^2$ is real negative \todo{Why?} if $|\theta-\theta_c|<|\chi_h|/(|b|^2 \sin(2 \theta_B))$, then $aT=i |a| T$, $\cos(a T)=\cosh(|a|T)$, $\sin(a T)=i \sinh(|a|T)$, 
 \begin{equation}
-    \begin{pmatrix}
-    D_0(T)\\
-    D_h(T)
-    \end{pmatrix}
-    =
-    M
-        \begin{pmatrix}
-    D_0(0) \\
-    D_h(0)
-    \end{pmatrix}
-    =
-    \begin{pmatrix}
-    m_{11} & m_{12}\\
-    m_{21} & m_{22}
-    \end{pmatrix}
-    \begin{pmatrix}
-    D_0(0) \\
-    D_h(0)
-    \end{pmatrix},
+    r = \frac{b u_h \sinh(|a|T)}{i |a|T \cosh(|a|T)- \omega
+    \sinh(|a|T)}=
+\frac{i |b| u_h \tanh(|a|T)}{|a|+ i \omega \tanh(|a|T)}.
 \end{equation}
-where the terms of the transfer matrix $M$ are 
-\begin{subequations}\label{eq:scatteringMatrixBragg }
-\begin{align}
-m_{11} &= \left[ \cos(aT)-i\frac{\omega}{a}\sin(aT) \right] \inred{\exp(i T (u_0+\omega))};\\
-m_{12} &= i u_{-h}\frac{\sin(aT)}{a} \inred{\exp(i T (u_0+\omega))};\\
-m_{21} &= i b u_h \frac{\sin(aT)}{a} \inred{\exp(i T (u_0+\omega))};\\
-m_{22} &= \left[ \cos(aT)+i \frac{\omega}{a}\sin(aT) \right] \inred{\exp(i T (u_0+\omega))}.
-\end{align}
-\end{subequations}
+For $t \rightarrow \infty$, 
+\begin{equation}
+    r \rightarrow - \frac{i \inred{|b|} u_h}{|a|+ i \omega} .
+\end{equation}
+}
 
-It can be verified that $M^2$ is of the same form as $M$ where $T$ is replaced by $2T$. 
+\inblue{
+The matrix method permits to obtain the complex reflectances and transmittances of a crystal made by layers of different crystals (or the same crystal with different orientations). For that, i) construct the transfer matrix of the total crystal by multiplication of the transfer matrices of the different layers (each one calculated using equations~(\ref{eq:scatteringMatrix })); ii) if geometry is Laue, obtain reflectance and transmittance using the coefficients $m_{21}$ and $m_{11}$ of this matrix [equation~(\ref{eq:lauerandt})], respectively; otherwise, in Bragg geometry, compute the scattering matrix using equation~(\ref{eq:scatteringMatrix}) and reflectance and transmittance are given in the coefficients $s_{21}$ and $s_{11}$ [equation~(\ref{eq:braggrandt})], respectively.  This method can be used for analyzing distorted and bent crystals.
+}\todo{example? Or leave for future work...}
 
-\todo{ Some possible ideas for the continuation of the matrix methods
+\inred{In the case where the incident beam enters the crystal by the bottom surface, we set $(D_0(0),D_h(T))=(0,1)$ in equation~(\ref{eq:scatteringMatrix }) and  we obtain the amplitudes $\bar{r}=D_0(T)=s_{12}; \bar{t}=D_h(0)=s_{22}$, where the bar indicates ``from bottom to top". This allows, for example, to calculate the reflectivity $r_{2}$ of a crystal of double thickness $2 T$ using the scattering matrix of the crystal of thickness $T$
+by using the infinite sum $r_2=r(1 + (t \bar{t} / (1-r \bar{r})))=s_{21}(1 + (s_{11} s_{22} / (1-s_{21} s_{12})))$. This can be checked both analytically and numerically\footnote{See, for example, the example {\tt Si111\_layered.py} in {\tt crystalpy}.} (see Fig.~\ref{fig:doublelayer}).
+}
+
+\begin{figure}\label{fig:doublelayer}
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/doublelayer.png}
+    \includegraphics[width=0.49\textwidth]{figures/doublelayer2.png}
+    \caption{Example of calculation of the reflection amplitude $r_2$ of a crystal of \SI{2}{\micro\meter} thickness $2T$ from the amplitudes of the half-layer (\SI{1}{\micro\meter}) of thickness $T$. $r_2$ can be obtained as an infinite sum $r_2=r+ r t \bar(t) + r t\bar{t} (r\bar_{r}) + r t\bar{t} (r\bar_{r})^2 + ...= r[1+t\bar{t}\sum_{n=0}^{\infty}(r\bar{r})^n]=r(1 + (t \bar{t} / (1-r \bar{r})))$.
+    }
+\end{figure}
+
+% \section{Scattering and transfer matrices}
+% \label{sec:matrices}
+
+% Equations (\ref{eq:BSolutions}) represent a system of two equations containing two coefficients $c_1$ and $c_2$ and two fields ($B_0$ and $B_h$) that are latter expressed at the top ($s=0$) and bottom ($s=T$) surfaces. From these four fields, we can calculate two as a function of the other two. In the usual case, we calculate the diffracted and transmitted fields at the corresponding exit surface (which depends on the geometry, Bragg or Laue) given the other two that are set as boundary conditions. This gives the ``scattering matrix". In other cases, when one considers a complex crystal made by several piled individual crystal layer, we would be interested in calculating the diffracted and transmitted beam at the bottom as a function of the beams from the top.   
+
+% \subsection{Scattering matrix in Bragg case}
+% For the Bragg case, we calculate $D_0(T)$ (transmitted) and $D_h(0)$ (diffracted) as a function of generic $D_0(0)$ and $D_h(T)$, so we can write in matrix form
+% \begin{equation}
+%     \begin{pmatrix}
+%     D_h(0)\\
+%     D_0(T)
+%     \end{pmatrix}
+%     =
+%     S
+%         \begin{pmatrix}
+%     D_0(0) \\
+%     D_h(T)
+%     \end{pmatrix}
+%     =
+%     \begin{pmatrix}
+%     s_{11} & s_{12}\\
+%     s_{21} & s_{22}
+%     \end{pmatrix}
+%     \begin{pmatrix}
+%     D_0(0) \\
+%     D_h(T)
+%     \end{pmatrix},
+% \end{equation}
+% where the terms of the scattering matrix $S$ are 
+% \begin{subequations}\label{eq:scatteringMatrix }
+% \begin{align}
+% s_{11} &= \frac{-i b u_h \sin(a T)}{a \cos(a T) + i \omega \sin(a T)};\\
+% s_{12} &= \frac{a~\exp(-i T (u_0+ \omega))}{a \cos(a T) + i \omega \sin(a T)};\\
+% s_{21} &= \frac{a~\exp(i T (u_0+ \omega))}{a \cos(a T) + i \omega \sin(a T)};\\
+% s_{22} &= \frac{-i u_{-h} \sin(a T)}{a \cos(a T) + i \omega \sin(a T)}.
+% \end{align}
+% \end{subequations}
+
+
+% For the case studied in section~\ref{sec:TTsolutionsBragg} we set $(D_0(0),D_h(T))=(1,0)$ from there we get $s_{11}=r; s_{21}=t$, with $r$ and $t$ from equations (\ref{eq:braggrandt}). 
+
+% % Similarly, when the incident beam enters the crystal by the bottom surface, as studied in appendix~\ref{sec:braggfromtheback}, we set $(D_0(0),D_h(T))=(0,1)$ and  we get $s_{12}=\bar{r}; s_{22}=\bar{t}$, with $r$ and $t$ from equations (\ref{eq:braggrbarandtbar}) \todo{suppress the appendix?}.
+
+\inred{
+\subsection{Thick crystal approximation}\label{sec:thick}
+}
+
+
+\inred{
+\subsection{The direction of the incident and diffracted waves}\label{sec:directions}
+}
+
+\todo{
+
+The formulation done is ``inside the crystal". Therefore $D_{0,h}(0)$ correspond to the field ``inside" the crystal. So, $D_0(0)=1$ is the amplitude of the incident plane wave after refraction. What is ``before"?
+
+
+Having $\Psi(\textbf r) = D_0(\textbf r) e^{i \textbf k_0 . \textbf r} + D_h(\textbf r) e^{i \textbf k_h . \textbf r}$ this implies $\Psi(s) = D_0(s) e^{i \textbf k_0 . \textbf{s}} + D_h(s) e^{i \textbf k_h . \textbf s}$ with $\textbf{s}=(s_0,s_h)$. Can we write $\Psi(s)=\Psi_0(s)+\Psi_h(s)$?
+
+
+And $\Psi_0(0)=D_0(0) e^{i \textbf{k}_0. \textbf{r}}$ with $\textbf{k}_0$ inside the crystal. So different to our $\textbf{K}_0$ in vacuum. Right? Are we neglecting the refraction?
+The direction of the incident plane wave is $\nabla  \arg(\Psi_0(0))= \nabla  (\textbf{k}_0 . \textbf{r}) = \textbf{k}_0 $. Right?
+
+For the output beam (in Bragg), we calculate $D_h(0)$ inside the crystal.  $\Psi_h(0)=D_h(0) e^{i \textbf{k}_h . \textbf{r}}$. Again $\textbf{k}_h$ is inside the crystal. What is outside? Can I calculate the real direction of the output plane wave as $\nabla  \arg(\Psi_h(0))$? This direction should correspond to the conservation of the parallel component of the diffraction $\textbf{K}_{h,||}= \textbf{K}_{0,||} + \textbf{H}_{||}$. 
+
+Other things: 
+\begin{itemize}
+    \item discuss the fact that $b$ is not constant.
+    \item may be: discuss the grazing incidence case (\cite{Yashiro2001, Stepanov1998})
+\end{itemize}
+}
+
+\inred{
+\subsection{Application to multilayers}
+}\label{sec:multilayers}
+
+Can we directly apply the amplitudes in (\ref{eq:braggrandt}) to a multilayer? It is enough to replace $\chi_0$ by the averaged $\bar{\chi}=n^2-1$ and $\chi_h$ by $\chi_1$ and $\chi_{-h}$ by $\chi_{-1}$? Is this a bilayer? Shall we then use the scattering matrix? 
+Can we use $\alpha=2(\theta-\theta_B)\sin(2\theta_B)$ ?
+
+
+
+See also \cite{Osterhoff2012,Osterhoff2013}.
+\todo{ Some possible ideas for the matrix methods
 \begin{itemize}
     \item the multilayer case:
     \begin{itemize}
+        \item relation between scattering and transfer matrices. Can be built a multilayered $M=\Pi M_i$ and then calculate its corresponding scattering matrix?
         \item the Parratt recursion formula
         \item transition layer (non-abrupt change, see \cite{Lobach})
         \item Roughness layer
     \end{itemize}and 
-    \item relation between scattering and transfer matrices. Can be built a multilayered $M=\Pi M_i$ and then calculate its corresponding scattering matrix?
     \item may be: discuss the roughness layer
-    \item may be: discuss the grazing incidence case (\cite{Yashiro2001, Stepanov1998})
+
 \end{itemize}
 }
 
@@ -707,37 +765,180 @@ It can be verified that $M^2$ is of the same form as $M$ where $T$ is replaced b
 % \end{align}
 % \end{subequations}
 
-\newpage
-\todo{
-\begin{itemize}
-    \item direction of the output planewave
-    \item matrices for Laue case
-    \item discuss the fact that $b$ is not constant.
-\end{itemize}
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\inred{
-\section{New possible sections}
-\subsection{The crystalpy library}
-\subsection{Crystal examples}
+\section{The {\tt crystalpy} library}
+\label{sec:crystalpy}
+
+{\tt Crystalpy} is a Python library which performs calculations on diffraction
+from perfect crystals using the formalism introduced in the previous chapters. It also simulates the changes in the polarization state of the x-ray beam brought
+about by the diffraction using Müller-Stokes formalism. The first version of this library was developed by Edoardo Cappelli, Mark Glass and Manuel Sanchez del Rio. It contains three
+packages: {\tt util}, {\tt diffraction} and {\tt polarization}.
+
+
+The {\tt util} toolbox contains auxiliary classes which take part in the diffraction
+process but have their own significance independently of it.
+ The {\tt Vector} class includes definition and operations (addition, scalar product, cross product, normalization, rotation around
+an axis etc) of a 3D vector. 
+% This object is fundamental as the whole library was written with the idea of making everything work with vectorial quantities instead of using angles. 
+% To clarify the advantages of this approach, let us imagine we have an x-ray beam impinging on the surface of a crystal at an angle $\theta$ with respect to the normal: how do we describe this in the code? The simplest way would be to identify its direction by assigning $\theta$ to a variable, e.g. {\tt angle\_with\_normal}, while a more complicated way would be to use an object-oriented approach and write:
+% \texttt{normal = Vector(0, 0, 1) \# z axis}
+% \texttt{beam\_direction = normal.rotateAroundAxis(Vector(1, 0, 0), theta) }
+% This is more cumbersome, both at design and run time, but it allows for a very straightforward manipulation of the vectors: if, for example, we wanted to know the angle between the beam direction and the reciprocal vector \textbf{H}, we would also have to keep track of the angle between \textbf{H} and the normal and pay attention to the sign of the angles in order to avoid mistakes. The object-oriented approach becomes even more advantageous in a three-dimensional system, where storing one angle is not enough and finding the angle between vectors that do not share the same plane with the normal can be quite a head-scratcher\footnote{The {\tt rotateAroundAxis} function is implemented using Rodrigues formula (see Wikipedia)}.
+The {\tt Photon} class is contains the energy (in eV) and a direction vector. The {\tt PolarizedPhoton} class inherits from it and has a
+{\tt StokesVector}\footnote{The {\tt StokesVector} class has the four Stokes parameters as class attributes and contains a method for calculating the degree of circular
+polarization, defined as $P_c = S_3 /S_0$.} attribute. 
+% It is an abstraction of a monochromatic plane wave rather than of a physical photon.
+Both {\tt Photon} and {\tt PolarizedPhoton} have a corresponding {\tt PhotonBunch} object, which is an iterator containing a collection of photons. 
+% \footnote{the term photon will be used here to refer to a Photon object even if it does not correspond to a physical photon}, this means it can be indexed and called iteratively by using the in keyword:
+% {\tt
+% for photon in PhotonBunch:
+%     do\_something()
+% }
+% These classes are used as ``beam" or ``signal" between different widgets
+% when integrating the library into OASYS.
+
+
+The {\tt diffraction} toolbox is concerned with the definition of the crystal setup and the calculation of x-ray diffraction from perfect crystals. The {\tt DiffractionSetup} class handles the information about the crystal setup and collects all the parameters needed to fully define the physical system we are modelling:
+{\tt geometry\_type} (among {\tt BraggDiffraction, BraggTransmission, LaueDiffraction} and {\tt LaueTransmission}),
+{\tt crystal\_name} (a string, e.g. Si, Ge),
+{\tt thickness} (crystal thickness in SI units [m]),
+{\tt miller\_h(,k,l)} (the Miller indices),
+ and {\tt asymmetry\_angle} (angle in degrees between the crystal surface and the planes $hkl$ as defined in \cite{codeCRYSTAL}, shown in figure~\ref{fig:edo_sketch}).
+% Let us explore this toolbox and see how the computation is handled.
+
+
+% \begin{enumerate}
+ 
+% \begin{itemize}
+
+%     \item {\tt geometry\_type} clarifies which is the diffraction geometry among {\tt BraggDiffraction, BraggTransmission, LaueDiffraction} and {\tt LaueTransmission}.
+%     \item {\tt crystal\_name} is a string (e.g. Si, Ge . . . ) specifying which crystal is being used for the diffraction.
+%     \item {\tt thickness} of the crystal in centimetres; we are considering parallel plane plates, so this parameter is always well defined.
+%     \item {\tt miller\_h(,k,l)} are the Miller indices identifying the family of lattice planes which satisfy the Laue condition. Remember that in the two-wave approximation only one family of planes takes part in the diffraction process, so three indices are enough to fix the \textbf{H} vector once the crystal structure is known.
+%     \item {\tt asymmetry\_angle} is shown graphically in figure~\ref{fig:edo_sketch} and is the angle between the crystal surface and the planes $hkl$ as defined in XX. It depends on how the crystal has been cut.
+% \end{itemize}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/edo_sketch.png}
+    \caption{Schematic drawings of Bragg (left) and Laue (right) diffraction setups: \textbf{H} is the reciprocal vector associated with the $hkl$ family of lattice planes, also called the Bragg normal, $\theta_B$ is the Bragg angle and $\alpha_X$ is the asymmetry angle as defined in XXXX.}
+    \label{fig:edo_sketch}
+\end{figure}
+
+The {\tt DiffractionSetup} class used some methods to access the basic information of the crystal (defined as a string, e.g. ``Si") such as {\tt angleBragg}, {\tt dSpacing}, and {\tt unitCellVolume}, and very important, to compute the structure factors: {\tt F0}, {\tt FH}, {\tt FH\_bar}. These parameters are obtained from the {\tt xraylib} library \cite{xraylib}. Alternatively, other sources of crystal data can be used. The class {\tt DiffractionSetupDabax} uses the DABAX library \cite{dabax} instead.
+
+% It takes advantage of the functions implemented in the xraylib library XXX to provide methods able to yield important parameters such as the Bragg angle at a certain energy: angleBragg(energy), the structure factor Fourier components \textbf{F\_0} , \textbf{F\_H} and \textbf{F\_$\bar{H}$}: \textbf{F0(energy)}, \textbf{FH(energy)},
+% \textbf{FH\_bar(energy)}, the unit cell volume: \texttt{unitCellVolume()}, the lattice
+% spacing for the $hkl$ family of planes: \texttt{dSpacing()} and the reciprocal
+% vector \textbf{H}: \texttt{normalBragg()}. 
+
+% If one just wants to plot the reflectivities/trasmittivities as functions of angular deviation or energy (like in figures \ref{fig:braggProfiles}, \ref{fig:laueProfiles}) the {\tt DiffractionSetupSweeps} class can be used to build a {\tt PhotonBunch} containing all the photons for whom the calculations are going to be carried out. 
+% It needs to know how many photons to create and in which angular and/or energy range, so it takes as attributes {\tt energy\_min}, {\tt energy\_max}, {\tt energy\_points} for the energy and {\tt angle\_deviation\_min}, {\tt angle\_deviation\_max} and {\tt angle\_deviation\_points} for the angular deviations from the (0, 1, 0) direction.
+
+% \item The {\tt Diffraction} class manages the computations without actually doing anything at initialization. It behaves as an administrator, directing the inputs to where they are needed and collecting the results in an orderly fashion to create the output. 
+% % The advantage of this solution is that, in order to compute the results from the main, an Orange widget or a user script, one only needs to do this:
+
+% \begin{verbatim}
+
+% diffraction = Diffraction()
+% outgoing_photon_bunch = diffraction.calculateDiffractedPhotonBunch(diffraction_setup,
+% incoming_photon_bunch)
+
+% \end{verbatim}
+% The {\tt calculateDiffractedPhotonBunch} method iterates over all the
+% photons in the incoming bunch and for each one calls the {\tt calculate-DiffractedPhoton} function. This in turn creates an instance of the {\tt PerfectCrystalDiffraction} class. This class contains methods to perform the actual calculations. This matryoshka-like structure is illustrated in figure~\ref{fig:edo_matryshka}. Diffraction is designed to propose different methods of calculation, or different algorithms. At present, only Guigay (this formalism) and Zachariasen theories for perfect crystals are available.
+
+\item {\tt PerfectCrystalDiffraction} is the class that handles the actual computations. It calculates the diffraction parameters by means of
+several methods and then plugs them into the equations XXX according to the specified experimental geometry: for each
+one setup the results are two amplitude ratios for the two polarization
+states $S$ (i.e. $\sigma)$) and $P$ (i.e $\pi$). A graphical representation of the steps
+of the calculation is shown in figure \ref{fig:edo_matryoshka}.
+
+
+
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{figures/edo_structure.png}
+%     \caption{Structure and data flow of the Diffraction class. The {\tt \_checkSetup} method checks whether the parameters from {\tt DiffrationSetup} are not contradictory, e.g. it verifies that, if the declared geometry type is Bragg, the asymmetry angle be smaller than the Bragg angle (why it must be so becomes clear by inspecting figure \ref{fig:edo_sketch}); if this is not true, then the angles are not compatible with the expected geometry and an exception must be raised. We will see when dealing with the polarization toolbox that the amplitudes are used to generate a ``polarized photon" as output. The $\Psi$ parameters are computed via equation XXX}
+%     \label{fig:edo_structure}
+% \end{figure}
+
+
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{figures/edo_matryoshka.png}
+    \caption{A board-game-style representation of the calculation process in the {\tt PerfectCrystalDiffraction} class: the letters stand for the parameters computed using the equations we have derived in section \ref{sec:TTsolutions}. Each one of the concentric circles is one ``layer" of computation, i.e. the innermost parameters are computed starting from the parameters surrounding them on the outside. 
+    For example, to obtain $z$ using equation XXX we need $b$, $\Psi_0$  and $\alpha$, which are adjacent to $z$ and located further out; to compute $x_{1,2}$ via XXX we need $z$, $q$, $\Psi$, \textbf{H} and $P$, and so on. \todo{adapt to our notation}}
+    \label{fig:edo_matryoshka}
+\end{figure}
+
+
+% \subsection{The {\tt polarization} toolbox}
+
+% This toolbox is made up of classes needed to allow {\tt Diffraction} to perform
+% polarization calculations through class methods such as {\tt calculateDiffracted-PolarizedPhotonBunch} and {\tt calculateDiffractedPolarizedPhoton}, which follow the same process described in figure~\ref{fig:edo_structure} but have {\tt PolarizedPhoton}
+% objects as inputs and outputs. These functions compute {\tt photon\_out} and
+% amplitudes through the dedicated {\tt PerfectCrystalDiffraction} methods and then use the field amplitudes to build the Müller matrix for a crystal
+% phase plate. The matrix is then applied to the Stokes vector attribute of
+% the incoming {\tt PolarizedPhoton} object to get the outgoing polarized photon.
+% The single Stokes parameters can then be extracted and plotted as a function of angular deviation from the Bragg angle to analyse the birefringence
+% of the crystal phase plates.
+
+% To do this the toolbox contains:
+% \begin{itemize}
+%     \item The {\tt MuellerMatrix} class has a matrix attribute which contains a 4 × 4 {\tt numpy} matrix. It has a few methods which allow it to behave as a Müller matrix should: {\tt matrix\_by\_scalar(scalar)} for scalar multiplication, {\tt mueller\_times\_mueller(matrix)} for matrix multiplication, and {\tt calculate\_stokes\_vector(incoming\_stokes\_vector)} to apply the matrix to an incoming Stokes vector to get an outgoing Stokes vector.
+%     \item The {\tt CrystalPhasePlate} class inherits from MuellerMatrix, since the matrix for a specific phase plate is nothing but a particular instance of the abstract concept of a Müller matrix. The crystal plate’s reference frame will in general be rotated with respect to the source frame as shown in figures 4.4 and 4.5. The Jones matrix for the phase plate is then made up of a rotation by an angle $\alpha$, called the inclination angle, and the subsequent crystal diffraction:
+%     \begin{equation}
+%         xxxx
+%     \end{equation}
+    
+%     This result can then be translated into the more general Müller-Stokes formalism and we can do so by applying equation 1.21, which yields
+%     \begin{equation}
+%         yyyyy
+%     \end{equation}
+%     where $\Phi=...$ is the phase difference between the two field components.
+
+%     At initialization time the class needs five parameters: {\tt intensity\_sigma}, {\tt intensity\_pi}, {\tt phase\_sigma}, {\tt phase\_pi} and {\tt inclination\_angle}. With these it computes all the entries of the matrix at 4.2, writes them on a {\tt numpy} matrix and then calls the constructor of the parent class with this matrix as parameter.
+    
+% \end{itemize}
+
+% The {\tt Diffraction.calculateDiffractedPolarizedPhoton} method uses these
+% classes as follows:
+% \begin{enumerate}
+%     \item It reads intensities and phases for both $\pi$ and $\sigma$ polarizations from the amplitudes dictionary ...
+%     \item It then uses them to create a CrystalPhasePlate object...
+%     \item It applies the phase plate Müller matrix to the incoming wave’s Stokes vector and calculates the outgoing vector...
+%     \item It returns a {\tt PolarizedPhoton} object which has the energy and direction of {\tt outgoing\_photon} and the computed Stokes vector...
+% \end{enumerate}
+
+
+
+
+
+\subsection{crystalpy examples}
+
 \begin{itemize}
     \item rocking curves (see Figs.~\ref{fig:braggProfiles}, \ref{fig:laueProfiles})
-    \item differences with Darwin (see \cite{Yashiro2000, Yashiro2001}), Ewald, Zachariasen, etc. 
     \item field maps inside the crystal using equation~(\ref{eq:bragginside})
     \item skew scans (2D scans) [Needs to calculate the output direction]
     \item crystal curvature/deformation treated with matrices??
     \item extend the matrices to include s and p polarization to calculate polarization changes
+    \item differences with Darwin (see \cite{Yashiro2000, Yashiro2001}), Ewald, Zachariasen, etc. 
+
 \end{itemize}
 
-\subsection{Multilayer examples }
-(\cite{Osterhoff2012, Osterhoff2013})
+
+
 \section{Conclusions and future perspectives}
 \label{sec:summary}
 
-}
+
 
 % \ack{Acknowledgements}
 % A large part of this work comes from ...
@@ -891,37 +1092,37 @@ with $a=\sqrt{\omega^2 + b u_h u_{-h}}$, and
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Bragg amplitudes when beam enters from the back of the crystal}
-\label{sec:braggfromtheback}
-It is useful to calculate the reflectance and transmitted amplitudes when the beam enters from the back along the $\textbf{k}_h$ direction for then build the amplitudes of a layered crystal (matrix method). 
+% \section{Bragg amplitudes when beam enters from the back of the crystal}
+% \label{sec:braggfromtheback}
+% It is useful to calculate the reflectance and transmitted amplitudes when the beam enters from the back along the $\textbf{k}_h$ direction for then build the amplitudes of a layered crystal (matrix method). 
 
-\subsubsection{Bragg case:} the entrance surface is $s=T$ and the exit is $s=0$. The boundary conditions are $B_h(T)=1$ and $B_0(0)=0$. From equations~(\ref{sec:TTsolutions}) we get
-\begin{subequations}
-\begin{align}
-c_1 = \frac{1}{\xi_1 \exp(i a T) - \xi_2 \exp(-i a T)}\\
-c_2 = \frac{-1}{\xi_1 \exp(i a T) - \xi_2 \exp(-i a T)},
-\end{align}
-\end{subequations}
-and 
-\begin{subequations}
-\begin{align}
-B_0(T) = &c_1 \exp{i a T} + c_2 \exp(-i a T)=
-\frac{i u_{-h} \sin(a T)}{a \cos(a T)+ i \omega \sin(a T)}\\
-B_h(0) = &c_1 \xi_1 + c_2 \xi_2=
-\frac{a}{a \cos(a T)+ i \omega \sin(a T)}.
-\end{align}
-\end{subequations}
-In consequence
-\begin{subequations}
-\label{eq:braggrbarandtbar}
-\begin{align}
-\bar r = \frac{D_0(T)}{D_h(T)} = &
-\frac{i u_{-h} \sin(a T)}{a \cos(a T)+ i \omega \sin(a T)}\\
-\bar t = \frac{D_h(0)}{D_h(T)} = &
-\frac{a ~ \exp(-i T (u_0+\omega))}{a \cos(a T)+ i \omega \sin(a T)} .
-\end{align}
-\end{subequations}
-As compared with equations~(\ref{eq:braggrandt}) we see now that $-b$ does not appear in $\bar r$, there us $u_{-h}$ instead of $u_h$ and there is a different sign in the exponential of the numerator in $\bar t$. 
+% \subsubsection{Bragg case:} the entrance surface is $s=T$ and the exit is $s=0$. The boundary conditions are $B_h(T)=1$ and $B_0(0)=0$. From equations~(\ref{sec:TTsolutions}) we get
+% \begin{subequations}
+% \begin{align}
+% c_1 = \frac{1}{\xi_1 \exp(i a T) - \xi_2 \exp(-i a T)}\\
+% c_2 = \frac{-1}{\xi_1 \exp(i a T) - \xi_2 \exp(-i a T)},
+% \end{align}
+% \end{subequations}
+% and 
+% \begin{subequations}
+% \begin{align}
+% B_0(T) = &c_1 \exp{i a T} + c_2 \exp(-i a T)=
+% \frac{i u_{-h} \sin(a T)}{a \cos(a T)+ i \omega \sin(a T)}\\
+% B_h(0) = &c_1 \xi_1 + c_2 \xi_2=
+% \frac{a}{a \cos(a T)+ i \omega \sin(a T)}.
+% \end{align}
+% \end{subequations}
+% In consequence
+% \begin{subequations}
+% \label{eq:braggrbarandtbar}
+% \begin{align}
+% \bar r = \frac{D_0(T)}{D_h(T)} = &
+% \frac{i u_{-h} \sin(a T)}{a \cos(a T)+ i \omega \sin(a T)}\\
+% \bar t = \frac{D_h(0)}{D_h(T)} = &
+% \frac{a ~ \exp(-i T (u_0+\omega))}{a \cos(a T)+ i \omega \sin(a T)} .
+% \end{align}
+% \end{subequations}
+% As compared with equations~(\ref{eq:braggrandt}) we see now that $-b$ does not appear in $\bar r$, there us $u_{-h}$ instead of $u_h$ and there is a different sign in the exponential of the numerator in $\bar t$. 
 
 \section{Equivalence of amplitudes in equations (\ref{eq:braggrandt}) and (\ref{eq:lauerandt}) with Zachariasen theory.}
 \label{appendix:zachariasen}
