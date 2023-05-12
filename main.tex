@@ -616,9 +616,9 @@ by using the infinite sum $r_2=r(1 + (t \bar{t} / (1-r \bar{r})))=s_{21}(1 + (s_
 
 \begin{figure}\label{fig:doublelayer}
     \centering
-    \includegraphics[width=0.49\textwidth]{figures/doublelayer.png}
+    \includegraphics[width=0.49\textwidth]{figures/figlayered2.pdf}
     \includegraphics[width=0.49\textwidth]{figures/doublelayer2.png}
-    \caption{Example of calculation of the reflection amplitude $r_2$ of a crystal of \SI{2}{\micro\meter} thickness $2T$ from the amplitudes of the half-layer (\SI{1}{\micro\meter}) of thickness $T$. $r_2$ can be obtained as an infinite sum $r_2=r+ r t \bar(t) + r t\bar{t} (r\bar_{r}) + r t\bar{t} (r\bar_{r})^2 + ...= r[1+t\bar{t}\sum_{n=0}^{\infty}(r\bar{r})^n]=r(1 + (t \bar{t} / (1-r \bar{r})))$.
+    \caption{Example of calculation of the reflection amplitude $r_2$ of a Si 111 crystal of \SI{2}{\micro\meter} thickness $2T$ from the amplitudes of the half-layer (\SI{1}{\micro\meter}) of thickness $T$. $r_2$ can be obtained as an infinite sum $r_2=r+ r t \bar(t) + r t\bar{t} (r\bar_{r}) + r t\bar{t} (r\bar_{r})^2 + ...= r[1+t\bar{t}\sum_{n=0}^{\infty}(r\bar{r})^n]=r(1 + (t \bar{t} / (1-r \bar{r})))$. Photon energy is 8 keV.
     }
 \end{figure}
 
@@ -668,11 +668,44 @@ by using the infinite sum $r_2=r(1 + (t \bar{t} / (1-r \bar{r})))=s_{21}(1 + (s_
 \inred{
 \subsection{Thick crystal approximation}\label{sec:thick}
 }
+Equations~(\ref{eq:lauerandt}) and (\ref{eq:braggrandt}) are expressed in terms of $a$, but it is clearly seen that they depend only on $a^2=bu_h u_{-h}+\omega^2$ which is a complex number. Let us chose $a$ such that $\operatorname{Im}(a)>0$. Then  
+$\exp(iaT)=\exp[iT\operatorname{Re}(a)-T\operatorname{Im}(a)]\rightarrow 0$, as $T\rightarrow \infty$; cosequently $\sin(aT)\approx (i/2) \exp(-i a T)$, $\cos(aT)\approx (1/2) \exp(-i a T)$. The reflectivity of the Bragg case [equation~(\ref{eq:braggrandt}a)] take a simplified form
+\begin{equation}\label{eq:thickbraggr}
+    r = \frac{b u_h}{a-\omega} = \frac{a+\omega}{u_{-h}},
+\end{equation}
+where $a$ can be obtained from $a^2$ as: 
+\begin{equation}
+a = \frac{1}{\sqrt{2}} \left[ \frac{\operatorname{Im}(a^2)}{\sqrt{|a^2|-\operatorname{Re}(a^2)}} + i \sqrt{|a^2|-\operatorname{Re}(a^2)} \right].
+\end{equation}
+
+Equation~(\ref{eq:thickbraggr}) is a very useful result, as most of the crystal monochromators used in synchrotron radiation use thick crystals in Bragg (reflection) mode. For all other geometries (Bragg transmission, and both Laue cases) the approximation $T\rightarrow \infty$ makes the exponential term tends to zero, therefore there is no intensity at the back crystal surface. If we apply the approximations mentioned, but leave the exponential term (with a reasonable small $T$, thus small absorption), we obtain diffraction intensity distributions that do not present Pendell\"osung. The simplified form of equation~ (\ref{eq:braggrandt}b) is   
+\begin{equation}\label{eq:thickbraggt}
+    t = \frac{2a}{a-\omega} e^{i T (u_0+\omega+a)},
+\end{equation}
+and for the Laue case [equations (\ref{eq:lauerandt}b)] we get
+\begin{subequations}
+\label{eq:thicklaue}
+\begin{align}
+r = & - \frac{b u_h}{2 a} e^{iT (u_0+\omega-a)}  \\
+t = & \frac{1}{2} (1 + \frac{\omega}{a})e^{i T (u_0+\omega-a)}.
+\end{align}
+\end{subequations}
 
 
 \inred{
 \subsection{The direction of the incident and diffracted waves}\label{sec:directions}
 }
+As mentioned before, the selection of the directions used to solve the TT equations contains some dose of arbitrarily. In our choice, $\textbf{k}_0$ vector corresponds exactly with the direction and wavelength of the incident ray or wave, which is not necessarily verifying the Bragg law. The vector $\textbf{k}_h$ (see section~\ref{sec:TT}) is defined as as $\textbf k_h=\textbf k_0 + \textbf h$. Therefore, it is not necessarily matching the wavevector of the outgoing ray or wave outside the crystal. In many applications, like in ray tracing, it is essential to know the output wavevector $\textbf{k}_{\text{out}}$ that exits from the crystal. The length of $\textbf{k}_h$ is [equation~(\ref{eq:alpha})] $|$\textbf{k}_h|=k\sqrt{1-\alpha}$. To get $\textbf{k}_{\text{out}}$ we must get into account i) its length is the same as $\textbf{k}_0$, and ii) its value parallel to the crystal surface $\textbf{k}_{\text{out}, ||}$ must be equal to $\textbf{k}_{h,||}}$ (continuity of the tangential component of the electric field at he crystal-vacuum interface). These conditions permit to determine how the perpendicular component of $\textbf{k}_{\text{out}}$ differs from $\textbf{k}_h$
+\begin{equation}
+    \textbf{k}_{\text{out}, \bot} = \kappa \textbf{k}_{h,\bot},
+\end{equation}
+with 
+\begin{equation}
+    \kappa = \frac{|\textbf{k}_0|^2-|\textbf{k}_{h,||}|^2}
+    {|\textbf{k}_{h,\bot}|^2}
+\end{equation}
+
+\todo{simplify the discussion?}
 
 \todo{
 
@@ -698,13 +731,14 @@ Other things:
 \subsection{Application to multilayers}
 }\label{sec:multilayers}
 
+
+\todo{ 
+
 Can we directly apply the amplitudes in (\ref{eq:braggrandt}) to a multilayer? It is enough to replace $\chi_0$ by the averaged $\bar{\chi}=n^2-1$ and $\chi_h$ by $\chi_1$ and $\chi_{-h}$ by $\chi_{-1}$? Is this a bilayer? Shall we then use the scattering matrix? 
 Can we use $\alpha=2(\theta-\theta_B)\sin(2\theta_B)$ ?
-
-
-
 See also \cite{Osterhoff2012,Osterhoff2013}.
-\todo{ Some possible ideas for the matrix methods
+
+Some possible ideas for the matrix methods
 \begin{itemize}
     \item the multilayer case:
     \begin{itemize}
@@ -774,10 +808,12 @@ See also \cite{Osterhoff2012,Osterhoff2013}.
 
 {\tt Crystalpy} is a Python library which performs calculations on diffraction
 from perfect crystals using the formalism introduced in the previous chapters. It also simulates the changes in the polarization state of the x-ray beam brought
-about by the diffraction using Müller-Stokes formalism. The first version of this library was developed by Edoardo Cappelli, Mark Glass and Manuel Sanchez del Rio. It contains three
+about by the diffraction using Müller-Stokes formalism. The first version of this library was developed by Edoardo Cappelli, Mark Glass and Manuel Sanchez del Rio. 
+As mentioned in section~\ref{sec:Intro}, many software tools are available for crystal calculations based on the dynamical diffraction theory. However, these are usually complex ancient code, which makes complicate the use, integration and maintenance in new applications. For this reason, we wanted to create a modern, extensible, well-documented, and friendly library. It will help in the future as support for new versions of the codes delivered in platforms like OASYS \cite{codeOASYS}. 
+
+The {\tt \crystalpy} library is written in the python language and uses standard libraries (numpy and scipy).
+It basically contains three
 packages: {\tt util}, {\tt diffraction} and {\tt polarization}.
-
-
 The {\tt util} toolbox contains auxiliary classes which take part in the diffraction
 process but have their own significance independently of it.
  The {\tt Vector} class includes definition and operations (addition, scalar product, cross product, normalization, rotation around
@@ -787,11 +823,14 @@ an axis etc) of a 3D vector.
 % \texttt{normal = Vector(0, 0, 1) \# z axis}
 % \texttt{beam\_direction = normal.rotateAroundAxis(Vector(1, 0, 0), theta) }
 % This is more cumbersome, both at design and run time, but it allows for a very straightforward manipulation of the vectors: if, for example, we wanted to know the angle between the beam direction and the reciprocal vector \textbf{H}, we would also have to keep track of the angle between \textbf{H} and the normal and pay attention to the sign of the angles in order to avoid mistakes. The object-oriented approach becomes even more advantageous in a three-dimensional system, where storing one angle is not enough and finding the angle between vectors that do not share the same plane with the normal can be quite a head-scratcher\footnote{The {\tt rotateAroundAxis} function is implemented using Rodrigues formula (see Wikipedia)}.
-The {\tt Photon} class is contains the energy (in eV) and a direction vector. The {\tt PolarizedPhoton} class inherits from it and has a
-{\tt StokesVector}\footnote{The {\tt StokesVector} class has the four Stokes parameters as class attributes and contains a method for calculating the degree of circular
-polarization, defined as $P_c = S_3 /S_0$.} attribute. 
+The {\tt Photon} class is a minimum class for a photon, containing the energy (in eV) and a unit direction vector. Superclasses of Photon are {\tt ComplexAmplitudePhoton} (that contains the complex amplitude for $\sigma$ and $\pi$ polarizations), and {\tt PolarizedPhoton} with the four Stokes parameters.
+
+% as class attributes and contains a method for calculating the degree of circular
+% polarization, defined as $P_c = S_3 /S_0$.} attribute. 
 % It is an abstraction of a monochromatic plane wave rather than of a physical photon.
-Both {\tt Photon} and {\tt PolarizedPhoton} have a corresponding {\tt PhotonBunch} object, which is an iterator containing a collection of photons. 
+% Both {\tt Photon} and {\tt PolarizedPhoton} 
+The photon classes 
+have corresponding {\tt PhotonBunch} objects, which group a collection of photons. The interest of using these classes is for vectorizing operations and reducing computational time. For the calculations, vectors are always preferred to angles. Typical angle or photon scans as shown in Fig.~\ref{fig:braggProfiles} are calculating defining a $\tt Photon$ entity for each point, group then in a {\tt PhotonBunch} for being send to the crystal. 
 % \footnote{the term photon will be used here to refer to a Photon object even if it does not correspond to a physical photon}, this means it can be indexed and called iteratively by using the in keyword:
 % {\tt
 % for photon in PhotonBunch:
@@ -801,7 +840,7 @@ Both {\tt Photon} and {\tt PolarizedPhoton} have a corresponding {\tt PhotonBunc
 % when integrating the library into OASYS.
 
 
-The {\tt diffraction} toolbox is concerned with the definition of the crystal setup and the calculation of x-ray diffraction from perfect crystals. The {\tt DiffractionSetup} class handles the information about the crystal setup and collects all the parameters needed to fully define the physical system we are modelling:
+The {\tt DiffractionSetup} toolbox is twofold: i) as a container of physical parameters of the crystal and the definition of the crystal setup, and ii) supply methods to calculate important physical quantities needed in the calculation, in particular the structure factors. The {\tt DiffractionSetup} class handles the information about the crystal setup and collects all the parameters needed to fully define the physical system we are modelling:
 {\tt geometry\_type} (among {\tt BraggDiffraction, BraggTransmission, LaueDiffraction} and {\tt LaueTransmission}),
 {\tt crystal\_name} (a string, e.g. Si, Ge),
 {\tt thickness} (crystal thickness in SI units [m]),
@@ -829,7 +868,7 @@ The {\tt diffraction} toolbox is concerned with the definition of the crystal se
     \label{fig:edo_sketch}
 \end{figure}
 
-The {\tt DiffractionSetup} class used some methods to access the basic information of the crystal (defined as a string, e.g. ``Si") such as {\tt angleBragg}, {\tt dSpacing}, and {\tt unitCellVolume}, and very important, to compute the structure factors: {\tt F0}, {\tt FH}, {\tt FH\_bar}. These parameters are obtained from the {\tt xraylib} library \cite{xraylib}. Alternatively, other sources of crystal data can be used. The class {\tt DiffractionSetupDabax} uses the DABAX library \cite{dabax} instead.
+The {\tt DiffractionSetup} class has methods to access the basic information of the crystal (defined as a string, e.g. ``Si") such as {\tt angleBragg}, {\tt dSpacing}, and {\tt unitCellVolume}, and very important, to compute the structure factors: {\tt F0}, {\tt FH}, {\tt FH\_bar}. These parameters can be obtained from several libraries external to {\tt crystalpy}. We implemented two options: i) {\tt DiffractionSetupXraylib} using the {\tt xraylib} library \cite{xraylib}, and ii) {\tt DiffractionSetupDabax} that uses the DABAX library \cite{dabax}. This modular structure permits disconnecting the calculation part from the access to optical and physical constants. Indeed, the implemented structure permits us to easily implement other sources of these data. As an example, we could also use pure text files thus not needing to import the {\tt xraylib} or {\tt dabax} packages. We implemented this for the crystal material files of the SHADOW~\cite{codeSHADOW} code.
 
 % It takes advantage of the functions implemented in the xraylib library XXX to provide methods able to yield important parameters such as the Bragg angle at a certain energy: angleBragg(energy), the structure factor Fourier components \textbf{F\_0} , \textbf{F\_H} and \textbf{F\_$\bar{H}$}: \textbf{F0(energy)}, \textbf{FH(energy)},
 % \textbf{FH\_bar(energy)}, the unit cell volume: \texttt{unitCellVolume()}, the lattice
@@ -852,7 +891,7 @@ The {\tt DiffractionSetup} class used some methods to access the basic informati
 % The {\tt calculateDiffractedPhotonBunch} method iterates over all the
 % photons in the incoming bunch and for each one calls the {\tt calculate-DiffractedPhoton} function. This in turn creates an instance of the {\tt PerfectCrystalDiffraction} class. This class contains methods to perform the actual calculations. This matryoshka-like structure is illustrated in figure~\ref{fig:edo_matryshka}. Diffraction is designed to propose different methods of calculation, or different algorithms. At present, only Guigay (this formalism) and Zachariasen theories for perfect crystals are available.
 
-\item {\tt PerfectCrystalDiffraction} is the class that handles the actual computations. It calculates the diffraction parameters by means of
+The {\tt Diffraction} class contain methods to drive the simulations, thus using both {\tt DiffractionSetup} and {\tt PhotonBunch} and calculates the reflectivities and output photons. It is merely an interface to call the different classes that calculates the different kind of crystal models. For the moment, only flat perfect crystals are implemented in the {\tt PerfectCrystalDiffraction} class implementing the formulation and theory presented in section~\ref{sec:TTsolutions}. The {\tt PerfectCrystalDiffraction} class handles the actual computations. It calculates the diffraction parameters by means of
 several methods and then plugs them into the equations XXX according to the specified experimental geometry: for each
 one setup the results are two amplitude ratios for the two polarization
 states $S$ (i.e. $\sigma)$) and $P$ (i.e $\pi$). A graphical representation of the steps
