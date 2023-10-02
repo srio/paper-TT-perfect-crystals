@@ -176,7 +176,7 @@ with $\chi$ the electric susceptibility (refraction index $n=(1+\chi)^{1/2}$) an
 \label{eq:chi}
     \chi = \sum_{\textbf{h}} \chi_h \exp(i \textbf{h} . \textbf{r}),
 \end{equation}
-where $\bf{h}$ is the reciprocal lattice vector (with modulus $|\textbf{h}|=2\pi/d_\text{hkl}$, being $d_\text{hkl}$ the d-spacing of the hkl reflection), and the sum goes over all reciprocal vectors $|\textbf{h}|$ with possible hkl Miller indices. If a single reflection $\bf{h}$ is considered, only the terms $\bf{0}$, $\bf{h}$ and $\bf{-h}$ are non-zero, 
+where $\bf{h}$ is the reciprocal lattice vector (of modulus $|\textbf{h}|=2\pi/d_\text{hkl}$, being $d_\text{hkl}$ the d-spacing of the hkl reflection), and the sum goes over all reciprocal vectors $|\textbf{h}|$ with possible hkl Miller indices. If a single reflection $\bf{h}$ is considered, only the terms $\bf{0}$, $\bf{h}$ and $\bf{-h}$ are taken into account, 
 \begin{equation}
 \label{eq:chisimple}
     \chi = \chi_0 + \chi_{h} \exp(i \textbf{h} . \textbf{r}) + \chi_{-h} \exp(-i \textbf{h} . \textbf{r}).
@@ -241,7 +241,8 @@ of the incident angle from the geometrical Bragg position as
 
 In the ``rotating crystal mode" $\alpha=4 \sin \theta_B (\sin \theta - \sin \theta_B) \approx 2 (\theta-\theta_B) \sin (2\theta_B)$, with $\theta$ the glancing angle on the reflective planes\footnote{
 The choice of the sign of $\alpha$ is made in such a way that $\alpha$ increases when $\theta$ increases. 
-}, and $\theta_B$ the Bragg angle ($h=2 k \sin\theta_B$, $\textbf k_0 . \textbf h = -2 k \sin\theta$). Note that the last approximation fails far from the Bragg position or if $\cos\theta_B \rightarrow 0$ (normal incidence), therefore the equation~(\ref{eq:alpha}) is used in the software.
+}, and $\theta_B$ the Bragg angle ($h=2 k \sin\theta_B$, $\textbf k_0 . \textbf h = -2 k \sin\theta$).
+Note that the approximated value of $\alpha$ is not valid far from the Bragg position or when $\cos\theta_B \rightarrow 0$ (normal incidence), therefore the equation~(\ref{eq:alpha}) is used in the software.
 The TT equation become
 \begin{subequations}
 \label{eq:TTvectorAlpha}
@@ -358,9 +359,9 @@ $ w = b \alpha / 2 + (1/2) (b-1) \chi_0 \approx
 % \inblue{$w= (\lambda/\pi) \omega= 
 % (\lambda/\pi) (b \alpha' + (b-1) u_0)/2 \approx
 b \sin(2\theta_B)(\theta-\theta_B)+\chi_0 (b-1)/2=
-b \sin(2\theta_B)(\theta-\theta_c)+ i [(b-1)/2] \operatorname{Im} \chi_0$, where $\theta_c=\theta_B+ (b-1)/(b \sin(2\theta_B) \operatorname{Re}\chi_0$.
+b \sin(2\theta_B)(\theta-\theta_c)+ i (b-1)/2 \operatorname{Im} \chi_0$, where $\theta_c=\theta_B+ \operatorname{Re}\chi_0(b-1)/(b \sin 2\theta_B) $.
 
-Equations~(\ref{eq:TTinB}) are a system of linear differential equations with constant coefficients. The solutions can be found in two ways i) using test solutions in form of exponential (this method follows), and ii) using the Laplace transform (this method is shown in Appendix~\ref{appendix:laplace}).
+Equations~(\ref{eq:TTinB}) are a system of linear differential equations with constant coefficients. The solutions can be found in two ways i) using test solutions in form of exponential (as follows here), and ii) using the Laplace transform (as shown in Appendix~\ref{appendix:laplace}).
 
 Looking for solutions of equations~(\ref{eq:TTinB}) of the form $B_0(s)=\exp(i \eta s)$, $B_h(s)=\xi \exp(i \eta s)$,  we obtain
 \begin{equation}
@@ -376,7 +377,7 @@ Hence
 \xi_{1,2}=\frac{b u_h}{\pm a-\omega} = \frac{\omega \pm a}{u_{-h}}.    
 \end{equation}
 
-Some useful expressions are
+Some useful simple expressions are
 \begin{subequations}
 \label{eq:TTuseful}
 \begin{align}
@@ -396,13 +397,13 @@ B_h(s) = &c_1 \xi_1 \exp(i a s) + c_2 \xi_2 \exp(-i a s) = \nonumber \\
 &(c_1 \xi_1+c_2 \xi_2) \cos(as) + (c_1 \xi_1-c_2 \xi_2) i \sin(as),
 \end{align}
 \end{subequations}
-where coefficients $c_{1,2}$ will be calculated from the boundary conditions. They are different for the Laue and Bragg cases.
+where the coefficients $c_{1,2}$ will be calculated from the boundary conditions. They are different for the Laue and Bragg cases.
 
 \subsection{Boundary conditions in a generic case: the Transfer matrix}
 \label{sec:transferMatrix}
 
-In many practical cases of a crystal slab we are interested in knowing the electric fields at the top surface ($s$=0) or/and at the bottom surface ($s=T=z/\gamma_0=t_c/\cos\theta_0$ with $t_c$ the thickness of the crystal). Some boundary conditions are know, usually the incident beam.   
-We can express the fields at the bottom surface $(D_0(T),D_h(T))$ as a function of those at the top surface $(D_0(0),D_h(0))$, so we can write in matrix form
+In many practical cases of a crystal parallel slab we are interested in knowing the electric fields at the top surface ($s$=0) or/and at the bottom surface ($s=T=z/\gamma_0=t_c/\cos\theta_0$ with $t_c$ the thickness of the crystal). Some boundary conditions are know, usually the incident beam.   
+We can express the fields at the bottom surface $(D_0(T),D_h(T))$ in terms of those at the top surface $(D_0(0),D_h(0))$, in a matrix form
 \begin{equation}\label{eq:Mtransfer}
     \begin{pmatrix}
     D_0(T)\\
@@ -455,7 +456,7 @@ m_{22} &= \left[ \cos(aT)+i \frac{\omega}{a}\sin(aT) \right] \inblue{\exp(i T (u
 \end{align}
 \end{subequations}
 
-The matrix $M$ has a determinant equal to one \inblue{if we exclude the exponential terms related to absorption. This is a confirmation of the energy conservation}. It can be verified that $M^2$ is of the same form as $M$ where $T$ is replaced by $2T$ (the addition of two equal layers behaves like a single layer of double thickness). Last, but not least, these equations are valid for both Bragg and Laue cases \inblue{(using, the adequate values $b$, $a$ and $\omega$).} 
+The matrix $M$ has a determinant equal to one \inblue{if we exclude the exponential term related to absorption. This is a confirmation of the energy conservation}. It can be verified that $M^2$ is of the same form as $M$ where $T$ is replaced by $2T$ (the addition of two equal layers behaves like a single layer of double thickness). Last, but not least, these equations are valid for both Bragg and Laue cases \inblue{(using, the adequate values $b$, $a$ and $\omega$).} 
 
 % For the case studien in section~\ref{sec:TTsolutionsBragg}, the initial conditions are 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -475,7 +476,7 @@ t = D_0(T) = m_{11} = & \left(\cos(a T) - i \omega\frac{\sin(a T)}{a}  \right) e
 \end{empheq}
 \end{subequations}
 
-The \inblue{diffraction profile (intensity distribution)}, often \inblue{incorrectly} referred as rocking curve, is obtained from equations~(\ref{eq:lauerandt}) as $\mathcal{R}=|r(\theta,\lambda)|^2 \times P$, with $P=1/|b|$ is a power factor (see \cite{ZachariasenBook}). The forward diffracted profile (or transmitted) is $\mathcal{T}=|t|^2$. \inblue{There are called hereafter reflectance ($\mathcal{R}$) and transmittance ($\mathcal{T}$)}. An example is in Fig.~\ref{fig:laueProfiles}. 
+The \inblue{diffraction profile (intensity distribution)}, often \inblue{incorrectly} referred to rocking curve, is obtained from equations~(\ref{eq:lauerandt}) as $\mathcal{R}=|r(\theta,\lambda)|^2 \times P$, with $P=1/|b|$ is a power factor (see \cite{ZachariasenBook}). The forward diffracted profile (or transmitted) is $\mathcal{T}=|t|^2$. \inblue{There are called hereafter reflectance ($\mathcal{R}$) and transmittance ($\mathcal{T}$)}. An example is in Fig.~\ref{fig:laueProfiles}. 
 
 
 \begin{figure}\label{fig:laueProfiles}
@@ -510,7 +511,7 @@ which depends on $\theta$. At $\theta=\theta_c$ we find the usual value $\Lambda
 \subsection{Bragg case}
 \label{sec:TTsolutionsBragg}
 
-For the Bragg case $b<0$. Considering $T$ the path length of the incident beam in the crystal, and a ``normalized" incident beam $D_0(0)=1$. The other boundary condition is found at the bottom surface, where there is no diffracted field in the ascendant direction $D_h(T)=0$. Knowing $(D_0(0),D_h(T)) = (1,0)$, we have the unknows $(D_0(T),D_h(0))$ and we have to modify  the transfer equation~(\ref{eq:Mtransfer}) to get the ``Bragg case scattering matrix"
+For the Bragg case $b<0$. Considering $T$ the path length of the incident beam in the crystal, and a ``normalized" incident beam $D_0(0)=1$. The other boundary condition is found at the bottom surface, where there is no diffracted field in the ascendant direction $D_h(T)=0$. Knowing $(D_0(0),D_h(T)) = (1,0)$, we have the unknows $(D_0(T),D_h(0))$ and we have to modify  the transfer equation~(\ref{eq:Mtransfer}) to get the ``Bragg case scattering matrix" $S$
 
 \begin{equation}\label{eq:scatteringMatrix}
     \begin{pmatrix}
@@ -544,7 +545,7 @@ For the Bragg case $b<0$. Considering $T$ the path length of the incident beam i
 \end{equation}
 
 
-The amplitudes are, after a small algebraic calculations, 
+The amplitudes are, after a simple algebraic calculations,  using $D_0(0)=1$ and $D_h(T)=0$, are
 \begin{subequations}
 \label{eq:braggrandt}
 \begin{empheq}[box=\fbox]{align}
@@ -555,7 +556,7 @@ t = D_0(T)=s_{11}=
 \end{empheq}
 \end{subequations}
 
-The diffraction profiles are $\mathcal{R}=|r|^2 P$ (diffracted beam or reflectance) and $\mathcal{T}=|t|^2$ (forward diffracted beam or transmittance).
+The diffraction profiles are $\mathcal{R}=|r|^2 P$ (diffracted intensity or reflectance) and $\mathcal{T}=|t|^2$ (forward diffracted intensity or transmittance).
 An example is in Fig.~\ref{fig:braggProfiles}. 
 
 \begin{figure}\label{fig:braggProfiles}
@@ -673,8 +674,8 @@ by using the infinite sum $r_2=r(1 + (t \bar{t} / (1-r \bar{r})))=s_{21}(1 + (s_
 }
 
 \inblue{
-Equations~(\ref{eq:lauerandt}) and (\ref{eq:braggrandt}) are expressed in terms of $a$, but it is clearly seen that they depend only on $a^2=bu_h u_{-h}+\omega^2$ which is a complex number. Let us chose $a$ such that $\operatorname{Im}(a)>0$. Then  
-$\exp(iaT)=\exp[iT\operatorname{Re}(a)-T\operatorname{Im}(a)]\rightarrow 0$, as $T\rightarrow \infty$; cosequently $\sin(aT)\approx (i/2) \exp(-i a T)$, $\cos(aT)\approx (1/2) \exp(-i a T)$. The reflectivity of the Bragg case [equation~(\ref{eq:braggrandt}a)] take a simplified form
+Equations~(\ref{eq:lauerandt}) and (\ref{eq:braggrandt}) are expressed in terms of $a$, but it is clearly seen that they depend only on $a^2=bu_h u_{-h}+\omega^2$ which is a complex number. Let us choose $a$ such that $\operatorname{Im}(a)>0$. Then  
+$\exp(iaT)=\exp[iT\operatorname{Re}(a)-T\operatorname{Im}(a)]\rightarrow 0$, as $T\rightarrow \infty$; consequently $\sin(aT)\approx \inred{-}(i/2) \exp(-i a T)$, $\cos(aT)\approx (1/2) \exp(-i a T)$. The reflectivity of the Bragg case [equation~(\ref{eq:braggrandt}a)] take a simplified form
 \begin{equation}\label{eq:thickbraggr}
     r = \frac{b u_h}{a-\omega} = \frac{a+\omega}{u_{-h}},
 \end{equation}
@@ -683,7 +684,7 @@ where $a$ can be obtained from $a^2$ as:
 a = \frac{1}{\sqrt{2}} \left[ \frac{\operatorname{Im}(a^2)}{\sqrt{|a^2|-\operatorname{Re}(a^2)}} + i \sqrt{|a^2|-\operatorname{Re}(a^2)} \right].
 \end{equation}
 
-Equation~(\ref{eq:thickbraggr}) is a very useful result, as most of the crystal monochromators used in synchrotron radiation use thick crystals in Bragg (reflection) mode. For all other geometries (Bragg transmission, and both Laue cases) the approximation $T\rightarrow \infty$ makes the exponential term tends to zero, therefore there is no intensity at the back crystal surface. If we apply the approximations mentioned, but leave the exponential term (with a reasonable small $T$, thus small absorption), we obtain diffraction intensity distributions that do not present Pendell\"osung. The simplified form of equation~ (\ref{eq:braggrandt}b) is   
+Equation~(\ref{eq:thickbraggr}) is a useful result, as most crystal monochromators used in synchrotron radiation are thick crystals in Bragg (reflection) mode. For all other geometries (Bragg transmission, and both Laue cases) the approximation $T\rightarrow \infty$ makes the exponential term tends to zero, therefore there is no intensity at the back crystal surface. If we apply the approximations mentioned, but leave the exponential term (with a reasonable small $T$, thus small absorption), we obtain diffraction intensity distributions that do not present Pendell\"osung. The simplified form of equation~ (\ref{eq:braggrandt}b) is   
 \begin{equation}\label{eq:thickbraggt}
     t = \frac{2a}{a-\omega} e^{i T (u_0+\omega+a)},
 \end{equation}
