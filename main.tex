@@ -148,7 +148,7 @@ Almost every synchrotron radiation beamline operating at hard X-rays makes use o
 Most beamlines use crystal monochromators, typically in the DCM (double crystal monochromator) mode, but polychromators or single-crystal Laue monochromators can be also found. In addition, crystal analyzers are used in most spectroscopy beamlines. 
 Beamline simulation tools used for the design, optimization, and commissioning of synchrotron instrumentation, implement in software the equations to calculate the reflectivity of perfect crystals. The theory of diffraction (see \cite{authierbook} for a complete reference) puts the basis of all numeric implementations. 
 
-There are lots of simulation tools implementing the equations of the dynamical theory in different forms. This variate scenario is even more complex if we consider that the calculation of the crystal structure factor, which is an essential ingredient to calculating diffracted amplitudes and intensities, is obtained from tabulated scattering functions of multiple origins. The wide menu of available methods and tools can be found even in the single suite OASYS \cite{codeOASYS}, which provides multiple solutions for calculating diffraction profiles of crystals (e.g. INPRO\footnote{\texttt{https://github.com/oasys-kit/xoppy\_externa\_codes/tree/master/src/INPRO}}, CRYTSTAL \cite{codeCRYSTAL}, X-RAY Server \cite{codeXRAYserver}), as well as beamline simulation tools (based on the ray tracing code SHADOW \cite{codeSHADOW}) and physical wave-optics simulations with SRW \cite{codeSRW, codeSRWcrystals}. This scenario has heritaged decades of developments and have witnessed several synchrotron radiation generations. The work presented here looks into the future to improve this situation. We have two objectives: deriving the equations of the crystal reflectivities from first principles and implementing them in a well-documented open-source software library.
+There are many simulation tools implementing the equations of the dynamical theory in different forms. This variate scenario is even more complex if we consider that the calculation of the crystal structure factor, which is an essential ingredient to calculating diffracted amplitudes and intensities, is obtained from tabulated scattering functions of multiple origins. A wide collection of software methods and tools can be found even in a single application, such as the OASYS suite \cite{codeOASYS}, which provides multiple solutions for calculating diffraction profiles of crystals [e.g. INPRO\footnote{\texttt{https://github.com/oasys-kit/xoppy\_externa\_codes/tree/master/src/INPRO}}, CRYSTAL \cite{codeCRYSTAL}, X-RAY Server \cite{codeXRAYserver}], as well as beamline simulation tools [based on the ray tracing code SHADOW \cite{codeSHADOW}] and physical wave-optics simulations with SRW \cite{codeSRW, codeSRWcrystals}. This scenario has heritaged decades of developments and have witnessed several synchrotron radiation generations. The work presented here aims to improve this situation for the future. We have two objectives: deriving the equations of the crystal reflectivities from first principles and implementing them in a well-documented open-source software library.
 
 In section~\ref{sec:TT} we derive the Takagi-Taupin (TT) equations \cite{Takagi1962, Taupin, Taupin1967} equations.
 In section~\ref{sec:TTsolutions} we solve the TT equations for a plane undeformed-crystal.
@@ -179,8 +179,8 @@ where
 the sum goes over all reciprocal lattice vectors $\textbf{h}$ with (hkl) Miller indices. 
 The spacing of the (hkl) reflection is $d_\text{hkl}=2 \pi/|\textbf{h}|$.
 
-For an incident plane wave $\exp(i\textbf{k}_0 . \textbf{r})$ in vacuum, the ``two-waves case" of Bragg diffraction, considered in this paper, \inred{one can define} a single vector $\textbf{k}_h \equiv \textbf{k}_0+\textbf{h}$ is close to the geometrical Bragg condition \inred{$|\textbf{h}|=2 k \sin\theta_B$}. \inred{It verifies} $|\textbf{k}_h|=|\textbf{k}_0| = k$.
-The wave-field $\Psi(\textbf{r})$ \inred{in the crystal} can be written as  
+For an incident plane wave $\exp(i\textbf{k}_0 . \textbf{r})$ in vacuum, the ``two-waves case" of Bragg diffraction, considered in this paper, one can define a single vector $\textbf{k}_h \equiv \textbf{k}_0+\textbf{h}$ is close to the geometrical Bragg condition $|\textbf{h}|=2 k \sin\theta_B$. It verifies $|\textbf{k}_h|=|\textbf{k}_0| = k$.
+The wave-field $\Psi(\textbf{r})$ in the crystal can be written as  
 \begin{equation}
 \label{eq:wavefield}
     \Psi(\textbf r) = D_0(\textbf r) e^{i \textbf k_0 . \textbf r} + D_h(\textbf r) e^{i \textbf k_h . \textbf r}.
@@ -477,7 +477,7 @@ We can express the fields at the back surface $(D_0(T),D_h(T))$ in terms of thos
 \end{equation}
 
 According to equation~(\ref{eq:DSolutionsCompact}), the elements of the transfer matrix are
-\begin{subequations}\label{eq:scatteringMatrix }
+\begin{subequations}\label{eq:MtransferElements}
 \begin{align}
 m_{11} &= \left[ \cos(aT)-i\frac{\omega}{a}\sin(aT) \right] e^{i T (u_0+\omega)};\\
 m_{12} &= i \frac{u_{-h}}{a}\sin(aT) e^{i T (u_0+\omega)};\\
@@ -488,9 +488,52 @@ m_{22} &= \left[ \cos(aT)+i \frac{\omega}{a}\sin(aT) \right] e^{i T (u_0+\omega)
 
 The determinant of the matrix $M$ is equal to one \inred{for a non-absorbing crystal (in this case $u_0$ and $\omega$ are real)}.
 % if we exclude the exponential term related to normal absorption and refraction. 
-This is agreement with the expected energy conservation. It can be verified that $M(T_1+T_2)=M(T_1) M(T_2)$ and $M(-T)=[M(T)]^{-1}$. Last, but not least, equations~(\ref{eq:DSolutionsCompact}) are valid for both Bragg and Laue cases (using the adequate values of $b$, $a$ and $\omega$). 
+This is agreement with the expected energy conservation. It can be verified that $M(T_1+T_2)=M(T_1) M(T_2)$ and $M(-T)=[M(T)]^{-1}$. Last, but not least, equations~(\ref{eq:DSolutionsCompact}) are valid for both Bragg and Laue cases (using the adequate values of $b$, $a$ and $\omega$).
 
-\todo{Discuss $M$ for the thick crystal approximation.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{The transfer matrix for the thick crystal approximation}
+\label{sec:Mthick}
+
+The equations~(\ref{eq:DSolutionsCompact}) and the matrix elements (\ref{eq:MtransferElements}) are expressed in terms of $a$ but they depend only on $a^2$.
+It is possible to write it as 
+\begin{equation}\label{eq:Mfactorized}
+    M =
+    \frac{e^{i(u_0+\omega+a)T}}{2a}
+    \begin{pmatrix}
+    a-\omega & u_{-h}\\
+    b u_h & a + \omega
+    \end{pmatrix}
+    \times 
+    \frac{e^{i(u_0+\omega-a)T}}{2a}
+    \begin{pmatrix}
+    a+\omega & -u_{-h}\\
+    -b u_h & a - \omega
+    \end{pmatrix}, 
+\end{equation}
+where the two \inred{factors} are interchangeable when $a$ is changed in $-a$. They correspond to the two roots of $a^2$. The real part of the argument of the exponential factors is equal to $-T[(b-1)/2 \operatorname{Im} u_0 \pm \operatorname{Im} a]$. Normal absorption is represented as $\exp[-T(b-1)/2 \operatorname{Im} u_0]$. Let us set $\operatorname{Im}a>0$. The absorption will be more than normal for the first matrix, and less than normal for the second one. If $T \operatorname{Im}a  \gtrsim 5$, we can \inred{neglect one of the factors in equation~(\ref{eq:Mfactorized}): \begin{equation}\label{eq:Mthickapprox}
+    M \approx \begin{cases} 
+    \frac{e^{i(u_0+\omega+a)T}}{2a}
+    \begin{pmatrix}
+    a-\omega & u_{-h}\\
+    b u_h & a + \omega
+    \end{pmatrix}, & \text{if $\operatorname{Im}a<0$}.\\
+    
+    \frac{e^{i(u_0+\omega-a)T}}{2a}
+    \begin{pmatrix}
+    a+\omega & -u_{-h}\\
+    -b u_h & a - \omega
+    \end{pmatrix}, & \text{if $\operatorname{Im}a>0$}.
+    \end{cases}
+\end{equation} 
+
+An x-ray beam may go trough such a ``thick crystal" in the condition of Bragg diffraction, where it would be normally absorbed. This is a manifestation of the Bormann effect (anomalour absorption).
+}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -507,7 +550,7 @@ t_L = D_0(T) = m_{11} = & \left(\cos(a T) - i \omega\frac{\sin(a T)}{a}  \right)
 \end{empheq}
 \end{subequations}
 
-The reflecting power, or diffraction profile, often referred to rocking curve, is obtained from equations~(\ref{eq:lauerandt}) as $\mathcal{R}(\theta)=|r(\theta)|^2 P$, with $P=1/|b|$ the power factor (see \cite{ZachariasenBook} \inred{pag. 122}). The forward diffracted profile (or transmitted) is $\mathcal{T}=|t|^2$. There are called hereafter reflectance ($\mathcal{R}$) and transmittance ($\mathcal{T}$). An example is in Fig.~\ref{fig:laueProfiles}. 
+The reflecting power, or diffraction profile, often referred as rocking curve, is obtained from equations~(\ref{eq:lauerandt}) as $\mathcal{R}(\theta)=|r(\theta)|^2 P$, with $P=1/|b|$ the power factor (see \cite{ZachariasenBook} \inred{pag. 122}). The forward diffracted profile (or transmitted) is $\mathcal{T}=|t|^2$. There are called hereafter reflectance ($\mathcal{R}$) and transmittance ($\mathcal{T}$). An example is in Fig.~\ref{fig:laueProfiles}. 
 
 
 \begin{figure}\label{fig:laueProfiles}
@@ -531,7 +574,7 @@ It is also interesting to consider the case of incidence along the direction of 
     \end{pmatrix}
     = M.
 \end{equation}
-This means that for the Laue case the matrix $M$ can be considered as the ``transfer-matrix" of the crystal slab, as well as the ``scattering-matrix" (S-matrix) which relates the vacuum waves leaving the crystal to the vacuum waves entering it. The term S-matrix is usual in the general scattering theory.  
+This means that for the Laue case the matrix $M$ can be considered as the ``transfer-matrix" of the crystal slab, as well as the ``scattering-matrix" ($S$-matrix) which relates the vacuum waves leaving the crystal to the vacuum waves entering it. The term $S$-matrix is usual in the general scattering theory.  
 
 Note that $u_{0,h,-h}$, $\omega$ and $a$ in equations~(\ref{eq:lauerandt}) are complex. The careful look at the real and imaginary parts leads to common expressions for absorption and Pendell\"osung. 
 
@@ -552,12 +595,10 @@ At $\theta=\theta_c$, $b \chi_h \chi_{-h}+w^2=b \chi_h \chi_{-h} - [(1/2)(b-1)\o
     \Lambda =\frac{\lambda}{\operatorname{Re}\sqrt{\chi_h\chi_{-h}}} \cos\theta_B.
 \end{equation}
 
-
-\todo{Discuss the Bormann effect in the case of the thick crystal approximation...}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{\inred{Reflectance, transmittance and S-matrix} in the Bragg case (reflection)}
+\subsection{\inred{Reflectance, transmittance and S-matrix} in the Bragg case (reflection geometry)}
 \label{sec:TTsolutionsBragg}
 
 In this case $b<0$. $T$ is, again, the path length in the crystal of the incident beam along $\textbf{k}_0$.
@@ -570,8 +611,8 @@ Similarly, in the case of incidence on the crystal back side along the direction
     \bar{t}_B = \frac{1}{m_{22}} \text{ and } \bar{r}_B = \frac{m_{12}}{m_{22}}.
 \end{equation}
 
-Consequently, S-matrix for the Bragg case is represented as 
-\begin{equation}\label{eq:scatteringMatrix}
+Consequently, $S$-matrix for the Bragg case is represented as 
+\begin{equation}\label{eq:scatteringMatrixDefinition}
     \begin{pmatrix}
     D_0(T)\\
     D_h(0)
@@ -581,29 +622,31 @@ Consequently, S-matrix for the Bragg case is represented as
         \begin{pmatrix}
     D_0(0) \\
     D_h(T)
-    \end{pmatrix}
-    =
+    \end{pmatrix},
+\end{equation}
+with
+\begin{equation}\label{eq:scatteringMatrix}
+    S = 
     \begin{pmatrix}
     s_{11} & s_{12}\\
     s_{21} & s_{22}
     \end{pmatrix}
+    =
     \begin{pmatrix}
-    D_0(0) \\
-    D_h(T)
+    m_{11}-\frac{m_{12} m_{21}}{m_{22}} & 
+    \frac{m_{12}}{m_{22}}\\
+    -\frac{m_{21}}{m_{22}} & 
+    \frac{1}{m_{22}}
     \end{pmatrix}
-        =
+    =
     \begin{pmatrix}
-    t_B=m_{11}-\frac{m_{12} m_{21}}{m_{22}} & 
-    \bar{r}_B=\frac{m_{12}}{m_{22}}\\
-    r_B=-\frac{m_{21}}{m_{22}} & 
-    \bar{t}_B=\frac{1}{m_{22}}
-    \end{pmatrix}
-    \begin{pmatrix}
-    D_0(T) \\
-    D_h(0)
+    t_B& 
+    \bar{r}_B\\
+    r_B& 
+    \bar{t}_B
     \end{pmatrix}.
 \end{equation}
-Particularly,
+Particularly, using equations~(\ref{eq:MtransferElements}),
 \begin{subequations}
 \label{eq:braggrandt}
 \begin{empheq}[box=\fbox]{align}
@@ -649,26 +692,10 @@ An example of simulation of the field inside the crystal using equations~(\ref{e
     }
 \end{figure}
 
-\inblue{
-The matrix method permits to obtain the complex reflection and transmission amplitudes of a crystal made by layers of different crystals (or the same crystal with different orientations). For that,
-i) construct the transfer matrix of the total crystal by multiplication\footnote{\inred{The multiplication be from bottom to top, i.e. $M=M_n M_{n-1}...M_2 M_1$}}
-of the transfer matrices of the different layers [each one calculated using equations~(\ref{eq:scatteringMatrix })];
-ii) if geometry is Laue, obtain reflectance and transmittance using the coefficients $m_{21}$ and $m_{11}$ of this matrix [equation~(\ref{eq:lauerandt})], respectively; otherwise (Bragg geometry), compute the scattering matrix using equation~(\ref{eq:scatteringMatrix}) and reflectance and transmittance are given in the matrix terms $s_{21}$ and $s_{11}$ [equation~(\ref{eq:braggrandt})], respectively. This method can be used for analyzing distorted and bent crystals and will be explored in a future work.
-
-As a simple application of this recipe, consider a bilayer of two identical crystal layers of thickness $T$ and transfer matrix $M$. Using matrix analysis, the transfer matrix of the bilayer is $[M(T)]^2=M(2T)$ from which is easy to compute the reflectivity in Bragg geometry [equation~(\ref{eq:braggrandt})]. Otherwise, if this result would be obtained via the reflectivities ($r$ and $\bar{r}$) and transmittivities ($t$ and $\bar{t}$) of the single layer (S-matrix), the reflectivity of the bilayer results from an infinite series as shown in  Fig.~\ref{fig:doublelayer}.
-}
-
-\begin{figure}\label{fig:doublelayer}
-    \centering
-    \includegraphics[width=0.49\textwidth]{figures/figlayered2.pdf}
-    \includegraphics[width=0.49\textwidth]{figures/doublelayer2.png}
-    \caption{Example of calculation of the reflection amplitude $r_2$ of a Si 111 crystal of \SI{2}{\micro\meter} thickness from the amplitudes of the half-layer (\SI{1}{\micro\meter}). The reflectivity of the bilayer $r_2$ can be obtained as an infinite sum $r_2 = r + r t \bar{t} + r t \bar{t} (r \bar{r}) + r t \bar{t} (r \bar{r})^2 + ...= r[1 + t \bar{t}\sum_{n=0}^{\infty}(r\bar{r})^n]=r(1 + (t \bar{t} / (1-r \bar{r})))$. Calculations done with {\tt crystalpy} for a photon energy of 8 keV..}
-
-\end{figure}
 
 
 
-\todo{Discuss also the case of a thick crystal with a capping crystal layer. The final transfer matrix is then $M$ for the capping layer multiplied by the $M$ of the thick substrate...}
+% \todo{Discuss also the case of a thick crystal with a capping crystal layer. The final transfer matrix is then $M$ for the capping layer multiplied by the $M$ of the thick substrate...}
 
 % \section{Scattering and transfer matrices}
 % \label{sec:matrices}
@@ -713,43 +740,83 @@ As a simple application of this recipe, consider a bilayer of two identical crys
 
 % % Similarly, when the incident beam enters the crystal by the bottom surface, as studied in appendix~\ref{sec:braggfromtheback}, we set $(D_0(0),D_h(T))=(0,1)$ and  we get $s_{12}=\bar{r}; s_{22}=\bar{t}$, with $r$ and $t$ from equations (\ref{eq:braggrbarandtbar}) \todo{suppress the appendix?}.
 
-\inred{
-\subsection{Thick crystal approximation}\label{sec:thick}
-} \todo{Move this section to ``Bragg section", and obtain these results from the $M$ for the thick crystal}
+
+ % \todo{Move this section to ``Bragg section", and obtain these results from the $M$ for the thick crystal}
+
+
+
 
 \inred{
-Equations~(\ref{eq:lauerandt}) and (\ref{eq:braggrandt}) are expressed in terms of $a$, but it is clearly seen that they depend only on $a^2=bu_h u_{-h}+\omega^2$ which is a complex number. Let us choose $a$ such that $\operatorname{Im}(a)>0$. Then  
-$\exp(iaT)=\exp[iT\operatorname{Re}(a)-T\operatorname{Im}(a)]\rightarrow 0$, as $T\rightarrow \infty$; consequently $\sin(aT)\approx \inred{-}(i/2) \exp(-i a T)$, $\cos(aT)\approx (1/2) \exp(-i a T)$. The reflectivity of the Bragg case [equation~(\ref{eq:braggrandt}a)] take a simplified form
+In case of thick Bragg crystal, the reflection amplitude is given by $r_B=-m_{21}/m_{22}$ which from equation~(\ref{eq:Mthickapprox}) gives  
 \begin{equation}\label{eq:thickbraggr}
-    r = \frac{b u_h}{a-\omega} = \frac{a+\omega}{u_{-h}},
+    r_B^{\text{thick}} = \frac{b u_h}{a-\omega} = \frac{a+\omega}{u_{-h}},
 \end{equation}
 where $a$ can be obtained from $a^2$ as: 
 \begin{equation}
 a = \frac{1}{\sqrt{2}} \left[ \frac{\operatorname{Im}(a^2)}{\sqrt{|a^2|-\operatorname{Re}(a^2)}} + i \sqrt{|a^2|-\operatorname{Re}(a^2)} \right].
 \end{equation}
 
-Equation~(\ref{eq:thickbraggr}) is a useful result, as most crystal monochromators used in synchrotron radiation are thick crystals in Bragg (reflection) mode. For all other geometries (Bragg transmission, and both Laue cases) the approximation $T\rightarrow \infty$ makes the exponential term tends to zero, therefore there is no intensity at the back crystal surface. If we apply the approximations mentioned, but leave the exponential term (with a reasonable small $T$, thus small absorption), we obtain diffraction intensity distributions that do not present Pendell\"osung. The simplified form of equation~ (\ref{eq:braggrandt}b) is   
-\begin{equation}\label{eq:thickbraggt}
-    t = \frac{2a}{a-\omega} e^{i T (u_0+\omega+a)},
-\end{equation}
-and for the Laue case [equations (\ref{eq:lauerandt}b)] we get
-\begin{subequations}
-\label{eq:thicklaue}
-\begin{align}
-r = & - \frac{b u_h}{2 a} e^{iT (u_0+\omega-a)}  \\
-t = & \frac{1}{2} (1 + \frac{\omega}{a})e^{i T (u_0+\omega-a)}.
-\end{align}
-\end{subequations}
+Equation~(\ref{eq:thickbraggr}) is a useful result, as most crystal monochromators used in synchrotron radiation are thick crystals in Bragg (reflection) mode. 
+
+% For all other geometries (Bragg transmission, and both Laue cases) the approximation $T\rightarrow \infty$ makes the exponential term tends to zero, therefore there is no intensity at the back crystal surface. If we apply the approximations mentioned, but leave the exponential term (with a reasonable small $T$, thus small absorption), we obtain diffraction intensity distributions that do not present Pendell\"osung. The simplified form of equation~ (\ref{eq:braggrandt}b) is   
+% \begin{equation}\label{eq:thickbraggt}
+%     t_B = \frac{2a}{a-\omega} e^{i T (u_0+\omega+a)},
+% \end{equation}
+% and for the Laue case [equations (\ref{eq:lauerandt}b)] we get
+% \begin{subequations}
+% \label{eq:thicklaue}
+% \begin{align}
+% r_L = & - \frac{b u_h}{2 a} e^{iT (u_0+\omega-a)}  \\
+% t_L = & \frac{1}{2} (1 + \frac{\omega}{a})e^{i T (u_0+\omega-a)}.
+% \end{align}
+% \end{subequations}
+
 }
 
-\todo{
-\begin{itemize}
-    \item a high numerical precision is required for calculating $\sin(aT)$, $\cos(aT)$ and $\exp(iT(u_0+\omega))$ for large values of T. This is  a typical problem when calculating Bragg reflection case using a large $t_c$. Can we make a recipe to switch to the "thick" crystal model for $t_c>t_{\text{eff}}$. How to calculate $t_{\text{eff}}$? 
-\end{itemize}
-}
-\inblue{
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\inred{Calculation of raflection and transmission amplitudes using the transfer matrix}}
+
+The matrix method permits to obtain the complex reflection and transmission amplitudes of a crystal made by layers of different crystals (or the same crystal with different orientations). For that,
+i) construct the transfer matrix of the total crystal by multiplication\footnote{\inred{The multiplication be from bottom to top, i.e. $M=M_n M_{n-1}...M_2 M_1$}}
+of the transfer matrices of the different layers [each one calculated using equations~(\ref{eq:MtransferElements})];
+ii) if geometry is Laue, obtain reflectance and transmittance using the coefficients $m_{21}$ and $m_{11}$ of this matrix [equation~(\ref{eq:lauerandt})], respectively; otherwise (Bragg geometry), compute the scattering matrix using equation~(\ref{eq:scatteringMatrix}) and reflectance and transmittance are given in the matrix terms $s_{21}$ and $s_{11}$ [equation~(\ref{eq:braggrandt})], respectively.
+
+\inred{A first example shows how simple is to apply this recipe of multiplication of transfer matrices to get the reflectance of a simple two-layer crystal. Consider}
+a bilayer of two identical crystal layers of thickness $T$ and transfer matrix $M$ for each one. Using matrix analysis, the transfer matrix of the bilayer is $[M(T)]^2=M(2T)$ from which is easy to compute the reflectivity in Bragg geometry [equation~(\ref{eq:braggrandt})]. Otherwise, if this result would be obtained via the reflectivities ($r$ and $\bar{r}$) and transmittivities ($t$ and $\bar{t}$) of the single layer (S-matrix), the reflectivity of the bilayer results from an infinite series as shown in  Fig.~\ref{fig:doublelayer}.
+ 
+\begin{figure}\label{fig:doublelayer}
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/figlayered2.pdf}
+    \includegraphics[width=0.49\textwidth]{figures/doublelayer2.png}
+    \caption{Example of calculation of the reflection amplitude $r_2$ of a Si 111 crystal of \SI{2}{\micro\meter} thickness from the amplitudes of the half-layer (\SI{1}{\micro\meter}). The reflectivity of the bilayer $r_2$ can be obtained as an infinite sum $r_2 = r + r t \bar{t} + r t \bar{t} (r \bar{r}) + r t \bar{t} (r \bar{r})^2 + ...= r[1 + t \bar{t}\sum_{n=0}^{\infty}(r\bar{r})^n]=r(1 + (t \bar{t} / (1-r \bar{r})))$. Calculations done with {\tt crystalpy} for a photon energy of 8 keV..}
+\end{figure}
+
+
+A second example is the Bragg reflection of a crystal layer on a thick substrate. The transfer matrix of the set $M'$ is calculated as
+\begin{equation}
+    M' = M^{\text{thick}} \times M,
+\end{equation}
+with $M^{\text{thick}}$ the transfer matrix of the substrate and $M$ the transfer matrix of the thin layer. We are interested in the Bragg reflectance or 
+\begin{equation}
+r_B=-\frac{m'_{21}}{m'_{22}}=
+-\frac{m_{21}^{\text{thick}} m_{11} + m_{22}^{\text{thick}} m_{21}}
+{m_{21}^{\text{thick}} m_{12} + m_{22}^{\text{thick}} m_{22}}.
+\end{equation}
+This can be expressed as a function of the substrate reflectance $r_S=-m_{21}^{\text{thick}}/m_{22}^{\text{thick}}$ giving: 
+\begin{equation}
+r_B=\frac{r_S m_{11} - m_{12}}
+{m_{22}  - r_S m_{11}}.
+\end{equation}
+
+ The method of transfer matrix multiplication can also be used for analyzing distorted and bent crystals and will be explored in a future work.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{The direction of the incident and diffracted waves}\label{sec:directions}
-}
 \inblue{
 As mentioned before, the selection of the directions used to solve the TT equations contains some dose of arbitrarily. In our choice, $\textbf{k}_0$ vector corresponds exactly with the direction and wavelength of the incident ray or wave, which is not necessarily verifying the Bragg law.
 The vector $\textbf{k}_h$ (see section~\ref{sec:TT}) is defined as as $\textbf k_h=\textbf k_0 + \textbf h$. Therefore, it is not necessarily matching the wavevector of the outgoing ray or wave outside the crystal.
@@ -857,7 +924,8 @@ The {\tt DiffractionSetup} classes handle the information about the crystal setu
 {\tt crystal\_name} (a string, e.g. Si, Ge),
 {\tt thickness} (crystal thickness in SI units [m]),
 {\tt miller\_h(,k,l)} (the Miller indices),
-and {\tt asymmetry\_angle} (angle in degrees between the crystal surface and the planes $hkl$ as defined in \cite{codeCRYSTAL}, shown in figure~\ref{fig:edo_sketch}).
+and {\tt asymmetry\_angle} (angle in degrees between the crystal surface and the planes $hkl$ as defined in \cite{codeCRYSTAL}).
+% shown in figure~\ref{fig:edo_sketch}).
 
 To perform the main calculations (reflectivities, transfer matrices, diffracted photons, etc.) several methods in the {\tt Diffraction} class are used, getting the crystal setup and the photon bunch as inputs. For the moment, only flat perfect crystals are coded (in the {\tt PerfectCrystalDiffraction} class) which directly implements the formulation and theory in section~\ref{sec:TTsolutions}. For completeness, {\tt crystalpy} also includes the equations of the Zachariasen formalist~\cite{ZachariasenBook} and can be used instead of the ones described in this paper.
 Typical angle or photon scans as shown in Fig.~\ref{fig:braggProfiles} are calculated defining a $\tt ComplexAmplitudePhoton$ entity for each point, group then in a {\tt ComplexAmplitudePhotonBunch} for then calculate the diffraction by the crystal using {\tt calculateDiffractedComplexAmplitudes}. \todo{listing?} 
@@ -874,6 +942,12 @@ A user-friendly application has been written in the OASYS environment to compute
 
 In the ray tracing SHADOW4, all calculations related to crystal optics are delegated to  {\tt crystalpy}. Ray tracing permits simulations of beamline optics including a realistic description of the source. It also allows the simulation of curved crystals, under the assumption that the local reflectivity of the curved crystal is the same as for the flat crystal. This assumption is not always granted and has to be verified before ray tracing curved crystals. \todo{Example?}
 
+
+\todo{
+\begin{itemize}
+    \item a high numerical precision is required for calculating $\sin(aT)$, $\cos(aT)$ and $\exp(iT(u_0+\omega))$ for large values of T. This is  a typical problem when calculating Bragg reflection case using a large $t_c$. Can we make a recipe to switch to the "thick" crystal model for $t_c>t_{\text{eff}}$. How to calculate $t_{\text{eff}}$? 
+\end{itemize}
+}
 
 % \begin{figure}
 %     \centering
@@ -1018,7 +1092,7 @@ The solutions are
 \end{align}
 \end{subequations}
 with, \inred{as previously defined,} $a^2=\omega^2 + b u_h u_{-h}$, $a=\sqrt{\omega^2+b u_h u_{-h}}$
-hence one retrieve the same results of equations (\ref{eq:laueSolutionsB}) using the fact that  $(p^2+a^2)^{-1}$ and $p(p^2+a^2)^{-1}$ are the Laplace transform of \inred{ $\sin(a s)/a$ and $\cos(a s)$}, respectively. 
+hence one retrieve the same results of equations (\ref{eq:BSolutions}) using the fact that  $(p^2+a^2)^{-1}$ and $p(p^2+a^2)^{-1}$ are the Laplace transform of \inred{ $\sin(a s)/a$ and $\cos(a s)$}, respectively. 
 
 \todo{ REMOVE (NOT USED)? Using the formula $\sin(p+i q)=\sin p \cos(i q) + \cos p \sin(i q)=\sin p \cosh q + i \cos p \sinh q$. it is shown that $|\sin(a s)|^2=\sin^2(s \operatorname{Re}(a)) + \sinh^2(s \operatorname{Im}(a)$;
 }
@@ -1104,7 +1178,7 @@ In \cite{ZachariasenBook}, the diffracted and transmitted amplitudes for a singl
     t^Z_L &= \frac{x_2 c_1 - x_1 c_2}{x_2-x_1},
     \end{align}
 	\end{subequations}
-and for Bragg case\footnote{Note that in equation~(\ref{eq:ZacBragg}a) we write $(c_2-c_1)$ rather than $(c_1-c_2)$. This is not affecting the result shown by Zachariasen as the amplitudes are squared to give intensities. But for calculating the amplitudes the correct sign (as shown here) is important.} (equations [3.137] and [3.138]) 
+and for Bragg case\footnote{Note that in equation~(\ref{eq:ZacBragg}a) we write $(c_2-c_1)$ rather than $(c_1-c_2)$ as in Zachariasen's book. This does not affect the result shown by Zachariasen as the amplitudes are squared to give intensities. However, for calculating the amplitudes, the correct sign (as shown here) is important.} (equations [3.137] and [3.138]) 
 	\begin{subequations}
 	\label{eq:ZacBragg}
     \begin{align}
