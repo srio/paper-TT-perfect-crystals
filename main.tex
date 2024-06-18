@@ -81,7 +81,7 @@
 
 \begin{document}  % DO NOT DELETE THIS LINE
 
-\title{Formulation of perfect-crystal diffraction  from Takagi-Taupin equations. Numerical implementation in the \texttt{crystalpy} library.}
+\title{Formulation of perfect-crystal diffraction  from Takagi-Taupin equations. \\ Numerical implementation in the \texttt{crystalpy} library.}
 
 
 \cauthor[a]{Jean-Pierre}{Guigay}{guigay@esrf.eu}{address if different from \aff}
@@ -93,7 +93,7 @@
 \maketitle   % DO NOT DELETE THIS LINE
 
 \begin{synopsis}
-The Takagi-Taupin equations are solved in their simplest form (zero deformation) and equations of the diffracted and transmitted amplitudes are obtained. Then, the case of a multilayered crystal is discussed using a matrix model. The theory presented is coded in the open-source software package {\tt crystalpy}.
+The Takagi-Taupin equations are solved in their simplest form (zero deformation) and equations of the diffracted and transmitted amplitudes are obtained using a matrix model. The theory presented is coded in the open-source software package {\tt crystalpy}.
 \end{synopsis}
 
 \begin{abstract}
@@ -134,8 +134,8 @@ The scalar time-independent x-ray wave equation in a perfect crystal is the Helm
 \label{eq:helmholz}
     \Delta \Psi + k^2~(1+\chi(\textbf{r})) ~\Psi(\textbf{r}) = 0,
 \end{equation}
-with $\Psi(\textbf{r})$ is the wave-function, $k=2\pi/\lambda$, with $\lambda$ the wavelength. $\chi(\textbf{r})$ is the electric susceptibility (refractive index $n=\sqrt{1+\chi}$)
-that can be expanded in a Fourier series,
+with $\Psi(\textbf{r})$ is the wave-function, $k=2\pi/\lambda$, with $\lambda$ the wavelength, $\chi(\textbf{r})$ is the electric susceptibility (refractive index $n=\sqrt{1+\chi}$)
+that can be expanded in a Fourier series
 \begin{equation}
 \label{eq:chi}
     \chi(\textbf{r}) = \sum_{\textbf{h}} \chi_h ~\exp(i~\textbf{h} . \textbf{r}),
@@ -145,13 +145,13 @@ the sum goes over all reciprocal lattice vectors $\textbf{h}$ with (hkl) Miller 
 The spacing of the (hkl) reflection is $d_\text{hkl}=2 \pi/h$, where $h=|\textbf{h}|$.
 
 Let us consider an incident plane wave $\exp(i\textbf{k}_0 . \textbf{r})$ in vacuum. Its wavevector $\textbf{k}_0$, with modulus $k=|\textbf{k}_0|$, is close, but not exactly on the Bragg condition.
-In the ``two-beams case" of Bragg diffraction, considered in this paper, one can \textit{define} a single vector $\textbf{k}_h \equiv \textbf{k}_0+\textbf{h}$, \inblue{of modulus  $k_h=|\textbf{k}_h|$}.
+In the ``two-beams case" of Bragg diffraction, considered in this paper, one can \textit{define} a single vector $\textbf{k}_h \equiv \textbf{k}_0+\textbf{h}$, of modulus  $k_h=|\textbf{k}_h|$.
 % This vector will be used to define a dedicated reference frame.
 In general, the direction of $\textbf{k}_h$ does not correspond to the Bragg-diffracted wavevector in vacuum, and $k_h$ is slightly different from $k$.
 % The direction of the diffracted wave is discussed in section \ref{sec:directions}. 
 The deviation from the exact Bragg position is expressed by the parameter $\alpha$ ($\alpha \ll 1$)
  \footnote{In the``rotating crystal mode" $\alpha=4 \sin \theta_B (\sin \theta - \sin \theta_B) \approx 2 (\theta-\theta_B) \sin (2\theta_B)$, with $\theta$ the glancing angle on the reflective planes. Note that the approximated value of $\alpha$ is not valid far from the Bragg position or when $\cos\theta_B \rightarrow 0$ (normal incidence), therefore  equation~(\ref{eq:alpha}) is used in the {\tt crystalpy} software. }\footnote{
- The \inblue{definition of} $\alpha$ is made in such a way that $\alpha$ increases when $\theta$ increases. Our $\alpha$ has the opposite sign than the $\alpha$ defined in (equation [3.114b]) of \cite{ZachariasenBook}. 
+ The definition of $\alpha$ is made in such a way that $\alpha$ increases when $\theta$ increases. Our $\alpha$ has the opposite sign than the $\alpha$ defined in (equation [3.114b]) of \cite{ZachariasenBook}. 
  } defined as
 \begin{equation}
 \label{eq:alpha}
@@ -301,10 +301,10 @@ D_{0,h}(s) =
 \end{equation}
 with
 \begin{equation}\label{eq:omega}
-    \omega=\frac{ b \alpha' + (b-1) u_0}{2},
+    \omega=\frac{ b \alpha' + (b-1) u_0}{2}.
 \end{equation}
-\inblue{and the
-equations~(\ref{eq:TTinD}) are} 
+\inblue{The
+equations~(\ref{eq:TTinD}) become} 
 \begin{subequations}
 \label{eq:TTinB}
 \begin{align}
@@ -338,22 +338,22 @@ c_1=B_0(0) \frac{a-\omega}{2a}
 + B_h(0) \frac{u_{-h}}{2a}; 
 c_2=B_0(0)
 \frac{a+\omega}{2a} - 
-B_h(0) \frac{u_{-h}}{2a}. \nonumber
+B_h(0) \frac{u_{-h}}{2a}, \nonumber
 \end{equation}
-Consequently, 
+consequently
 \begin{subequations}
 \label{eq:preBSolutions}
 \begin{align}
 B_0(s) = &B_0(0) \frac{(a-\omega)e^{ias}-(a+\omega) e^{-ias}}{2a} +
-B_h(0) u_{-h} \frac{e^{ias} - e^{-ias}}{2a} \nonumber\\
+B_h(0) u_{-h} \frac{e^{ias} - e^{-ias}}{2a}, \nonumber\\
 B_h(s) = &B_0(0) b u_h 
 \frac{e^{ias}-e^{-ias}}{2a}
 + B_h(0) 
 \frac{(a+\omega) e^{ias}- (\omega-a) e^{-ias}}{2a}
-. \nonumber
+, \nonumber
 \end{align}
 \end{subequations}
-or, in a more compact form, and in terms of $D_{0,h}(s)$ [equation~(\ref{eq:Bdefinition})],
+or, in terms of $D_{0,h}(s)$ [equation~(\ref{eq:Bdefinition})] in a more compact form
 \begin{subequations}
 \label{eq:DSolutionsCompact}
 \begin{align}
@@ -614,7 +614,7 @@ t_B = m_{11} + m_{12} r_B=
 Similarly, in the case of incidence on the crystal back side along the direction $\textbf{k}_h$ (diffraction vector $-\textbf{h}$), we set  $D_h(T)=1$, $D_0(T)=\bar{r}_B$, $D_0(0)=0$ and $D_h(0)=\bar{t}_B$. Therefore 
 \begin{equation}\label{eq:MtransferBraggBack}
     \begin{pmatrix}
-    \bar{t}_B\\
+    \bar{r}_B\\
     0
     \end{pmatrix}
     =
@@ -708,7 +708,7 @@ An example of simulation of the field inside the crystal using equations~(\ref{e
 \end{figure}
 
 Fig.~\ref{fig:braggMap}b shows that the penetration of the incident wave inside the crystal is small with respect to the total crystal thickness. This is related to the penetration length or depth. In Fig.~\ref{fig:penetration} we fitted the intensity profile of $|D_0(s)|^2$ versus depth for each value of $\theta-\theta_B$.
-The fact that for a thick crystal in Bragg geometry $|D_0(s)|^2$ has significant values only in the vicinity of the crystal surface in the central region, can be explained from equations~(\ref{eq:bragginside}). The moduli of the functions $\sin(aT-as)$ and $\cos(aT-as)$ are approximately proportional to $\exp[(T-s)|\operatorname{Im}a|]$ if the argument of the exponential function is sufficiently large. Consequently, $|D_0(s)|^2$ is nearly proportional to $\exp[-2s(|\operatorname{Im}a|+(|b+1|)\operatorname{Im}u_0)]$. Writing $|D_0(s)|^2=\exp[-s/s_{ext}]$, with $s_{ext}$ the extinction length (measured along the $s_0$ axis), we obtain for the Bragg symmetric ($b=-1$) case  
+The fact that for a thick crystal in Bragg geometry $|D_0(s)|^2$ has significant values only in the vicinity of the crystal surface in the central region, can be explained from equations~(\ref{eq:bragginside}). The moduli of the functions $\sin(aT-as)$ and $\cos(aT-as)$ are approximately proportional to $\exp[(T-s)|\operatorname{Im}a|]$ if the argument of the exponential function is sufficiently large. Consequently, $|D_0(s)|^2$ is nearly proportional to $\exp[-2s(|\operatorname{Im}a|+|b+1|\operatorname{Im}u_0)]$. Writing $|D_0(s)|^2=\exp[-s/s_{ext}]$, with $s_{ext}$ the extinction length (measured along the $s_0$ axis), we obtain for the Bragg symmetric ($b=-1$) case  
 \begin{equation}\label{eq:extictionlength}
     s_{ext} = \frac{1}{2 |\operatorname{Im}a|}.
 \end{equation}
@@ -940,7 +940,7 @@ is obtained by inserting equation~(\ref{eq:rotatingField}) in (\ref{eq:helmholz}
 \begin{subequations}
 \begin{align}
 \frac{\partial A_0}{\partial s_0} =& \frac{ik}{2} \left[ \chi_0 A_0+ \chi_{-h} \exp(-i\phi) A_h\right]; \nonumber \\
-\frac{\partial A_h}{\partial s_h} =& \frac{ik}{2} \left[ \chi_0 A_h+ \chi_{h} \exp(+i\phi) A_0\right]. \nunomber
+\frac{\partial A_h}{\partial s_h} =& \frac{ik}{2} \left[ \chi_0 A_h+ \chi_{h} \exp(+i\phi) A_0 \right]. \nonumber
 \end{align}
 \end{subequations}
 
