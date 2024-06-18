@@ -81,7 +81,7 @@
 
 \begin{document}  % DO NOT DELETE THIS LINE
 
-\title{\inblue{Formulation of} perfect-crystal diffraction  from Takagi-Taupin equations. Numerical implementation in the \texttt{crystalpy} library.}
+\title{Formulation of perfect-crystal diffraction  from Takagi-Taupin equations. Numerical implementation in the \texttt{crystalpy} library.}
 
 
 \cauthor[a]{Jean-Pierre}{Guigay}{guigay@esrf.eu}{address if different from \aff}
@@ -119,37 +119,37 @@ Our research aims to tackle this challenge by consolidating the resources for cr
 
 In section~\ref{sec:TT} we derive the Takagi-Taupin (TT) equations \cite{Takagi1962, Taupin, Taupin1967} equations.
 In section~\ref{sec:TTsolutions} we solve the TT equations for a plane undeformed-crystal.
-Given known amplitudes at the entrance surface, the amplitudes along the incident and diffracted directions at the back surface are calculated via the transfer matrix (section~\ref{sec:transferMatrix}). For the Laue case, the transfer matrix \inblue{is directly} used to compute the diffracted and forward-diffracted (or transmitted) amplitudes (section~\ref{sec:TTsolutionsLaue}). For the Bragg case (section~\ref{sec:TTsolutionsBragg}) the transfer matrix is used to obtain the scattering matrix, which gives the diffracted and forward-diffracted (or transmitted) amplitudes. 
+Given known amplitudes at the entrance surface, the amplitudes along the incident and diffracted directions at the back surface are calculated via a transfer matrix (section~\ref{sec:transferMatrix}). For the Laue case, the transfer matrix is directly used to compute the diffracted and forward-diffracted (or transmitted) amplitudes (section~\ref{sec:TTsolutionsLaue}). For the Bragg case (section~\ref{sec:TTsolutionsBragg}) the transfer matrix is used to obtain the scattering matrix, which gives the diffracted and forward-diffracted (or transmitted) amplitudes. 
 Section~\ref{sec:crystalpy} is dedicated to the software implementation of the library \texttt{crystalpy}. A final summary and conclusions are in section~\ref{sec:summary}.
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Takagi-Taupin equations for a plane monochromatic incident wave}
+\section{Takagi-Taupin equations}
 \label{sec:TT}
 
 The scalar time-independent x-ray wave equation in a perfect crystal is the Helmholtz equation
 
 \begin{equation}
 \label{eq:helmholz}
-    \Delta \Psi + k^2 (1+\chi(\textbf{r})) \Psi(\textbf{r}) = 0,
+    \Delta \Psi + k^2~(1+\chi(\textbf{r})) ~\Psi(\textbf{r}) = 0,
 \end{equation}
-with $\Psi(\textbf{r})$ is the wave-function, $k=2\pi/\lambda$, with $\lambda$ the wavelength. $\chi$ is the electric susceptibility (refraction index $n=(1+\chi)^{1/2}$)
+with $\Psi(\textbf{r})$ is the wave-function, $k=2\pi/\lambda$, with $\lambda$ the wavelength. $\chi(\textbf{r})$ is the electric susceptibility (refractive index $n=\sqrt{1+\chi}$)
 that can be expanded in a Fourier series,
 \begin{equation}
 \label{eq:chi}
-    \chi(\textbf{r}) = \sum_{\textbf{h}} \chi_h \exp(i \textbf{h} . \textbf{r}),
+    \chi(\textbf{r}) = \sum_{\textbf{h}} \chi_h ~\exp(i~\textbf{h} . \textbf{r}),
 \end{equation}
 where 
 the sum goes over all reciprocal lattice vectors $\textbf{h}$ with (hkl) Miller indices. 
-The spacing of the (hkl) reflection is $d_\text{hkl}=2 \pi/h$, \inblue{where $h=|\textbf{h}|$}.
+The spacing of the (hkl) reflection is $d_\text{hkl}=2 \pi/h$, where $h=|\textbf{h}|$.
 
-Let us consider an incident plane wave $\exp(i\textbf{k}_0 . \textbf{r})$ in vacuum. Its wavevector $\textbf{k}_0$, with modulus $k=|\textbf{k}_0|$, is \inblue{close,
-% ($|\textbf{k}_h| \approx k$)
-but not exactly on the Bragg condition.} 
-% ($|\textbf{k}_h|= k$).
-In the ``two-beams case" of Bragg diffraction, considered in this paper, one can \textit{define} a single vector $\textbf{k}_h \equiv \textbf{k}_0+\textbf{h}$. This vector will be used to define a dedicated reference frame. In general, the direction of $\textbf{k}_h$ does not correspond to the \inblue{Bragg}-diffracted wavevector \inblue{in vacuum}, and its modulus $k_h=|\textbf{k}_h|$ is \inblue{slightly} different from $k$. The direction of the diffracted wave is discussed in section \ref{sec:directions}. 
-The deviation of $\textbf{k}_0$ from the exact Bragg position is expressed by the $\alpha$ parameter ($\alpha \ll 1$)
+Let us consider an incident plane wave $\exp(i\textbf{k}_0 . \textbf{r})$ in vacuum. Its wavevector $\textbf{k}_0$, with modulus $k=|\textbf{k}_0|$, is close, but not exactly on the Bragg condition.
+In the ``two-beams case" of Bragg diffraction, considered in this paper, one can \textit{define} a single vector $\textbf{k}_h \equiv \textbf{k}_0+\textbf{h}$, \inblue{of modulus  $k_h=|\textbf{k}_h|$}.
+% This vector will be used to define a dedicated reference frame.
+In general, the direction of $\textbf{k}_h$ does not correspond to the Bragg-diffracted wavevector in vacuum, and $k_h$ is slightly different from $k$.
+% The direction of the diffracted wave is discussed in section \ref{sec:directions}. 
+The deviation from the exact Bragg position is expressed by the parameter $\alpha$ ($\alpha \ll 1$)
  \footnote{In the``rotating crystal mode" $\alpha=4 \sin \theta_B (\sin \theta - \sin \theta_B) \approx 2 (\theta-\theta_B) \sin (2\theta_B)$, with $\theta$ the glancing angle on the reflective planes. Note that the approximated value of $\alpha$ is not valid far from the Bragg position or when $\cos\theta_B \rightarrow 0$ (normal incidence), therefore  equation~(\ref{eq:alpha}) is used in the {\tt crystalpy} software. }\footnote{
  The \inblue{definition of} $\alpha$ is made in such a way that $\alpha$ increases when $\theta$ increases. Our $\alpha$ has the opposite sign than the $\alpha$ defined in (equation [3.114b]) of \cite{ZachariasenBook}. 
  } defined as
@@ -157,37 +157,38 @@ The deviation of $\textbf{k}_0$ from the exact Bragg position is expressed by th
 \label{eq:alpha}
 \alpha = \frac{k^2-k_h^2}{k^2} = \frac{k^2-|\textbf k_0 + \textbf h|^2}{k^2} = - \frac{\textbf h^2 + 2 \textbf k_0 . \textbf h}{k^2}.
 \end{equation}
-\todo{REMOVE, IT HAS BEEN MOVED TO PHYSICAL MEANING? Expressing this equation as a function of the angles, we note that $h=2k \sin\theta_B$, being $\theta_B$ the geometrical Bragg angle, and $\textbf{k}_0 . \textbf{h}= -k h \sin\theta$, with $\theta$ the glancing angle of $\textbf{k}_0$ with respect to the reflecting planes. Therefore $\alpha=4\sin\theta_B (\sin\theta-\sin\theta_B)$.}
 
-The wave-field $\Psi(\textbf{r})$ in the crystal is the sum of ``two modulated plane waves": 
+The wave-field $\Psi(\textbf{r})$ in the crystal is set empirically as the sum of ``two modulated plane waves"
 \begin{equation}
 \label{eq:wavefield}
-    \Psi(\textbf r) = D_0(\textbf r) e^{i \textbf k_0 . \textbf r} + D_h(\textbf r) e^{i \textbf k_h . \textbf r}.
+    \Psi(\textbf r) = D_0(\textbf r) e^{i \textbf k_0 . \textbf r} + D_h(\textbf r) e^{i \textbf k_h . \textbf r},
 \end{equation}
-It is furthermore considered that the amplitudes $D_{0,h}(\textbf{r})$ are ``slowly varying functions", thus neglecting the 2$^{\text{nd}}$ order derivatives of $D_{0,h}$ in the calculation of $\Delta \Psi(\textbf{r})$
+in which the amplitudes $D_{0,h}(\textbf{r})$ are considered as ``slowly varying functions", thus neglecting their 2$^{\text{nd}}$ order derivatives in $\Delta \Psi(\textbf{r})$,
 \begin{equation}
-\Delta[D_{0,h}(\textbf{r}) \exp(i\textbf{k}_{0,h} . \textbf{r})] \approx 
- [2 i \textbf{k}_{0,h} . \nabla D_{0,h} - k^2_{0,h} D_{0,h}] \exp(i\textbf{k}_{0,h} . \textbf{r}), \nonumber
+\Delta[D_{0,h}(\textbf{r}) \exp(i\textbf{k}_{0,h} . \textbf{r})] 
+\inblue{=}
+ [2 i \textbf{k}_{0,h} . \nabla D_{0,h} \inblue{+ (k}- k^2_{0,h} ) D_{0,h}] \exp(i\textbf{k}_{0,h} . \textbf{r}), \nonumber
 \end{equation}
-
-In the \inblue{expansion} of $\chi(\textbf{r}) \Psi(\textbf{r})$, using the \inblue{equations~(\ref{eq:chi}) and (\ref{eq:wavefield})}, we \inblue{write separately} the terms containing either $\exp(i \textbf{k}_0 . \textbf{r})$ or $\exp(i \textbf{k}_h . \textbf{r})$, and do not consider the other terms\footnote{
+\inblue{thus giving
+\begin{equation}\label{eq:approxDeltaPsi}
+    \Delta\Psi + k^2\Psi= 
+    \exp(i \textbf{k}_0.\textbf{r})
+    \left[ 2 i \textbf{k}_0 . \nabla D_0 \right] + 
+    \exp(i \textbf{k}_h.\textbf{r})
+    \left[ 2 i \textbf{k}_k . \nabla D_h + (k-k_h) D_h \right]).
+\end{equation}
+}
+In the product $\chi(\textbf{r}) \Psi(\textbf{r})$, using the equations~(\ref{eq:chi}) and (\ref{eq:wavefield}), we write separately the terms containing either $\exp(i \textbf{k}_0 . \textbf{r})$ or $\exp(i \textbf{k}_h . \textbf{r})$, and do not consider the other terms\footnote{
 We discarded the terms $\chi_h D_h \exp(i (\textbf{k}_0+2\textbf{h}) . \textbf{r}) + \chi_{-h} D_0 \exp(i (\textbf{k}_0 - 2 \textbf{h}) .\textbf{r})$,
 in such a way that the two-beam approximation is maintained.},
 \begin{equation}
 \label{eq:approxchiPsi}
 \chi\Psi =
 [\chi_0 D_0 + \chi_{-h} D_h ] \exp(i \textbf{k}_0 . \textbf{r}) +
-[\chi_h D_0 + \chi_0 D_h] \exp(i \textbf{k}_h . \textbf{r})+... \nonumber
+[\chi_h D_0 + \chi_0 D_h] \exp(i \textbf{k}_h . \textbf{r})+... 
 \end{equation}
 
-\inblue{Inserting this equation in (\ref{eq:helmholz}), we} obtain the TT equations 
-% \begin{subequations}
-% \label{eq:TTvector}
-% \begin{align}
-% 2 i \textbf{k}_0 . \nabla D_0 + \chi_0 k^2 D_0 + \chi_{-h} k^2 D_h =& 0; \\
-% 2 i \textbf{k}_h . \nabla D_h + (k^2 - k_h^2 + \chi_0 k^2) D_h + \chi_{h} k^2 D_0 =& 0.
-% \end{align}
-% \end{subequations}
+Inserting equations (\ref{eq:approxDeltaPsi}) and (\ref{eq:approxchiPsi}) in (\ref{eq:helmholz}), we obtain the TT equations 
 \begin{subequations}
 \label{eq:TTvectorAlpha}
 \begin{align}
@@ -196,18 +197,19 @@ in such a way that the two-beam approximation is maintained.},
 \end{align}
 \end{subequations}
 
-\inblue{We can use the oblique coordinates $(s_0,s_h)$ in the diffraction plane (the plane containing $\textbf{k}_0$ and $\textbf{h}$, \inred{as well as $\textbf{k}_h$}), with unit vectors of the axes 
-$\hat{ \textbf{s}}_{0}$ and $\hat{ \textbf{s}}_{h}$ (along $\textbf k_0$ and $\textbf k_h$), respectively.
-} 
+We can use the oblique coordinates $(s_0,s_h)$ in the diffraction plane (the plane containing $\textbf{k}_0$ and $\textbf{h}$, as well as $\textbf{k}_h$),
+with origin $O$ on the crystal surface and unit vectors 
+$\hat{ \textbf{s}}_{0}$ and $\hat{ \textbf{s}}_{h}$ along $\textbf k_0$ and $\textbf k_h$, respectively.
 A generic spatial position  $\textbf r=(s_0,s_h,s_t)$ should include a third coordinate $s_t$ along an axis $\hat{\textbf{s}}_t$ non coplanar with $\textbf{k}_0$ and $\textbf{k}_h$.
-\inblue{We can choose $\hat{ \textbf{s}}_{t}$ that lie in the crystal entrance (plane) surface, and perpendicular to the line that intersects the diffraction plane with the crystal surface plane.  
-}
-The \inblue{general} equation of the crystal surface is $\gamma_0 s_0 + \gamma_h s_h + \gamma_t s_t=0$, with $\gamma_{0,h,t}=\cos(\textbf{n} , \hat{\textbf{s}}_{0,h,t}) \equiv \cos(\theta_{0,h,t})$ the director cosines with respect to the inward normal of the entrance plane surface.  \inblue{The chosen direction of $\hat{ \textbf{s}}_{t}$ imply $\gamma_t=0$. }
-For any point $\textbf r=(s_0,s_h,s_t)$ inside the crystal, we introduce the path length $s$ of the incident ray going in this point: this ray enters the crystal at the point of coordinates $(s'_0,s_h,s_t)$ such that $\gamma_0 s'_0+\gamma_h s_h = 0$, so that 
+We can choose $\hat{ \textbf{s}}_{t}$ lying in the crystal entrance surface, and perpendicular to the \inblue{line intersecting the diffraction plane and the crystal surface plane}.  
+The equation of the crystal surface is $\gamma_0 s_0 + \gamma_h s_h \inblue{+ \gamma_t s_t}=0$, with $\gamma_{0,h,t}=\textbf{n}.\textbf{s}_{0,h,t} \equiv \cos(\theta_{0,h,t})$ the director cosines with respect to \inblue{$\textbf{n}$, the inward normal vector to the entrance plane surface}. The chosen direction of $\hat{ \textbf{s}}_{t}$ imply $\gamma_t=0$.
+
+\todo{ MOVE For any point $\textbf r=(s_0,s_h,s_t)$ inside the crystal, we introduce the path length $s$ of the incident ray going in this point: this ray enters the crystal at the point of coordinates $(s'_0,s_h,s_t)$ such that $\gamma_0 s'_0+\gamma_h s_h = 0$, so that 
 \begin{equation}
 \label{eq:s}
 s = s_0 - s'_0 = s_0 + s_h \frac{\gamma_h}{\gamma_0}.
 \end{equation}
+}
 
 The relation $d s_0 = \nabla s_0 . \textbf{r}= \nabla s_0 . [ d s_0 \hat{\textbf{s}}_0 + d s_h \hat{\textbf{s}}_h + d s_t \hat{\textbf{s}}_t ]$ implies $\nabla s_0 . \hat{\textbf{s}}_0=1$ and $\nabla s_0 . \hat{\textbf{s}}_{h,t}=0$. Similarly, $\nabla s_h . \hat{\textbf{s}}_h=1$ and $\nabla s_h . \hat{\textbf{s}}_{0,t}=0$. Therefore, 
 \begin{subequations}
@@ -225,31 +227,32 @@ The relation $d s_0 = \nabla s_0 . \textbf{r}= \nabla s_0 . [ d s_0 \hat{\textbf
 \frac{\partial D}{\partial s_h}.
 \end{align}
 \end{subequations}
-Using the approximation
-\begin{equation}
-\label{eq:approxKH}
-\textbf k_h . \nabla D_h = 
+Using the approximation\footnote{
 \inblue{
-k \sqrt{1-\alpha} \frac{\partial D_h}{\partial s_h}}
+If approximation in equation (\ref{eq:approxKH}) were not used, the coefficients of $D_{0,h}$ in (\ref{eq:TT})b should be multiplied by $(1-\alpha)^{-1/2} \approx 1 + \alpha/2 + ...$; since $\chi_0$, $\chi_h$ and $\alpha$ are much smaller than one, we neglect the high-order terms.
+}
+}
+\begin{equation}\label{eq:approxKH}
+\textbf k_h . \nabla D_h = 
+k \sqrt{1-\alpha} \frac{\partial D_h}{\partial s_h}
 \approx k \frac{\partial D_h}{ \partial s_h},
 \end{equation}
 we obtain from equations~(\ref{eq:TTvectorAlpha})
-\begin{subequations}
-\label{eq:TT}
+\begin{subequations}\label{eq:TT}
 \begin{align}
-\frac{\partial D_0}{\partial s_0} =& \frac{ik}{2} \left[ \chi_0 D_0(s_0,s_h,s_t)+ \chi_{-h} D_h(s_0,s_h,s_t) \right]; \\
-\frac{\partial D_h}{\partial s_h} =& \frac{ik}{2} \left[ (\chi_0 + \alpha) D_h(s_0,s_h,s_t)+ \chi_{h} D_0(s_0,s_h,s_t) \right],
+\frac{\partial D_0}{\partial s_0} =& \frac{ik}{2} \left[ \chi_0 D_0+ \chi_{-h} D_h \right] = i u_0 D_0 + i u_{-h} D_h; \\
+\frac{\partial D_h}{\partial s_h} =& \frac{ik}{2} \left[ (\chi_0 + \alpha) D_h+ \chi_{h} D_0 \right] = i (u_0 + \alpha') D_h + i u_h D_0,
 \end{align}
 \end{subequations}
-or, in a more compact form,
-\begin{subequations}
-\label{eq:TTcompact}
-\begin{align}
-\frac{\partial D_0}{\partial s_0} =& i u_0 D_0(s_0,s_h,s_t) + i u_{-h} D_h(s_0,s_h,s_t); \\
-\frac{\partial D_h}{\partial s_h} =& i (u_0 + \alpha') D_h(s_0,s_h,s_t) + i u_{h} D_0(s_0,s_h,s_t),
-\end{align}
-\end{subequations}
-where the notation 
+% or, in a more compact form,
+% \begin{subequations}
+% \label{eq:TTcompact}
+% \begin{align}
+% \frac{\partial D_0}{\partial s_0} =& i u_0 D_0(s_0,s_h,s_t) + i u_{-h} D_h(s_0,s_h,s_t); \\
+% \frac{\partial D_h}{\partial s_h} =& i (u_0 + \alpha') D_h(s_0,s_h,s_t) + i u_{h} D_0(s_0,s_h,s_t),
+% \end{align}
+% \end{subequations}
+where we used the notation 
 \begin{subequations}
 \label{eq:uandalphaprime}
 \begin{align}
@@ -257,32 +260,31 @@ where the notation
      \alpha'  &= \frac{k}{2}  \alpha.
 \end{align}
 \end{subequations}
-is used.
-\todo{REMOVED, IT HAS BEEN MOVED TO PHYSICAL MEANING? Note that $\alpha'=2 k \sin\theta_B(\sin\theta-\sin\theta_B)=h(\sin\theta-\sin\theta_B)$.}
-An equivalent form of the TT equations~(\ref{eq:TT}) is obtained in appendix~\ref{appendix:rotating}, using oblique axes along the directions of the geometrical Bragg \inblue{law}, and applying a crystal rotation.
+
+An equivalent form of the TT equations~(\ref{eq:TT}) is obtained in appendix~\ref{appendix:rotating}, using oblique axes along the directions of the geometrical Bragg law, and applying a crystal rotation.
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Solutions of TT equations}
+\section{Solutions of TT equations  for a plane monochromatic incident wave}
 \label{sec:TTsolutions}
 
 It is interesting to consider first the effects of refraction and absorption without Bragg diffraction. 
-Setting $u_{-h}=0$ in equation~(\ref{eq:TTcompact}a), we obtain the following equation for the refracted amplitude 
+Setting $u_{-h}=0$ in equation~(\ref{eq:TT}a), we obtain the following equation for the refracted amplitude 
 \begin{equation}\label{eq:refraction}
 \frac{\partial D_0^{\text{ref}}}{\partial s_0} = i u_0 D_0^{\text{ref}}.
 \end{equation}
-The solution of equation~(\ref{eq:refraction}) that satisfies the boundary conditions $D_0^{\text{ref}}=1$ for  $\gamma_0 s_0 + \gamma_h s_h + \gamma_t s_t=0$ (equation of the crystal surface) is $D_0^{\text{ref}}= \exp[i u_0 (s_0 + s_h \gamma_h/\gamma_0)]$.
+Its solution satisfies the boundary conditions $D_0^{\text{ref}}=1$ for  $\gamma_0 s_0 + \gamma_h s_h =0$ (equation of the crystal surface) is $D_0^{\text{ref}}= \exp[i u_0 (s_0 + s_h \gamma_h/\gamma_0)]$.
 
-We will now consider the solutions of the TT equations~(\ref{eq:TTcompact}) depending on the single variable $s=s_0+s_h \gamma_h/\gamma_0$, which means 
+We will now consider the solutions of the TT equations~(\ref{eq:TT}) depending on the single variable $s=s_0+s_h \gamma_h/\gamma_0$, which means 
 $\partial D_{0} / \partial  s_{0}=D'_{0}(s)$ and $\partial D_{h} / \partial s_{h}=D'_{h}(s)\gamma_h/\gamma_0$.
 Defining 
 \begin{equation}\label{eq:b}
 b = \frac{\gamma_0}{\gamma_h},    
 \end{equation}
-the equations~(\ref{eq:TTcompact}) become
+the equations~(\ref{eq:TT}) become
 \begin{subequations}
 \label{eq:TTinD}
 \begin{align}
@@ -290,18 +292,19 @@ D'_0(s) =& i u_0 D_0(s) + i u_{-h} D_h(s); \\
 D'_h(s) =& i b (u_0 + \alpha') D_h(s) + i b u_{h} D_0(s).
 \end{align}
 \end{subequations}
-
-It is convenient to introduce the functions $B_{0,h}(s)$ by setting
+\inblue{To make these equations more symmetrical, we} introduce the functions $B_{0,h}(s)$ by setting
 \begin{equation}
 \label{eq:Bdefinition}
-D_{0,h}(s) = \exp \left[ i s \frac{u_0 + b (u_0+\alpha')}{2} \right] B_{0,h}(s) = \exp[i s (u_0+\omega)] B_{0,h}(s),  
+D_{0,h}(s) = 
+\exp \left[ i s \frac{u_0 + b (u_0+\alpha')}{2} \right] B_{0,h}(s) = 
+\exp[i s (u_0+\omega)] B_{0,h}(s),  
 \end{equation}
 with
 \begin{equation}\label{eq:omega}
-    \omega=\frac{ b \alpha' + (b-1) u_0}{2}.
+    \omega=\frac{ b \alpha' + (b-1) u_0}{2},
 \end{equation}
-
-The differential equations\inblue{~(\ref{eq:TTinD}) expressed as a function of} $B_{0,h}(s)$ are 
+\inblue{and the
+equations~(\ref{eq:TTinD}) are} 
 \begin{subequations}
 \label{eq:TTinB}
 \begin{align}
@@ -309,18 +312,16 @@ B'_0(s) =& -i \omega B_0(s) + i u_{-h} B_h(s); \\
 B'_h(s) =& i \omega B_h(s) + i b u_{h} B_0(s).
 \end{align}
 \end{subequations}
-\inblue{
-They have special solutions of the form\footnote{these solutions are the Ewald wavefields discussed in detail in \cite{authierbook} using the dispersion surface.} $B_0(s)=\exp(i a s)$ and $B_h(s)=\xi \exp(i a s)$, which introduced in equation~(\ref{eq:TTinB}) give $\xi=bu_h/(a-\omega)=(a+\omega)/u_{-h}$ and 
+They have special solutions of the form\footnote{these solutions are the Ewald wavefields discussed in detail in \cite{authierbook} using the dispersion surface.} $B_0(s)=\exp(i a s)$ and $B_h(s)=\xi \exp(i a s)$, which, introduced in equation~(\ref{eq:TTinB}), give $\xi=bu_h/(a-\omega)=(a+\omega)/u_{-h}$ and 
 \begin{equation}\label{eq:a}
     a^2=b u_h u_{-h}+\omega^2.
 \end{equation}
-}
 The general solution of equation~(\ref{eq:TTinB}) is
 \begin{subequations}
 \label{eq:BSolutions}
 \begin{align}
 B_0(s) = &c_1 \exp(i a s) + c_2 \exp(-i a s), \\
-B_h(s) = &c_1 \inblue{\frac{a+\omega}{u_{-h}}} \exp(i a s) + c_2 
+B_h(s) = &c_1 \frac{a+\omega}{u_{-h}} \exp(i a s) + c_2 
 \inblue{\frac{\omega-a}{u_{-h}}} \exp(-i a s).
 \end{align}
 \end{subequations}
@@ -330,8 +331,7 @@ B_h(s) = &c_1 \inblue{\frac{a+\omega}{u_{-h}}} \exp(i a s) + c_2
 %     a^2 = b u_h u_{-h} + \omega^2
 % \end{equation}
 % }
-\inblue{
-From these equations, in the case $s=0$, we obtain
+For the case $s=0$, we obtain
 \begin{equation}
 \label{eq:cs}
 c_1=B_0(0) \frac{a-\omega}{2a}
@@ -345,15 +345,14 @@ Consequently,
 \label{eq:preBSolutions}
 \begin{align}
 B_0(s) = &B_0(0) \frac{(a-\omega)e^{ias}-(a+\omega) e^{-ias}}{2a} +
-B_h(0) u_{-h} \frac{e^{ias} - e^{-ias}}{2a}\\
+B_h(0) u_{-h} \frac{e^{ias} - e^{-ias}}{2a} \nonumber\\
 B_h(s) = &B_0(0) b u_h 
 \frac{e^{ias}-e^{-ias}}{2a}
 + B_h(0) 
 \frac{(a+\omega) e^{ias}- (\omega-a) e^{-ias}}{2a}
-.
+. \nonumber
 \end{align}
 \end{subequations}
-}
 or, in a more compact form, and in terms of $D_{0,h}(s)$ [equation~(\ref{eq:Bdefinition})],
 \begin{subequations}
 \label{eq:DSolutionsCompact}
@@ -369,25 +368,22 @@ e^{-is(u_0+\omega)} D_h(s) = & i b \frac{u_h}{a} \sin(as) D_0(0) +
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Expressions of  $\alpha$, $\omega$ and $a$ as a function of angles}
 \label{sec:physical_meaning}
-\inblue{
 %%%%%%%%%% alpha
 Expressing $\alpha$ [equation~(\ref{eq:alpha})] as a function of the angles, we note that $h=2k \sin\theta_B$, being $\theta_B$ the geometrical Bragg angle, and $\textbf{k}_0 . \textbf{h}= -k h \sin\theta$, with $\theta$ the glancing angle of $\textbf{k}_0$ with respect to the reflecting planes. Therefore
 \begin{equation}\label{eq:alphavsangles}
     \alpha=4\sin\theta_B (\sin\theta-\sin\theta_B),
 \end{equation}
 %%%%%%%%%% alpha'
-$\alpha'$ [equation~(\ref{eq:uandalphaprime})] is
+$\alpha'$ [equation~(\ref{eq:uandalphaprime})], and $\omega$ [equation~(\ref{eq:omega})] are
 \begin{equation}\label{eq:alphaprimevsangles}
     \alpha'=2 k \sin\theta_B(\sin\theta-\sin\theta_B)=h(\sin\theta-\sin\theta_B),
 \end{equation}
-%%%%%%%%%% omega
-and $\omega$ [equation~(\ref{eq:omega})]
 \begin{equation}\label{eq:omegavsangles}
     \omega=\frac{b h}{2} (\sin\theta-\sin\theta_B) + \frac{b-1}{2} u_0.
 \end{equation}
 
 %%%%%%%%%% thetac
-We define the ``corrected Bragg angle" taking into account the effect of the refraction. It is obtained as the $\theta$ value such that $\operatorname{Re} \omega=0$, or
+The ``corrected Bragg angle" $\theta_c$, in which the effect of the refraction is taken into account, is obtained as the $\theta$ value such that $\operatorname{Re} \omega=0$, or
 \begin{equation}\label{eq:correctedBraggAngleExact}
    \sin\theta_c - \sin\theta_B = \frac{1-b}{b h} \operatorname{Re}(u_0),  
 \end{equation}
@@ -408,7 +404,9 @@ Equations (\ref{eq:BSolutions}) and (\ref{eq:DSolutionsCompact}) are expressed i
 Using equation~(\ref{eq:omegavsthetac}) in equation~(\ref{eq:a}) we obtain
 \begin{subequations}\label{eq:avsthetac}
 \begin{align}
-\operatorname{Re}a^2&=\left[ \frac{bh}{2}(\sin\theta-\sin\theta_c) \right]^2 - \left[ \frac{(b-1)}{2}(\operatorname{Im}u_0) \right]^2 + \operatorname{Re}(b u_h u_{-h})  \\
+\operatorname{Re}a^2&=\left[ bh
+\frac{\sin\theta-\sin\theta_c}{2}
+\right]^2 - \left[ \frac{b-1}{2}\operatorname{Im}u_0 \right]^2 + \operatorname{Re}(b u_h u_{-h})  \\
 \operatorname{Im}a^2 &= \frac{b(b-1)}{2} h  (\sin\theta-\sin\theta_c) \operatorname{Im}u_0 + \operatorname{Im} (b u_h u_{-h}). 
 \end{align}
 \end{subequations}
@@ -425,7 +423,7 @@ Note that $a$ can be expressed in terms of $a^2$ as
 % \begin{equation}\label{eq:correctedBraggAngle}
 %    \theta_c \approx \theta_B + \frac{1-b}{2 b \sin2\theta_B} \operatorname{Re}(\chi_0).  
 % \end{equation}
-}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -470,9 +468,7 @@ m_{22} &= \left[ \cos(aT)+i \frac{\omega}{a}\sin(aT) \right] e^{i T (u_0+\omega)
 \end{subequations}
 
 The determinant of the matrix $M$ is 
-\inblue{
 $\text{det}(M)=\exp[2 i T (u_0+\omega)]$. Its modulus $|\text{det}(M)|\le 1$. It is one for a non-absorbing crystal ($u_0$ and $\omega$ are real).
-}
 This is in agreement with the expected energy conservation.
 It can be verified that $M(T_1+T_2)=M(T_1) M(T_2)$ and $M(-T)=[M(T)]^{-1}$. Last, but not least, equation~(\ref{eq:Mtransfer}) is valid for both Bragg and Laue cases (with the adequate values of $b$, $a$ and $\omega$).
 
@@ -499,29 +495,27 @@ It is possible to write them as
     \end{pmatrix}, 
 \end{equation}
 where the two terms are interchangeable when $a$ is changed in $-a$. They correspond to the two roots of $a^2$.
-The real part of the argument of the exponential factors is $-T [\operatorname{Im} u_0 (b+1)/2  \pm \operatorname{Im} a]$.
-\inblue{
+\inblue{They also correspond to the two branches of the dispersion surface}. The real part of the argument of the exponential factors is $-T [\operatorname{Im} u_0 (b+1)/2  \pm \operatorname{Im} a]$.
 The factor called by convention ``normal absorption" is represented as $\exp[-T \operatorname{Im} u_0 (b+1)/2 ]$.
 When $\operatorname{Im}a<0$,
-the absorption is less than the typical absorption for the first matrix, and more than typical absorption for the second one. Similarly, for  $\operatorname{Im}a \ge 0$ the matrices present opposite behavior.  If $T |\operatorname{Im}a|$ is large (for example $T |\operatorname{Im}a|  \gtrsim 5$), we can keep only one term in equation~(\ref{eq:Mfactorized}):
-}
+the absorption is less than the typical absorption for the first matrix, and more than the typical absorption for the second one. Similarly, for  $\operatorname{Im}a \ge 0$ the matrices present opposite behavior.  If $T |\operatorname{Im}a|$ is large (for example $T |\operatorname{Im}a|  \gtrsim 5$), we can keep only one term in equation~(\ref{eq:Mfactorized}):
 \begin{equation}\label{eq:Mthickapprox}
     M^{\text{thick}} \approx \begin{cases} 
     \frac{e^{i(u_0+\omega+a)T}}{2a}
     \begin{pmatrix}
     a-\omega & u_{-h}\\
     b u_h & a + \omega
-    \end{pmatrix}, & \text{\inblue{with the choice} $\operatorname{Im}a<0$}.\\
+    \end{pmatrix}, & \text{with the choice} \operatorname{Im}a<0.\\
     
     \frac{e^{i(u_0+\omega-a)T}}{2a}
     \begin{pmatrix}
     a+\omega & -u_{-h}\\
     -b u_h & a - \omega
-    \end{pmatrix}, & \text{\inblue{with the choice} $\operatorname{Im}a>0$}.
+    \end{pmatrix}, & \text{with the choice} \operatorname{Im}a>0.
     \end{cases}
 \end{equation} 
 
-\inred{An x-ray beam may go partially through such a ``thick crystal" in the condition of Bragg diffraction, where it would be absorbed without Bragg diffraction.} This is a manifestation of the Borrmann effect (anomalous absorption).
+An x-ray beam may go partially through such a ``thick crystal" in the condition of Bragg diffraction, where it would be absorbed without Bragg diffraction. This is a manifestation of the Borrmann effect (anomalous absorption).
 
 
 
@@ -542,14 +536,14 @@ t_L = m_{11} = & \left(\cos(a T) - i \omega\frac{\sin(a T)}{a}  \right) e^{i T (
 \end{empheq}
 \end{subequations}
 
-The reflecting power, or diffraction profile, often referred as rocking curve, is obtained from equations~(\ref{eq:lauerandt}) as $\mathcal{R}(\theta)=|r(\theta)|^2 P$, with   the power factor $P=1/|b|$ (see \cite{ZachariasenBook} pag. 122). The forward diffracted profile (or transmitted) is $\mathcal{T}=|t|^2$. There are called hereafter reflectance ($\mathcal{R}$) and transmittance ($\mathcal{T}$). An example is shown in Fig.~\ref{fig:laueProfiles}. 
+The reflecting power, or diffraction profile, often referred to as rocking curve, is obtained from equations~(\ref{eq:lauerandt}) as $\mathcal{R}(\theta)=|r(\theta)|^2 P$, with   the power factor $P=1/|b|$ (see \cite{ZachariasenBook} pag. 122). The transmitted profile is $\mathcal{T}(\theta)=|t(\theta)|^2$. There are called hereafter reflectance ($\mathcal{R}$) and transmittance ($\mathcal{T}$). An example is shown in Fig.~\ref{fig:laueProfiles}. 
 
 
 \begin{figure}\label{fig:laueProfiles}
     \centering
     \includegraphics[width=0.49\textwidth]{figures/Laue_1.eps}
     \includegraphics[width=0.49\textwidth]{figures/Laue_2.eps}
-    \caption{Calculated reflectance and transmittance for a \SI{10}{\micro\meter} thick Laue Si 111 crystal at 8 keV, \inblue{with 65 degrees of asymmetric angle.}}
+    \caption{Calculated reflectance and transmittance for a \SI{10}{\micro\meter} thick Laue Si 111 crystal at 8 keV, with 65 degrees of asymmetric angle. \inblue{The Bragg angle is $\theta_B$=14.31$^\circ$}.}
 \end{figure}
 
 It is also interesting to consider the case of incidence along the direction of $\textbf{k}_h$ (diffraction vector $-\textbf{h}$), for which ($D_0(0), D_h(0)=(0,1)$. It is directly seen from equation~(\ref{eq:Mtransfer}) that the transmission and reflection amplitudes are $\bar{t}_L=m_{22}$ and $\bar{r}_L=m_{12}$ (note that in this case the reflection power factor will be $P=|b|$). These results can be written as
@@ -568,17 +562,17 @@ It is also interesting to consider the case of incidence along the direction of 
 \end{equation}
 This means that for the Laue case the matrix $M$ can be considered not only as ``transfer-matrix" of the crystal slab, but also as the ``scattering-matrix" ($S$-matrix) which relates the vacuum waves leaving the crystal to the vacuum waves entering it, in analogy with the $S$-matrix used in general scattering theory.  
 
-A careful look at the real and imaginary parts of the complex parameters $u_{0,h,-h}$ and $a$ leads to common expressions for absorption and Pendell\"osung. 
-The exponential factor in equations~(\ref{eq:lauerandt}) gives a pure absorption term, which is (using $u_0 +\omega=[(b+1)u_0+b\alpha']/2$ from equation~({\ref{eq:omega}}), 
+% A careful look at the real and imaginary parts of the complex parameters $u_{0,h,-h}$ and $a$ leads to common expressions for absorption and Pendell\"osung. 
+The exponential factor in equations~(\ref{eq:lauerandt}) gives a damping term, which is (using $u_0 +\omega=[(b+1)u_0+b\alpha']/2$ from equation~({\ref{eq:omega}}), 
 and noting that $\alpha'$ is real):  
 \begin{equation}
    \exp[\operatorname{Re}(-iT(u_0+\omega))] = 
     \exp[-T \frac{b+1}{2}\operatorname{Im}(u_0)].
 \end{equation}
-The Pendell\"osung effect is due to the oscillations of $|\sin(aT)|^2\inblue{=\sin^2(\operatorname{Re} aT) + \sinh^2(\operatorname{Im}aT)}$.
+The Pendell\"osung effect is due to the oscillations of $|\sin(aT)|^2=\sin^2(\operatorname{Re} aT) + \sinh^2(\operatorname{Im}aT)$.
 The Pendell\"osung distance (depending on $\theta$) along $s_0$ is thus equal to  
 $\pi / |\operatorname{Re} a|=\lambda / |\operatorname{Re}\sqrt{b\chi_h\chi_{-h} + w^2}|$, where $w=(\lambda / \pi) \omega $.
-At $\theta=\theta_c$, $b \chi_h \chi_{-h}+w^2=b \chi_h \chi_{-h} - [(\operatorname{Im}\chi_0(b-1)/2]^2$. In symmetric Laue case ($b$=1) we obtain the well-known formula of the Pendell\"osung distance along the direction normal to the crystal surface \inblue{[see, e.g., equation (3.48) in \cite{pinskerbook}]}
+At $\theta=\theta_c$, $b \chi_h \chi_{-h}+w^2=b \chi_h \chi_{-h} - [(\operatorname{Im}\chi_0(b-1)/2]^2$. In symmetric Laue case ($b$=1) we obtain the well-known formula of the Pendell\"osung distance along the direction normal to the crystal surface [see, e.g., equation (3.48) in \cite{pinskerbook}]
 \begin{equation}\label{eq:Pendellosung}
     \Lambda =\frac{\lambda \cos\theta_B}{|\operatorname{Re}\sqrt{\chi_h\chi_{-h}}|} .
 \end{equation}
