@@ -170,13 +170,15 @@ in which the amplitudes $D_{0,h}(\textbf{r})$ are considered as ``slowly varying
  [2 i \textbf{k}_{0,h} . \nabla D_{0,h} \inblue{+ (k}- k^2_{0,h} ) D_{0,h}] \exp(i\textbf{k}_{0,h} . \textbf{r}), \nonumber
 \end{equation}
 \inblue{thus giving
-\begin{equation}\label{eq:approxDeltaPsi}
+\begin{subequation}\label{eq:approxDeltaPsi}
+\begin{align}
     \Delta\Psi + k^2\Psi= 
     \exp(i \textbf{k}_0.\textbf{r})
-    \left[ 2 i \textbf{k}_0 . \nabla D_0 \right] + 
+    \left[ 2 i \textbf{k}_0 . \nabla D_0 \right] + \nonumber \\
     \exp(i \textbf{k}_h.\textbf{r})
     \left[ 2 i \textbf{k}_k . \nabla D_h + (k-k_h) D_h \right]).
-\end{equation}
+\end{align}
+\end{subequation}
 }
 In the product $\chi(\textbf{r}) \Psi(\textbf{r})$, using the equations~(\ref{eq:chi}) and (\ref{eq:wavefield}), we write separately the terms containing either $\exp(i \textbf{k}_0 . \textbf{r})$ or $\exp(i \textbf{k}_h . \textbf{r})$, and do not consider the other terms\footnote{
 We discarded the terms $\chi_h D_h \exp(i (\textbf{k}_0+2\textbf{h}) . \textbf{r}) + \chi_{-h} D_0 \exp(i (\textbf{k}_0 - 2 \textbf{h}) .\textbf{r})$,
@@ -204,7 +206,7 @@ A generic spatial position  $\textbf r=(s_0,s_h,s_t)$ should include a third coo
 We can choose $\hat{ \textbf{s}}_{t}$ lying in the crystal entrance surface, and perpendicular to the \inblue{line intersecting the diffraction plane and the crystal surface plane}.  
 The equation of the crystal surface is $\gamma_0 s_0 + \gamma_h s_h \inblue{+ \gamma_t s_t}=0$, with $\gamma_{0,h,t}=\textbf{n}.\textbf{s}_{0,h,t} \equiv \cos(\theta_{0,h,t})$ the director cosines with respect to \inblue{$\textbf{n}$, the inward normal vector to the entrance plane surface}. The chosen direction of $\hat{ \textbf{s}}_{t}$ imply $\gamma_t=0$.
 
-\todo{ MOVE For any point $\textbf r=(s_0,s_h,s_t)$ inside the crystal, we introduce the path length $s$ of the incident ray going in this point: this ray enters the crystal at the point of coordinates $(s'_0,s_h,s_t)$ such that $\gamma_0 s'_0+\gamma_h s_h = 0$, so that 
+\todo{ REMOVE or MOVE? For any point $\textbf r=(s_0,s_h,s_t)$ inside the crystal, we introduce the path length $s$ of the incident ray going in this point: this ray enters the crystal at the point of coordinates $(s'_0,s_h,s_t)$ such that $\gamma_0 s'_0+\gamma_h s_h = 0$, so that 
 \begin{equation}
 \label{eq:s}
 s = s_0 - s'_0 = s_0 + s_h \frac{\gamma_h}{\gamma_0}.
@@ -293,12 +295,14 @@ D'_h(s) =& i b (u_0 + \alpha') D_h(s) + i b u_{h} D_0(s).
 \end{align}
 \end{subequations}
 \inblue{To make these equations more symmetrical, we} introduce the functions $B_{0,h}(s)$ by setting
-\begin{equation}
+\begin{subequation}
 \label{eq:Bdefinition}
-D_{0,h}(s) = 
-\exp \left[ i s \frac{u_0 + b (u_0+\alpha')}{2} \right] B_{0,h}(s) = 
-\exp[i s (u_0+\omega)] B_{0,h}(s),  
-\end{equation}
+\begin{align}
+D_{0,h}(s) =& 
+\exp \left[ i s \frac{u_0 + b (u_0+\alpha')}{2} \right] B_{0,h}(s) = \nonumber \\ 
+&\exp[i s (u_0+\omega)] B_{0,h}(s), 
+\end{align}
+\end{subequation}
 with
 \begin{equation}\label{eq:omega}
     \omega=\frac{ b \alpha' + (b-1) u_0}{2}.
