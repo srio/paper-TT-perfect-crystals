@@ -144,8 +144,8 @@ where
 the sum goes over all reciprocal lattice vectors $\textbf{h}$ with (hkl) Miller indices. 
 The spacing of the (hkl) reflection is $d_\text{hkl}=2 \pi/h$, where $h=|\textbf{h}|$.
 
-Let us consider an incident plane wave $\exp(i\textbf{k}_0 . \textbf{r})$ in vacuum. Its wavevector $\textbf{k}_0$, with modulus $k=|\textbf{k}_0|$, is close, but not exactly on the Bragg condition.
-In the ``two-beams case" of Bragg diffraction, considered in this paper, one can \textit{define} a single vector $\textbf{k}_h \equiv \textbf{k}_0+\textbf{h}$, of modulus  $k_h=|\textbf{k}_h|$.
+Let us consider an incident plane wave $\exp(i\textbf{k}_0 . \textbf{r})$ in vacuum. Its wavevector $\textbf{k}_0$, with modulus $k=|\textbf{k}_0|$, is close to the Bragg condition for the diffraction vector $\textbf{h}$.
+In the ``two-beams case" of Bragg diffraction, considered in this paper, we \textit{define} $\textbf{k}_h \equiv \textbf{k}_0+\textbf{h}$, of modulus  $k_h=|\textbf{k}_h|$.
 % This vector will be used to define a dedicated reference frame.
 In general, the direction of $\textbf{k}_h$ does not correspond to the Bragg-diffracted wavevector in vacuum, and $k_h$ is slightly different from $k$.
 % The direction of the diffracted wave is discussed in section \ref{sec:directions}. 
@@ -180,9 +180,8 @@ in which the amplitudes $D_{0,h}(\textbf{r})$ are considered as ``slowly varying
 \end{align}
 \end{subequation}
 }
-In the product $\chi(\textbf{r}) \Psi(\textbf{r})$, using the equations~(\ref{eq:chi}) and (\ref{eq:wavefield}), we write separately the terms containing either $\exp(i \textbf{k}_0 . \textbf{r})$ or $\exp(i \textbf{k}_h . \textbf{r})$, and do not consider the other terms\footnote{
-We discarded the terms $\chi_h D_h \exp(i (\textbf{k}_0+2\textbf{h}) . \textbf{r}) + \chi_{-h} D_0 \exp(i (\textbf{k}_0 - 2 \textbf{h}) .\textbf{r})$,
-in such a way that the two-beam approximation is maintained.},
+In the product $\chi(\textbf{r}) \Psi(\textbf{r})$, using the equations~(\ref{eq:chi}) and (\ref{eq:wavefield}), we write separately the terms containing either $\exp(i \textbf{k}_0 . \textbf{r})$ or $\exp(i \textbf{k}_h . \textbf{r})$, and do not consider the other terms,
+% \footnote{We discarded the terms $\chi_h D_h \exp(i (\textbf{k}_0+2\textbf{h}) . \textbf{r}) + \chi_{-h} D_0 \exp(i (\textbf{k}_0 - 2 \textbf{h}) .\textbf{r})$,in such a way that the two-beam approximation is maintained.}
 \begin{equation}
 \label{eq:approxchiPsi}
 \chi\Psi =
@@ -203,15 +202,17 @@ We can use the oblique coordinates $(s_0,s_h)$ in the diffraction plane (the pla
 with origin $O$ on the crystal surface and unit vectors 
 $\hat{ \textbf{s}}_{0}$ and $\hat{ \textbf{s}}_{h}$ along $\textbf k_0$ and $\textbf k_h$, respectively.
 A generic spatial position  $\textbf r=(s_0,s_h,s_t)$ should include a third coordinate $s_t$ along an axis $\hat{\textbf{s}}_t$ non coplanar with $\textbf{k}_0$ and $\textbf{k}_h$.
-We can choose $\hat{ \textbf{s}}_{t}$ lying in the crystal entrance surface, and perpendicular to the \inblue{line intersecting the diffraction plane and the crystal surface plane}.  
-The equation of the crystal surface is $\gamma_0 s_0 + \gamma_h s_h \inblue{+ \gamma_t s_t}=0$, with $\gamma_{0,h,t}=\textbf{n}.\textbf{s}_{0,h,t} \equiv \cos(\theta_{0,h,t})$ the director cosines with respect to \inblue{$\textbf{n}$, the inward normal vector to the entrance plane surface}. The chosen direction of $\hat{ \textbf{s}}_{t}$ imply $\gamma_t=0$.
+We can choose $\hat{ \textbf{s}}_{t}$ to lie on the crystal entrance surface and be perpendicular to the intersection line of the diffraction plane and the crystal surface.
+The chosen direction of $\hat{\textbf{s}}_{t}$ implies $
+\hat{\textbf{n}}.\textbf{s}_t=0$.
+The equation of the crystal surface is $\gamma_0 s_0 + \gamma_h s_h =0$, with $\gamma_{0,h}=\textbf{n}.\textbf{s}_{0,h} \equiv \cos(\theta_{0,h})$ the director cosines with respect to \inblue{$\textbf{n}$, the unit inward normal vector to the entrance plane surface}.
 
-\todo{ REMOVE or MOVE? For any point $\textbf r=(s_0,s_h,s_t)$ inside the crystal, we introduce the path length $s$ of the incident ray going in this point: this ray enters the crystal at the point of coordinates $(s'_0,s_h,s_t)$ such that $\gamma_0 s'_0+\gamma_h s_h = 0$, so that 
-\begin{equation}
-\label{eq:s}
-s = s_0 - s'_0 = s_0 + s_h \frac{\gamma_h}{\gamma_0}.
-\end{equation}
-}
+% \todo{ REMOVE or MOVE? For any point $\textbf r=(s_0,s_h,s_t)$ inside the crystal, we introduce the path length $s$ of the incident ray going in this point: this ray enters the crystal at the point of coordinates $(s'_0,s_h,s_t)$ such that $\gamma_0 s'_0+\gamma_h s_h = 0$, so that 
+% \begin{equation}
+% \label{eq:s}
+% s = s_0 - s'_0 = s_0 + s_h \frac{\gamma_h}{\gamma_0}.
+% \end{equation}
+% }
 
 The relation $d s_0 = \nabla s_0 . \textbf{r}= \nabla s_0 . [ d s_0 \hat{\textbf{s}}_0 + d s_h \hat{\textbf{s}}_h + d s_t \hat{\textbf{s}}_t ]$ implies $\nabla s_0 . \hat{\textbf{s}}_0=1$ and $\nabla s_0 . \hat{\textbf{s}}_{h,t}=0$. Similarly, $\nabla s_h . \hat{\textbf{s}}_h=1$ and $\nabla s_h . \hat{\textbf{s}}_{0,t}=0$. Therefore, 
 \begin{subequations}
@@ -270,7 +271,7 @@ An equivalent form of the TT equations~(\ref{eq:TT}) is obtained in appendix~\re
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Solutions of TT equations  for a plane monochromatic incident wave}
+\section{Solutions of TT equations  for a plane wave incident on a crystal with plane entrance surface}
 \label{sec:TTsolutions}
 
 It is interesting to consider first the effects of refraction and absorption without Bragg diffraction. 
@@ -279,14 +280,18 @@ Setting $u_{-h}=0$ in equation~(\ref{eq:TT}a), we obtain the following equation 
 \frac{\partial D_0^{\text{ref}}}{\partial s_0} = i u_0 D_0^{\text{ref}}.
 \end{equation}
 Its solution satisfies the boundary conditions $D_0^{\text{ref}}=1$ for  $\gamma_0 s_0 + \gamma_h s_h =0$ (equation of the crystal surface) is $D_0^{\text{ref}}= \exp[i u_0 (s_0 + s_h \gamma_h/\gamma_0)]$.
-
-We will now consider the solutions of the TT equations~(\ref{eq:TT}) depending on the single variable $s=s_0+s_h \gamma_h/\gamma_0$, which means 
-$\partial D_{0} / \partial  s_{0}=D'_{0}(s)$ and $\partial D_{h} / \partial s_{h}=D'_{h}(s)\gamma_h/\gamma_0$.
-Defining 
+We define
 \begin{equation}\label{eq:b}
-b = \frac{\gamma_0}{\gamma_h},    
+b = \frac{\gamma_0}{\gamma_h}.    
 \end{equation}
-the equations~(\ref{eq:TT}) become
+
+We will now consider the solutions of the TT equations~(\ref{eq:TT}) depending on the single variable\footnote{
+For any point $\textbf r=(s_0,s_h,s_t)$, $s$ is the path length inside the crystal along $s_0$: the ray through $\textbf{r}$ enters the crystal at the point of coordinates $(s'_0,s_h,s_t)$ such that $\gamma_0 s'_0+\gamma_h s_h = 0$, so that 
+$s = s_0 - s'_0 = s_0 + s_h /b$.
+}
+$s=s_0+s_h / b$, which means 
+$\partial D_{0} / \partial  s_{0}=D'_{0}(s)$ and $\partial D_{h} / \partial s_{h}=D'_{h}(s)/b$.
+The equations~(\ref{eq:TT}) become
 \begin{subequations}
 \label{eq:TTinD}
 \begin{align}
@@ -295,8 +300,7 @@ D'_h(s) =& i b (u_0 + \alpha') D_h(s) + i b u_{h} D_0(s).
 \end{align}
 \end{subequations}
 \inblue{To make these equations more symmetrical, we} introduce the functions $B_{0,h}(s)$ by setting
-\begin{subequation}
-\label{eq:Bdefinition}
+\begin{subequation}\label{eq:BdefinitionNN}
 \begin{align}
 D_{0,h}(s) =& 
 \exp \left[ i s \frac{u_0 + b (u_0+\alpha')}{2} \right] B_{0,h}(s) = \nonumber \\ 
@@ -339,12 +343,12 @@ For the case $s=0$, we obtain
 \begin{equation}
 \label{eq:cs}
 c_1=B_0(0) \frac{a-\omega}{2a}
-+ B_h(0) \frac{u_{-h}}{2a}; 
++ B_h(0) \frac{u_{-h}}{2a};~ 
 c_2=B_0(0)
 \frac{a+\omega}{2a} - 
-B_h(0) \frac{u_{-h}}{2a}, \nonumber
+B_h(0) \frac{u_{-h}}{2a}. \nonumber
 \end{equation}
-consequently
+Consequently
 \begin{subequations}
 \label{eq:preBSolutions}
 \begin{align}
@@ -357,7 +361,9 @@ B_h(s) = &B_0(0) b u_h
 , \nonumber
 \end{align}
 \end{subequations}
-or, in terms of $D_{0,h}(s)$ [equation~(\ref{eq:Bdefinition})] in a more compact form
+or, in terms of $D_{0,h}(s)$ [equation~\inred{(15)}]
+% (\ref{eq:BdefinitionNN})]
+in a more compact form
 \begin{subequations}
 \label{eq:DSolutionsCompact}
 \begin{align}
@@ -399,6 +405,8 @@ The value of $\omega$ vs $\theta_c$ is obtained from equations~(\ref{eq:omegavsa
 \begin{equation}\label{eq:omegavsthetac}
     \omega=\frac{b h}{2} (\sin\theta-\sin\theta_c) + i \frac{b-1}{2} \operatorname{Im}u_0.
 \end{equation}
+\inblue{
+Note that, in our representation (using waves of the form $\exp(i\textbf{k}.\textbf{r})$), we have $\operatorname{Im}u_0=(k/2)\operatorname{Im}\chi_0>0$.}
 Equations (\ref{eq:BSolutions}) and (\ref{eq:DSolutionsCompact}) are expressed in terms of $a$, but they depend only on $a^2$. 
 % We want to express the dependence of $\omega$ [equation~(\ref{eq:omega})] and $a^2$ [equation~(\ref{eq:a})] on the misorientation of the incident wave from the Bragg condition.  
 % Starting with $\omega$ as [using equations~(\ref{eq:omega}), (\ref{eq:correctedBraggAngleExact}) and $\alpha'=h(\sin\theta-\sin\theta_B)$]
@@ -499,10 +507,11 @@ It is possible to write them as
     \end{pmatrix}, 
 \end{equation}
 where the two terms are interchangeable when $a$ is changed in $-a$. They correspond to the two roots of $a^2$.
-\inblue{They also correspond to the two branches of the dispersion surface}. The real part of the argument of the exponential factors is $-T [\operatorname{Im} u_0 (b+1)/2  \pm \operatorname{Im} a]$.
-The factor called by convention ``normal absorption" is represented as $\exp[-T \operatorname{Im} u_0 (b+1)/2 ]$.
-When $\operatorname{Im}a<0$,
-the absorption is less than the typical absorption for the first matrix, and more than the typical absorption for the second one. Similarly, for  $\operatorname{Im}a \ge 0$ the matrices present opposite behavior.  If $T |\operatorname{Im}a|$ is large (for example $T |\operatorname{Im}a|  \gtrsim 5$), we can keep only one term in equation~(\ref{eq:Mfactorized}):
+\inblue{They also correspond to the two branches of the dispersion surface}. 
+The real part of the argument of the exponential factors, $-T [\operatorname{Im} u_0 (b+1)/2  \pm \operatorname{Im} a]$, \inblue{is related to the absorption}.
+% The factor called by convention ``normal absorption" is represented as $\exp[-T \operatorname{Im} u_0 (b+1)/2 ]$.
+\inblue{When $\operatorname{Im}a<0$,
+the absorption is less than $\exp[-T \operatorname{Im} u_0 (b+1)/2 ]$ for the first matrix, and more than that for the second one.} Similarly, for  $\operatorname{Im}a \ge 0$ the matrices present opposite behavior.  If $T |\operatorname{Im}a|$ is large (for example $T |\operatorname{Im}a|  \gtrsim 5$), we can keep only one term in equation~(\ref{eq:Mfactorized}):
 \begin{equation}\label{eq:Mthickapprox}
     M^{\text{thick}} \approx \begin{cases} 
     \frac{e^{i(u_0+\omega+a)T}}{2a}
@@ -615,7 +624,8 @@ t_B = m_{11} + m_{12} r_B=
 \end{empheq}
 \end{subequations}
 
-Similarly, in the case of incidence on the crystal back side along the direction $\textbf{k}_h$ (diffraction vector $-\textbf{h}$), we set  $D_h(T)=1$, $D_0(T)=\bar{r}_B$, $D_0(0)=0$ and $D_h(0)=\bar{t}_B$. Therefore 
+Similarly, in the case of incidence on the crystal back side along the direction $\textbf{k}_h$ (diffraction vector $-\textbf{h}$), we set  $D_h(T)=1$, $D_0(T)=\bar{r}_B$, $D_0(0)=0$ and $D_h(0)=\bar{t}_B$.
+Therefore, [equation~(\ref{eq:Mtransfer})] gives 
 \begin{equation}\label{eq:MtransferBraggBack}
     \begin{pmatrix}
     \bar{r}_B\\
@@ -642,7 +652,7 @@ from which we obtain
 \end{empheq}
 \end{subequations}
 
-Consequently, the $S$-matrix for the Bragg case is represented as 
+Consequently, the $S$-matrix for the Bragg case, defined as 
 \begin{equation}\label{eq:scatteringMatrixDefinition}
     \begin{pmatrix}
     D_0(T)\\
@@ -655,7 +665,7 @@ Consequently, the $S$-matrix for the Bragg case is represented as
     D_h(T)
     \end{pmatrix},
 \end{equation}
-with
+is
 \begin{equation}\label{eq:scatteringMatrix}
     S = 
     % \begin{pmatrix}
@@ -707,12 +717,12 @@ An example of simulation of the field inside the crystal using equations~(\ref{e
     \caption{Calculations for a symmetric Si 111 at 8 keV with thickness $t_c=$\SI{50}{\micro\meter}. The graphs show the electric field intensity inside the crystal as a function of the 
     deviation angle $\theta-\theta_B$ and penetration ratio $-s/T$ (equivalent to a depth ratio $-t/t_c$), for
     a) Bragg $|D_h|^2$, b) Bragg $|D_0|^2$,
-    c) Laue $|D_h|^2$, d) Laue $|D_0|^2$.
+    c) Laue $|D_h|^2$, d) Laue $|D_0|^2$. \todo{CHANGE UNITS TO $\mu$rad}
     }
 \end{figure}
 
 Fig.~\ref{fig:braggMap}b shows that the penetration of the incident wave inside the crystal is small with respect to the total crystal thickness. This is related to the penetration length or depth. In Fig.~\ref{fig:penetration} we fitted the intensity profile of $|D_0(s)|^2$ versus depth for each value of $\theta-\theta_B$.
-The fact that for a thick crystal in Bragg geometry $|D_0(s)|^2$ has significant values only in the vicinity of the crystal surface in the central region, can be explained from equations~(\ref{eq:bragginside}). The moduli of the functions $\sin(aT-as)$ and $\cos(aT-as)$ are approximately proportional to $\exp[(T-s)|\operatorname{Im}a|]$ if the argument of the exponential function is sufficiently large. Consequently, $|D_0(s)|^2$ is nearly proportional to $\exp[-2s(|\operatorname{Im}a|+|b+1|\operatorname{Im}u_0)]$. Writing $|D_0(s)|^2=\exp[-s/s_{ext}]$, with $s_{ext}$ the extinction length (measured along the $s_0$ axis), we obtain for the Bragg symmetric ($b=-1$) case  
+The fact that for a thick crystal in Bragg geometry $|D_0(s)|^2$ has significant values only in the vicinity of the crystal surface, in the central region, can be explained from equations~(\ref{eq:bragginside}). The moduli of the functions $\sin(aT-as)$ and $\cos(aT-as)$ are approximately proportional to $\exp[(T-s)|\operatorname{Im}a|]$ if the argument of this exponential function is sufficiently large. Consequently, $|D_0(s)|^2$ is nearly proportional to $\exp[-s(2|\operatorname{Im}a|+|b+1|\operatorname{Im}u_0)]$. Writing $|D_0(s)|^2=\exp[-s/s_{ext}]$, with $s_{ext}$ the extinction length (measured along the $s_0$ axis), we obtain for the Bragg symmetric ($b=-1$) case  
 \begin{equation}\label{eq:extictionlength}
     s_{ext} = \frac{1}{2 |\operatorname{Im}a|}.
 \end{equation}
@@ -721,7 +731,7 @@ The fact that for a thick crystal in Bragg geometry $|D_0(s)|^2$ has significant
     \centering
     \includegraphics[width=0.6\textwidth]{figures/penetration.pdf}
 
-    \caption{Fit of the $|D_0|^2$ vs $t$ of Fig.~\ref{fig:penetration}b with a function $\exp(-t/t_{ext})$ to get the extinction depth $t_{ext}$. This result is compared with the calculated value from equation~(\ref{eq:extictionlength}) that gives $t_{ext}=\sin\theta_B s_{ext} = \sin\theta_B/(2 |\operatorname{Im} a|)$.
+    \caption{Fit of the $|D_0|^2$ vs $t$ of Fig.~\ref{fig:braggMap}b with a function $\exp(-t/t_{ext})$ to get the extinction depth $t_{ext}$. This result is compared with the calculated value from equation~(\ref{eq:extictionlength}) that gives $t_{ext}=\sin\theta_B s_{ext} = \sin\theta_B/(2 |\operatorname{Im} a|)$.
     }
 \end{figure}
 
@@ -736,15 +746,20 @@ In the case of thick (or semi-infinite) Bragg crystal, the reflection amplitude,
     \frac{b u_h}{a-\omega} = \frac{\omega+a}{u_{-h}}, ~~~ \text{with the choice} \operatorname{Im} a>0.
     \end{cases}
 \end{equation}
-Both equations are equivalent \inblue{assuming that the sign in $a=\pm \sqrt{a^2}$ is correctly selected}. The condition on $\operatorname{Im}(a)$ in equations~(\ref{eq:thickbraggr}) is in accordance with the physical condition that the tails go to zero when $|\sin\theta-\sin\theta_c|$ is large.
+Both equations are equivalent \inblue{assuming that the sign in $a=\pm \sqrt{a^2}$ is correctly selected}. The condition on $\operatorname{Im}(a)$ in equations~(\ref{eq:thickbraggr}) is in accordance with the physical condition that $|r_B|$ go to zero when $|\sin\theta-\sin\theta_c|$ is large.
 The condition $\operatorname{Im} a < 0$ [$\operatorname{Im} a > 0$] is equivalent\footnote{
-To see it, suppose $\sin\theta-\sin\theta_c>0$; this implies [equation~(\ref{eq:omegavsthetac})] $\operatorname{Re}\omega<0$ (note that $b<0$ for Bragg) and 
+To see it, suppose $\sin\theta-\sin\theta_c>0$; this implies [equation~(\ref{eq:omegavsthetac})] $\operatorname{Re}\omega<0$ (note that $b<0$ for the Bragg case) and 
 [equation~(\ref{eq:avsthetac}a)] $\operatorname{Re}a^2>0$, therefore [equation~(\ref{eq:asigned})] $\operatorname{Re}a>0$ if $\operatorname{Im}a^2>0$. 
 Similarly, supposing $\sin\theta-\sin\theta_c<0$, we obtain $\operatorname{Re}\omega>0$ and $\operatorname{Re}a^2<0$, therefore $\operatorname{Re}a<0$ if $\operatorname{Im}a>0$. 
 }
 to $\text{sgn}(\operatorname{Re}a)=\text{sgn}(\operatorname{Re}\omega)$ [$\text{sgn}(\operatorname{Re}a)=-\text{sgn}(\operatorname{Re}\omega)$] for large values of $|\sin\theta-\sin\theta_c|$.
  
 Equation~(\ref{eq:thickbraggr}) is a useful result, as most crystal monochromators used in synchrotron radiation are thick crystals in Bragg (reflection) mode. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
