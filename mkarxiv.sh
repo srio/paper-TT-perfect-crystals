@@ -32,7 +32,7 @@ pdflatex main.tex
 
 okular main.pdf
 
-#sleep 1.0
-#rm main.aux main.blg main.log main.pdf
-#cd ..
-#zip -r ARXIV.zip ARXIV
+sleep 1.0
+rm main.aux main.blg main.log main.pdf
+cd ..
+zip -r ARXIV.zip ARXIV
