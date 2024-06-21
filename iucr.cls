@@ -1536,7 +1536,7 @@
         \vbox to 0pt{%
           \hrule height .1 pt width \textwidth \vskip 3pt%
           \hbox to \textwidth{%
-            {\fontsize{7}{12pt}%
+            {\fontsize{7}{1022pt}%
             \if\relax\j@urnalcode\else           % skip if null journal
               \sffamily%
               \textit{\j@urnalname}
@@ -4255,7 +4255,7 @@
 \def\j@urnalcode{\relax}                         % Some defaults in case the
 \def\j@urnaltitle{\relax}                        %  relevant items are not
 \def\j@urnalfullname{\relax}                     %  declared in the source
-\def\j@urnalyear{2022}                           %  file
+\def\j@urnalyear{2024}                           %  file
 \def\v@lume{00}                                  %
 \def\issn{\relax}
 
