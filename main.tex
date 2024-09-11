@@ -216,22 +216,22 @@ $\hat{ \textbf{s}}_{0}$ and $\hat{ \textbf{s}}_{h}$ along $\textbf k_0$ and $\te
 A generic spatial position  $\textbf r=(s_0,s_h,s_t)$ should include a third coordinate $s_t$ along an axis $\hat{\textbf{s}}_t$ non coplanar with $\textbf{k}_0$ and $\textbf{k}_h$.
 We can choose $\hat{ \textbf{s}}_{t}$ to lie on the crystal entrance surface and be perpendicular to the intersection line of the diffraction plane and the crystal surface.
 The chosen direction of $\hat{\textbf{s}}_{t}$ implies $
-\textbf{n}.\textbf{s}_t=0$.
-The equation of the crystal surface is $\gamma_0 s_0 + \gamma_h s_h =0$, with $\gamma_{0,h}=\textbf{n}.\textbf{s}_{0,h} \equiv \cos(\theta_{0,h})$ the director cosines with respect to $\textbf{n}$, the unit inward normal vector to the entrance plane surface.
+\textbf{n}.\hat{\textbf{s}}_t=0$.
+The equation of the crystal surface is $\gamma_0 s_0 + \gamma_h s_h =0$, with $\gamma_{0,h}=\textbf{n}.\hat{\textbf{s}}_{0,h} \equiv \cos(\theta_{0,h})$ the director cosines with respect to $\textbf{n}$, the unit inward normal vector to the entrance plane surface.
 
 The relation $d s_0 = \nabla s_0 . \textbf{r}= \nabla s_0 . [ d s_0 \hat{\textbf{s}}_0 + d s_h \hat{\textbf{s}}_h + d s_t \hat{\textbf{s}}_t ]$ implies $\nabla s_0 . \hat{\textbf{s}}_0=1$ and $\nabla s_0 . \hat{\textbf{s}}_{h,t}=0$. Similarly, $\nabla s_h . \hat{\textbf{s}}_h=1$ and $\nabla s_h . \hat{\textbf{s}}_{0,t}=0$. Therefore, 
 \begin{subequations}
 \label{eq:equalities}
 \begin{align}
-\hat s_0 . \nabla D=
-\hat s_0 . \left[ 
+\hat{\textbf{s}}_0 . \nabla D=
+\hat{\textbf{s}}_0 . \left[ 
 \frac{\partial D}{\partial s_0} \nabla s_0 + 
 \frac{\partial D}{\partial s_h} \nabla s_h +
 \frac{\partial D}{\partial s_t} \nabla s_t
 \right] 
 =& \frac{\partial D}{\partial s_0}
 ; \\
-\hat s_h \nabla D =& 
+\hat{\textbf{s}}_h \nabla D =& 
 \frac{\partial D}{\partial s_h}.
 \end{align}
 \end{subequations}
@@ -267,9 +267,8 @@ where we used the notation
 \end{align}
 \end{subequations}
 
+\inred{Our formulation is written for the case of $\sigma$-polarization. For the case of $\pi$-polarization, it is sufficient to replace $\chi_h$ and $\chi_{-h}$ by $C\chi_h$ and $C\chi_{-h}$ with $C=\cos(2\theta_B)$.}
 An equivalent form of the TT equations~(\ref{eq:TT}) is obtained in appendix~\ref{appendix:rotating}, using oblique axes along the directions of the geometrical Bragg law, and applying a crystal rotation.
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -510,7 +509,7 @@ It is possible to write them as
     -b u_h & a - \omega
     \end{pmatrix}, 
 \end{equation}
-where the two terms are interchangeable when $a$ is changed in $-a$. They correspond to the two roots of $a^2$.
+where the two terms are \inred{interchanged} when $a$ is changed in $-a$. They correspond to the two roots of $a^2$.
 They also correspond to the two branches of the dispersion surface \inred{[see e.g.~\cite{authierbook}]}. 
 The real part of the argument of the exponential factors, $-T [\operatorname{Im} u_0 (b+1)/2  \pm \operatorname{Im} a]$, is related to the absorption.
 When $\operatorname{Im}a<0$, the absorption is less than $\exp[-T \operatorname{Im} u_0 (b+1)/2 ]$ for the first term, and more than that for the second one.
@@ -533,12 +532,12 @@ Similarly, for  $\operatorname{Im}a > 0$ the two matrices present opposite behav
 
 % An x-ray beam may go partially through such a ``thick crystal" in the condition of Bragg diffraction, where it would be absorbed without Bragg diffraction. This is a manifestation of the Borrmann effect (anomalous absorption).
 
-\inred{A beam that would be absorbed without Bragg diffraction if $T \operatorname{Im} u_0 \gg  1$ may partially go through the ``thick crystal" in the condition of Bragg diffraction. Equation~(\ref{eq:Mthickapprox}) is a clear expression of the Borrmann effect.}
+\inred{A beam, that would be absorbed without Bragg diffraction if $T \operatorname{Im} u_0 \gg  1$, may partially go through the ``thick crystal" in the condition of Bragg diffraction. Equation~(\ref{eq:Mthickapprox}) is a clear expression of the Borrmann effect.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Reflection and transmission amplitudes in transmission geometry (Laue case)}
+\subsection{Reflection and transmission amplitudes in \inred{Laue case}}
 \label{sec:TTsolutionsLaue}
 
 In this case $b>0$. The boundary conditions are $(D_0(0),D_h(0))=(1,0)$. 
@@ -601,7 +600,7 @@ At $\theta=\theta_c$, $b \chi_h \chi_{-h}+w^2=b \chi_h \chi_{-h} - [(\operatorna
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Reflection and transmission amplitudes in reflection geometry (Bragg case). The S-matrix}
+\subsection{Reflection and transmission amplitudes in \inred{Bragg case}. The S-matrix}
 \label{sec:TTsolutionsBragg}
 
 In this case $b<0$. We set $D_0(0)=1$ and $D_h(T)=0$ (which means no beam entering the crystal slab on the back surface). The reflection and transmission amplitudes
@@ -728,8 +727,11 @@ An example of simulation of the field inside the crystal using equations~(\ref{e
     }
 \end{figure}
 
-Fig.~\ref{fig:braggMap}b shows that the penetration of the incident wave inside the crystal is small with respect to the total crystal thickness. This is related to the penetration length or depth. In Fig.~\ref{fig:penetration} we fitted the intensity profile of $|D_0(s)|^2$ versus depth for each value of $\theta-\theta_B$.
-The fact that for a thick crystal in Bragg geometry $|D_0(s)|^2$ has significant values only in the vicinity of the crystal surface, in the central region, can be explained from equations~(\ref{eq:bragginside}). The moduli of the functions $\sin(aT-as)$ and $\cos(aT-as)$ are approximately proportional to $\exp[(T-s)|\operatorname{Im}a|]$ if the argument of this exponential function is sufficiently large. Consequently, $|D_0(s)|^2$ is nearly proportional to $\exp[-s(2|\operatorname{Im}a|+|b+1|\operatorname{Im}u_0)]$. Writing $|D_0(s)|^2=\exp[-s/s_{ext}]$, with $s_{ext}$ the extinction length (measured along the $s_0$ axis), we obtain for the Bragg symmetric ($b=-1$) case  
+Fig.~\ref{fig:braggMap}b shows that the penetration of the incident wave inside the crystal is small \inred{in a limited interval around $\theta_c$}.
+% with respect to the total crystal thickness. 
+% This is related to the penetration length or depth. 
+In Fig.~\ref{fig:penetration} we fitted the intensity profile of $|D_0(s)|^2$ versus depth for each value of $\theta-\theta_B$.
+The fact that for a thick crystal in Bragg geometry $|D_0(s)|^2$ has significant values only in the vicinity of the crystal surface, in the central region, can be explained from equations~(\ref{eq:bragginside}). The moduli of the functions $\sin(aT-as)$ and $\cos(aT-as)$ are approximately proportional to $\exp[(T-s)|\operatorname{Im}a|]$ if the argument of this exponential function is sufficiently large. Consequently, $|D_0(s)|^2$ is nearly proportional to $\exp[-s(2|\operatorname{Im}a|+\inred{(}b+1\inred{)}\operatorname{Im}u_0)]$. Writing $|D_0(s)|^2=\exp[-s/s_{ext}]$, with $s_{ext}\inred{=[(2|\operatorname{Im}a|+(b+1)\operatorname{Im}u_0)]^{-1}}$ the extinction length (measured along the $s_0$ axis), we obtain for the Bragg symmetric ($b=-1$) case  
 \begin{equation}\label{eq:extictionlength}
     s_{ext} = \frac{1}{2 |\operatorname{Im}a|}.
 \end{equation}
@@ -851,11 +853,11 @@ r_B=\frac{r_S m_{11} - m_{12}}
 
 In some applications, \inred{as in ray tracing}, it is essential to know the diffracted wavevector $\textbf{k}_{\text{out}}$ that exits from the crystal. As mentioned before, the \inred{choice of $\textbf{k}_0$ in equation~(\ref{eq:wavefield}) is somewhat arbitrary.} 
 In our choice, $\textbf{k}_0$ corresponds exactly \inred{to the wavevector} of the incident \inred{plane} wave.
-The vector $\textbf{k}_h$ (see section~\ref{sec:TT}), defined  as $\textbf k_h=\textbf k_0 + \textbf h$, does not correspond in general to the wavevector of the outgoing ray or wave outside the crystal. The direction of the diffracted wave has the form 
+The vector $\textbf{k}_h$ (see section~\ref{sec:TT}), defined  as $\textbf k_h=\textbf k_0 + \textbf h$, does not correspond in general to the wavevector of the outgoing ray or wave outside the crystal. \inred{$\textbf{k}_\text{out}$} has the form 
 \begin{equation}
     \textbf{k}_{\text{out}} = \textbf{k}_h + \beta \textbf{n}, \nonumber
 \end{equation}
-with $\textbf{n}$ the unit vector along the inward normal to the crystal surface. The (real) coefficient $\beta$ is obtained by writing that the modulus of $\textbf{k}_{\text{out}}$ is equal to $k$:
+with $\textbf{n}$ the unit vector along the inward normal to the crystal \inred{exit} surface. The (real) coefficient $\beta$ is obtained by writing that the modulus of $\textbf{k}_{\text{out}}$ is equal to $k$:
 \begin{equation}
     |\textbf{k}_{\text{out}}|^2 = |\textbf{k}_h + \beta \textbf{n}|^2=k^2. \nonumber
 \end{equation}
@@ -869,7 +871,7 @@ Its solutions are
 \begin{equation}
     \beta = - k \gamma_h \sqrt{1-\alpha} \pm k \sqrt{\alpha + \gamma_h^2 (1-\alpha)}, \nonumber
 \end{equation}
-where the $\pm$ sign is chosen in such a way that $\beta=0$ when $\alpha=0$ (i.e., negative for Laue case with $\gamma_h>0$ and positive for Bragg case with $\gamma_h<0$).
+where the $\pm$ sign is chosen in such a way that $\beta=0$ when $\alpha=0$ (i.e., \inred{positive} for $\gamma_h>0$ and \inred{negative} for  $\gamma_h<0$).
 
 % This implies 
 % \begin{equation}
@@ -914,7 +916,7 @@ To simulate a diffraction experiment using a perfect crystal, {\tt crystalpy}  o
 
 The {\tt Photon} class is a minimum class for a photon, containing the energy (in eV) and a unit direction vector, implemented in 
 the {\tt Vector} class. It deals with the storage and operations (addition, scalar product, cross product, normalization, rotation around an axis, etc.) of a 3D vector. A superclass of {\tt Photon} is {\tt ComplexAmplitudePhoton}, that contains the scalar complex amplitude for $\sigma$ and $\pi$ polarizations). 
-These classes ({\tt Vector}, {\tt Photon} and {\tt ComplexAmplitudePhoton}) can hold stacks (the internal storage is done with arrays to speed-up vector operations). The {\tt ComplexAmplitidePhoton} classes 
+These classes ({\tt Vector}, {\tt Photon} and {\tt ComplexAmplitudePhoton}) can hold stacks (the internal storage is done with arrays to speed-up vector operations). The {\tt ComplexAmplit\inred{u}dePhoton} classe 
 has a corresponding {\tt ComplexAmplitudePhotonBunch} superclass, decorated with methods to deal with multiple waves or beams (bunches or sets of photons). 
 
 The information on the crystal itself (e.g., particular crystal material and crystal structure), its preparation (crystal cut), and related physical parameters (like the structure factor) are managed by the {\tt DiffractionSetup} classes. {\tt Crystalpy} allows multiple options to retrieve the crystal structure and the scattering functions needed to calculate the structure factors. 
@@ -925,15 +927,18 @@ The {\tt DiffractionSetup} classes handle the information about the crystal setu
 {\tt geometry\_type} (among {\tt BraggDiffraction, BraggTransmission, LaueDiffraction} and {\tt LaueTransmission}),
 {\tt crystal\_name} (a string, e.g. Si, Ge),
 {\tt thickness} (crystal thickness in SI units [m]),
-{\tt miller\_h(,k,l)} (the Miller indices),
+\inred{{\tt miller\_h},
+{\tt miller\_k},
+{\tt miller\_l}}
+ (the Miller indices),
 and {\tt asymmetry\_angle} (angle in degrees between the crystal surface and the planes $hkl$ as defined in \cite{codeCRYSTAL}).
 
 \inred{
 The determination of crystal structure factors (necessary to compute $\chi_h$, $\chi_{-h}$, and thus $u_h$ and $u_{-h}$) is not trivial, and requires the list of the crystallographic parameters (basically the cell parameters and a list of the atoms of the unit cell, with their occupation and coordinates). Both $\tt dabax$ and $\tt xraylib$ libraries use similar methods that are detailed in \cite{Yu2022}. This implementation allows any possible crystal structure. Complex crystals, such as alpha-quartz \cite{Sutter2022,Sutter2023}, or YB$_\text{66}$ \cite{Yu2022} are considered. However, some particularities regarding chirality, strong anisotropy, or temperature dependence may not be included accurately and are sometimes modelled by phenomenological parameters.
 }
 
-To perform the main calculations (reflectivities, transfer matrices, diffracted photons, etc.) several methods in the {\tt Diffraction} class are used, getting the crystal setup and the photon bunch as inputs. For the moment, only flat perfect crystals are coded (in the {\tt PerfectCrystalDiffraction} class) which directly implements the formulation and theory in section~\ref{sec:TTsolutions}. For completeness, {\tt crystalpy} also includes the equations of the Zachariasen formalist~\cite{ZachariasenBook} and can be used instead of the ones described in this paper.
-Typical angle or photon scans as shown in Fig.~\ref{fig:braggProfiles} are calculated defining a $\tt ComplexAmplitudePhoton$ entity for each point, group then in a {\tt ComplexAmplitudePhotonBunch} for then calculate the diffraction by the crystal using {\tt calculateDiffractedComplexAmplitudes}.
+To perform the main calculations (reflectivities, transfer matrices, diffracted photons, etc.) several methods in the {\tt Diffraction} class are used, getting the crystal setup and the photon bunch as inputs. For the moment, only flat perfect crystals are coded (in the {\tt PerfectCrystalDiffraction} class) which directly implements the formulation and theory in section~\ref{sec:TTsolutions}. For completeness, {\tt crystalpy} also includes the equations of Zachariasen~\cite{ZachariasenBook} and can be used instead of the formalism described in this paper.
+Typical angle or photon scans, as shown in Fig.~\ref{fig:braggProfiles}, are calculated defining a $\tt ComplexAmplitudePhoton$ entity for each point, group the\inred{m} in a {\tt ComplexAmplitudePhotonBunch} for then calculate the diffraction by the crystal using {\tt calculateDiffractedComplexAmplitudes}.
 % \todo{listing?} 
 
 A user-friendly application has been written in the OASYS environment to compute diffraction profiles using {\tt crystalpy} (Fig.~\ref{fig:xcrystal}). The applications automatically generates a script that can be used for further batch calculations. 
@@ -945,7 +950,7 @@ A user-friendly application has been written in the OASYS environment to compute
     \label{fig:xcrystal}
 \end{figure}
 
-In the ray tracing SHADOW4, all calculations related to crystal optics are delegated to  {\tt crystalpy}. Ray tracing permits simulations of beamline optics including a realistic description of the source. It also allows the simulation of curved crystals, under the assumption that the local reflectivity of the curved crystal is the same as for the flat crystal. This assumption is not always granted and has to be verified before ray tracing curved crystals.
+In the ray tracing SHADOW4, all calculations related to crystal optics are delegated to  {\tt crystalpy}. Ray tracing permits simulations of beamline optics including a realistic description of the source. It also allows the simulation of curved crystals, under the assumption that the local reflectivity of the curved crystal is the same as for the flat crystal. This assumption is not always granted and has to be verified before \inred{performing} ray tracing \inred{simulations including} curved crystals.
 % \todo{Example?}
 
 % \todo{
