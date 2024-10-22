@@ -1,0 +1,54 @@
+%
+%to crop the pdf, use
+% pdfcrop --margins '0 50 0 50' figlayered.pdf figlayered2.pdf
+% 
+
+
+\NeedsTeXFormat{LaTeX2e}
+%
+%\documentclass[aps,pra,showpacs,amsmath,amssymb,superscriptaddress,nofootinbib]{revtex4}
+\documentclass[]{article}
+\usepackage{graphicx}% Include figure files
+\usepackage{bm}% bold math
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{color}
+\usepackage{soul}
+\usepackage{nopageno}
+\usepackage{tikz}
+%%
+
+\begin{document}  
+
+\thispagestyle{empty}
+
+\section{Corrections to proofs tol5002}
+
+\begin{itemize}
+    % \item {\color{red} cover page:  add Guigay's ORCID}
+    \item line 108 missing the ``l" in ``external" in the URL:  https://github.com/oasys-kit/xoppy\_external\_codes/tree/master/src/INPRO
+    \item line 174: remove the italics in {\it define}
+    \item line 196 in equation (5) there is a tilde character in  $...=\exp(i\~{~}\textbf{k}_0 . \textbf{r})$ that must be removed.
+    \item line 197 also in equation (5), there is a wrong subindex $k$ that should be $h$: $.... [2i \textbf{k}_h$
+    \item line 269 $...=\exp(iu_s s)$ should be $...=\exp(iu_0 s)$
+    \item line 281,  in footnote 1 should say ...in equation (9) [instead of equation (10)]
+    \item line 282,  in footnote 2 should say `` along $\hat{\textbf{s}}_0$" instead of ``along $s_0$"
+    \item line 303. No, Appendix B should not be placed here. We understand that Appendix B is not called, it will be done at line 556.
+    \item line 336 in the title, please use {\boldmath{$a$}} instead of \textbf{a}
+    \item line 365 in equation (26) place parenthesis in $\sin(2\theta_B)$
+    \item line 396 please place ($D_0(T),D_h(T)$) instead of [$D_0(T),D_h(T)$] because it is a vector and is delimited by (...)  [as shown in equation (30)]
+    \item line 397 the same as before
+    \item line 421 please replace $M(T_1+T_2)=M(T_1)M(T_2)$ by $M(T_1+T_2)=M(T_2)M(T_1)$ 
+    \item line 448, 450 in equation (33). Please revert to our original manuscript and explicitly write in line 1: ``$\text{with the choice} \operatorname{Im}a<0$". Similarly for line 2: ``$\text{with the choice}\operatorname{Im}a>0$". This is a subtle detail that $\operatorname{Im} a$ cannot pass from negative to positive, but it must be chosen to be negative or positive.   
+    \item line 459 Please use () instead of [] as discussed for line 396
+    \item line 477 Please use () instead of [] as discussed for line 396
+    \item line 479 a small detail: the equal sign in $=m_{22}$ is too long, it seems you use math character instead of text one
+     \item line 556. At the beginning of this paragraph, just after equations (39) please add a sentence that calls Appendix B:  ``These solutions, as well as those for Laue in equations~(34), can also be obtained by direct integration of the TT equations (17) using Laplace transforms (see Appendix B)."
+    \item line 625 Figure 3. The labels (a) (b) (c) (d) are missing in the graph
+    \item line 728 equation (46) replace ``for" by ``with the choice of" as discussed for line 448
+    \item line 1027 please use ``provided its crystalline structure is known."
+    \item line 1139 Please replace equation (19) by equation (34).
+\end{itemize}
+
+\end{document}
